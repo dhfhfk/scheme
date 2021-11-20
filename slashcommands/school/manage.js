@@ -207,6 +207,7 @@ schedule: {
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
                             result.users[0].token.substr(0, 14) + "...",
+                            result.users[0].password.substr(0, 14) + "...",
                         ];
                     }
                     if (validate == 2) {
@@ -215,12 +216,14 @@ schedule: {
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
                             result.users[0].token.substr(0, 14) + "...",
+                            result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
                             result.users[1].token.substr(0, 14) + "...",
+                            result.users[1].password.substr(0, 14) + "...",
                         ];
                     }
                     if (validate == 3) {
@@ -229,18 +232,21 @@ schedule: {
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
                             result.users[0].token.substr(0, 14) + "...",
+                            result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
                             result.users[1].token.substr(0, 14) + "...",
+                            result.users[1].password.substr(0, 14) + "...",
                         ];
                         var userInfo2 = [
                             result.users[2].name,
                             result.users[2].encName.substr(0, 14) + "...",
                             result.users[2].encBirth.substr(0, 14) + "...",
                             result.users[2].token.substr(0, 14) + "...",
+                            result.users[2].password.substr(0, 14) + "...",
                         ];
                     }
                 } catch (e) {
@@ -283,7 +289,8 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]}
+    token: ${userInfo0[3]},
+    password: ${userInfo0[4]}
 }\`\`\``,
                                 inline: false,
                             });
@@ -307,7 +314,8 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]}
+    token: ${userInfo0[3]},
+    password: ${userInfo0[4]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -317,7 +325,8 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]}
+    token: ${userInfo1[3]},
+    password: ${userInfo1[4]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -342,7 +351,8 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]}
+    token: ${userInfo0[3]},
+    password: ${userInfo0[4]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -352,7 +362,8 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]}
+    token: ${userInfo1[3]},
+    password: ${userInfo1[4]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -362,7 +373,8 @@ schedule: {
     name: ${userInfo2[0]},
     encName: ${userInfo2[1]},
     encBirth: ${userInfo2[2]},
-    token: ${userInfo2[3]}
+    token: ${userInfo2[3]},
+    password: ${userInfo2[4]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -703,6 +715,7 @@ schedule: {
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
                             result.users[0].token.substr(0, 14) + "...",
+                            result.users[0].password.substr(0, 14) + "...",
                         ];
                     }
                     if (validate == 2) {
@@ -711,12 +724,14 @@ schedule: {
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
                             result.users[0].token.substr(0, 14) + "...",
+                            result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
                             result.users[1].token.substr(0, 14) + "...",
+                            result.users[1].password.substr(0, 14) + "...",
                         ];
                     }
                     if (validate == 3) {
@@ -725,18 +740,21 @@ schedule: {
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
                             result.users[0].token.substr(0, 14) + "...",
+                            result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
                             result.users[1].token.substr(0, 14) + "...",
+                            result.users[1].password.substr(0, 14) + "...",
                         ];
                         var userInfo2 = [
                             result.users[2].name,
                             result.users[2].encName.substr(0, 14) + "...",
                             result.users[2].encBirth.substr(0, 14) + "...",
                             result.users[2].token.substr(0, 14) + "...",
+                            result.users[2].password.substr(0, 14) + "...",
                         ];
                     }
                 } catch (e) {
@@ -778,7 +796,8 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]}
+    token: ${userInfo0[3]},
+    password: ${userInfo0[4]}
 }\`\`\``,
                                 inline: false,
                             });
@@ -874,7 +893,8 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]}
+    token: ${userInfo0[3]},
+    password: ${userInfo0[4]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -884,7 +904,8 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]}
+    token: ${userInfo1[3]},
+    password: ${userInfo1[4]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -994,7 +1015,8 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]}
+    token: ${userInfo0[3]},
+    password: ${userInfo0[4]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -1004,7 +1026,8 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]}
+    token: ${userInfo1[3]},
+    password: ${userInfo1[4]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -1014,7 +1037,8 @@ schedule: {
     name: ${userInfo2[0]},
     encName: ${userInfo2[1]},
     encBirth: ${userInfo2[2]},
-    token: ${userInfo2[3]}
+    token: ${userInfo2[3]},
+    password: ${userInfo2[4]}
 }\`\`\``,
                                     inline: false,
                                 }
