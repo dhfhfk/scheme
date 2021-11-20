@@ -1,0 +1,20 @@
+{
+    "bot": {
+        "token": "discord_token_here",
+        "guild_id": "guild_id_for_admin_commands",
+        "prefix": "prefix_for_commands"
+    },
+    "db": {
+        "mongopath": "mongopath EX: (mongodb://localhost:27017/discordbot)"
+    },
+    "services": {
+        "neis_key": "open.neis.go.kr token",
+        "user_limit": 1
+    },
+    "color": {
+        "error": "#da2723",
+        "delete": "#ed4245",
+        "success": "#3fbf4f",
+        "info": "#1aa7ff"
+    }
+}
