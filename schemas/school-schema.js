@@ -31,9 +31,9 @@ const schoolSchema = new mongoose.Schema(
             },
         ],
         schedule: {
-            type: { type: String },
-            kinds: { type: String },
-            channelId: { type: String },
+            type: { type: String, required: true },
+            kinds: { type: String, required: true },
+            channelId: { type: String, required: true },
             paused: { type: Boolean },
         },
     },
