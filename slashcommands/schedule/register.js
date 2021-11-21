@@ -213,28 +213,41 @@ module.exports = {
                                 );
                             } finally {
                                 mongoose.connection.close();
+                                console.log(
+                                    `[✅] (${userId}, ${userName}) REGISTER ${rawTimeTable[time]}${rawKindsTable[2]} schedule`
+                                );
                             }
                         });
                         var registered = new MessageEmbed()
                             .setTitle(
                                 `<:green_check:902151708380123137> 스케줄이 정상적으로 등록되었어요.`
                             )
-                            .setDescription(
-                                "이제 등록된 시간대에 알림이 전송될 거에요."
-                            )
+                            .setDescription("아래 정보들을 확인해 보세요.")
                             .setColor(config.color.success)
                             .addFields(
                                 {
-                                    name: `전송될 채널`,
-                                    value: `<#${channelId}>`,
+                                    name: `스케줄 등록 정보`,
+                                    value: `${timeTable[time]} 시간 사이에 <#${channelId}> 채널로 오늘 급식 알림을 전송할 거예요.`,
+                                    inline: true,
                                 },
                                 {
-                                    name: `등록된 시간대`,
-                                    value: `${timeTable[time]}`,
+                                    name: `Q1. 왜 정해진 시간이 아닌 특정 시간 사이에 전송되나요?`,
+                                    value: `자가진단 수행에 랜덤성을 추가하기 위함입니다. 정확한 시간은 각 날마다의 봇 상태메시지를 확인하세요.`,
+                                    inline: false,
                                 },
                                 {
-                                    name: `전송될 정보`,
-                                    value: `오늘 급식 알림`,
+                                    name: `Q2. 자가진단 스케줄은 남기고 알림을 끌 수 없나요?`,
+                                    value: `자가진단 서비스는 관련 이슈가 있을 때마다 알림을 보내야 합니다. 알림을 끄려면 채널알림 설정을 통해 꺼주세요.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `Q3. 알림은 어떤 형식으로 전송되나요?`,
+                                    value: `선택한 채널에 누구나 볼 수 있는 메시지로 전송합니다. 학교 정보, 사용자 정보를 숨기고싶다면 따로 개인 서버를 개설해 설정하세요.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `Q4. 개인 정보를 삭제하려면?`,
+                                    value: `\`/정보 명령:조회\` 명령어로 개인 정보를 조회할 수 있고 \`/정보 명령:삭제\` 명령어로 개인 정보를 삭제할 수 있습니다.`,
                                 }
                             );
                         interaction.editReply({
@@ -320,6 +333,16 @@ module.exports = {
                     });
                     collector4.on("end", async (SelectMenuInteraction) => {
                         var kinds = SelectMenuInteraction.first().values;
+                        if (!kinds) {
+                            const cancelled = new MessageEmbed()
+                                .setTitle(`스케줄 등록이 취소되었어요.`)
+                                .setColor(config.color.error);
+                            await interaction.editReply({
+                                embeds: [cancelled],
+                                components: [],
+                            });
+                            return;
+                        }
                         mongo().then(async (mongoose) => {
                             try {
                                 await schoolSchema.findOneAndUpdate(
@@ -356,8 +379,8 @@ module.exports = {
                                     inline: true,
                                 },
                                 {
-                                    name: `Q1. 사용자마다 스케줄을 등록할 수는 없나요?`,
-                                    value: `네, 현재 디스코드 계정당 스케줄은 하나만 등록할 수 있습니다.`,
+                                    name: `Q1. 왜 정해진 시간이 아닌 특정 시간 사이에 전송되나요?`,
+                                    value: `자가진단 수행에 랜덤성을 추가하기 위함입니다. 정확한 시간은 각 날마다의 봇 상태메시지를 확인하세요.`,
                                     inline: false,
                                 },
                                 {
@@ -375,7 +398,7 @@ module.exports = {
                                     value: `\`/정보 명령:조회\` 명령어로 개인 정보를 조회할 수 있고 \`/정보 명령:삭제\` 명령어로 개인 정보를 삭제할 수 있습니다.`,
                                 }
                             );
-                        interaction.editReply({
+                        await interaction.editReply({
                             embeds: [registered],
                             components: [],
                             ephemeral: true,
