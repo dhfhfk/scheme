@@ -18,7 +18,7 @@ function getRawMeal(schoolInfo, date1) {
             KEY: config.services.neis_key,
             Type: "json",
             pIndex: 1,
-            pSize: 1,
+            pSize: 3,
             ATPT_OFCDC_SC_CODE: schoolInfo[1],
             SD_SCHUL_CODE: schoolInfo[2],
             MLSV_YMD: date1,
@@ -56,15 +56,10 @@ function parseMeal(rawMeal) {
 }
 
 var survey = {
-    // 학생 본인이 37.5도 이상 발열 또는 발열감이 있나요?
     Q1: false,
-
-    // 학생에게 코로나19가 의심되는 임상증상이 있나요?
-    // 기침, 호흡곤란, 오한, 근육통, 두통, 인후통, 후각·미각 소실 또는 폐렴 등
     Q2: false,
-
-    // 학생 본인 또는 동거인이 방역당국에 의해 현재 자가격리가 이루어지고 있나요?
     Q3: false,
+    Q4: false,
 };
 function decrypt2(message) {
     const bytes = CryptoJS.AES.decrypt(message, secretKey);
@@ -92,8 +87,10 @@ async function doHcs(userInfo) {
             const error = new MessageEmbed()
                 .setTitle(`<:red_x:902151708765999104> 로그인에 실패했습니다.`)
                 .setAuthor(
-                    client.users.cache.get(userInfo[7]).username,
-                    client.users.cache.get(userInfo[7]).displayAvatarURL()
+                    client.users.cache.get(String(userInfo[7])).username,
+                    client.users.cache
+                        .get(String(userInfo[7]))
+                        .displayAvatarURL()
                 )
                 .setColor(config.color.error)
                 .addFields(
@@ -119,7 +116,7 @@ async function doHcs(userInfo) {
             } catch (e) {
                 try {
                     client.users.cache
-                        .get(userInfo[7])
+                        .get(String(userInfo[7]))
                         .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
                 } catch (e) {
                     console.log(
@@ -136,8 +133,10 @@ async function doHcs(userInfo) {
                     `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
                 )
                 .setAuthor(
-                    client.users.cache.get(userInfo[7]).username,
-                    client.users.cache.get(userInfo[7]).displayAvatarURL()
+                    client.users.cache.get(String(userInfo[7])).username,
+                    client.users.cache
+                        .get(String(userInfo[7]))
+                        .displayAvatarURL()
                 )
                 .setColor(config.color.error)
                 .addFields(
@@ -161,7 +160,7 @@ async function doHcs(userInfo) {
             } catch (e) {
                 try {
                     client.users.cache
-                        .get(userInfo[7])
+                        .get(String(userInfo[7]))
                         .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
                 } catch (e) {
                     console.log(
@@ -188,8 +187,10 @@ async function doHcs(userInfo) {
                         `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
                     )
                     .setAuthor(
-                        client.users.cache.get(userInfo[7]).username,
-                        client.users.cache.get(userInfo[7]).displayAvatarURL()
+                        client.users.cache.get(String(userInfo[7])).username,
+                        client.users.cache
+                            .get(String(userInfo[7]))
+                            .displayAvatarURL()
                     )
                     .setColor(config.color.error)
                     .addFields(
@@ -212,7 +213,7 @@ async function doHcs(userInfo) {
                     });
                 } catch (e) {
                     try {
-                        client.users.cache.get(userInfo[7]).send({
+                        client.users.cache.get(String(userInfo[7])).send({
                             content: "스케줄 채널 설정이 잘못되었어요!",
                         });
                     } catch (e) {
@@ -233,8 +234,10 @@ async function doHcs(userInfo) {
                         `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                     )
                     .setAuthor(
-                        client.users.cache.get(userInfo[7]).username,
-                        client.users.cache.get(userInfo[7]).displayAvatarURL()
+                        client.users.cache.get(String(userInfo[7])).username,
+                        client.users.cache
+                            .get(String(userInfo[7]))
+                            .displayAvatarURL()
                     )
                     .setColor(config.color.error)
                     .addFields(
@@ -256,7 +259,7 @@ async function doHcs(userInfo) {
                     });
                 } catch (e) {
                     try {
-                        client.users.cache.get(userInfo[7]).send({
+                        client.users.cache.get(String(userInfo[7])).send({
                             content: "스케줄 채널 설정이 잘못되었어요!",
                         });
                     } catch (e) {
@@ -273,8 +276,10 @@ async function doHcs(userInfo) {
                     `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                 )
                 .setAuthor(
-                    client.users.cache.get(userInfo[7]).username,
-                    client.users.cache.get(userInfo[7]).displayAvatarURL()
+                    client.users.cache.get(String(userInfo[7])).username,
+                    client.users.cache
+                        .get(String(userInfo[7]))
+                        .displayAvatarURL()
                 )
                 .setDescription(
                     "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
@@ -300,7 +305,7 @@ async function doHcs(userInfo) {
             } catch (e) {
                 try {
                     client.users.cache
-                        .get(userInfo[7])
+                        .get(String(userInfo[7]))
                         .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
                 } catch (e) {
                     console.log(
@@ -320,8 +325,8 @@ async function doHcs(userInfo) {
                 `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
             )
             .setAuthor(
-                client.users.cache.get(userInfo[7]).username,
-                client.users.cache.get(userInfo[7]).displayAvatarURL()
+                client.users.cache.get(String(userInfo[7])).username,
+                client.users.cache.get(String(userInfo[7])).displayAvatarURL()
             )
             .setColor(config.color.error)
             .addFields(
@@ -482,13 +487,13 @@ client.on("ready", async () => {
                     var weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
-                    var options = {
+                    let options = {
                         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
                         qs: {
                             KEY: config.services.neis_key,
                             Type: "json",
                             pIndex: 1,
-                            pSize: 1,
+                            pSize: 3,
                             ATPT_OFCDC_SC_CODE: schoolInfo[1],
                             SD_SCHUL_CODE: schoolInfo[2],
                             MLSV_YMD: date1,
@@ -512,7 +517,6 @@ client.on("ready", async () => {
                         })
                         .then((data) => {
                             try {
-                                data = JSON.parse(data);
                                 const dishCount =
                                     data.mealServiceDietInfo[0].head[0]
                                         .list_total_count;
@@ -663,6 +667,9 @@ client.on("ready", async () => {
                                     }
                                 }
                             } catch (e) {
+                                console.warn(
+                                    `[⚠️] 급식 정보가 없거나 검색 실패: ${e}`
+                                );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
                                     .setColor(config.color.info)
@@ -745,13 +752,13 @@ client.on("ready", async () => {
                     var weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
-                    var options = {
+                    let options = {
                         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
                         qs: {
                             KEY: config.services.neis_key,
                             Type: "json",
                             pIndex: 1,
-                            pSize: 1,
+                            pSize: 3,
                             ATPT_OFCDC_SC_CODE: schoolInfo[1],
                             SD_SCHUL_CODE: schoolInfo[2],
                             MLSV_YMD: date1,
@@ -775,7 +782,6 @@ client.on("ready", async () => {
                         })
                         .then((data) => {
                             try {
-                                data = JSON.parse(data);
                                 const dishCount =
                                     data.mealServiceDietInfo[0].head[0]
                                         .list_total_count;
@@ -926,6 +932,9 @@ client.on("ready", async () => {
                                     }
                                 }
                             } catch (e) {
+                                console.warn(
+                                    `[⚠️] 급식 정보가 없거나 검색 실패: ${e}`
+                                );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
                                     .setColor(config.color.info)
@@ -1049,13 +1058,13 @@ client.on("ready", async () => {
                     var weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
-                    var options = {
+                    let options = {
                         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
                         qs: {
                             KEY: config.services.neis_key,
                             Type: "json",
                             pIndex: 1,
-                            pSize: 1,
+                            pSize: 3,
                             ATPT_OFCDC_SC_CODE: schoolInfo[1],
                             SD_SCHUL_CODE: schoolInfo[2],
                             MLSV_YMD: date1,
@@ -1079,7 +1088,6 @@ client.on("ready", async () => {
                         })
                         .then((data) => {
                             try {
-                                data = JSON.parse(data);
                                 const dishCount =
                                     data.mealServiceDietInfo[0].head[0]
                                         .list_total_count;
@@ -1230,6 +1238,9 @@ client.on("ready", async () => {
                                     }
                                 }
                             } catch (e) {
+                                console.warn(
+                                    `[⚠️] 급식 정보가 없거나 검색 실패: ${e}`
+                                );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
                                     .setColor(config.color.info)
@@ -1276,13 +1287,6 @@ client.on("ready", async () => {
                         resultBB[i].schedule.channelId,
                         resultBB[i]._id,
                     ];
-                    const schoolInfo = [
-                        resultBB[i].school.name,
-                        resultBB[i].school.sc,
-                        resultBB[i].school.sd,
-                        resultBB[i].schedule.channelId,
-                        resultBB[i]._id,
-                    ];
                     try {
                         doHcs(userInfo);
                     } catch (e) {
@@ -1319,13 +1323,13 @@ client.on("ready", async () => {
                     var weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
-                    var options = {
+                    let options = {
                         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
                         qs: {
                             KEY: config.services.neis_key,
                             Type: "json",
                             pIndex: 1,
-                            pSize: 1,
+                            pSize: 3,
                             ATPT_OFCDC_SC_CODE: schoolInfo[1],
                             SD_SCHUL_CODE: schoolInfo[2],
                             MLSV_YMD: date1,
@@ -1349,11 +1353,10 @@ client.on("ready", async () => {
                         })
                         .then((data) => {
                             try {
-                                data = JSON.parse(data);
-                                const dishCount =
+                                let dishCount =
                                     data.mealServiceDietInfo[0].head[0]
                                         .list_total_count;
-                                var mealInfos = new Array();
+                                let mealInfos = new Array();
                                 for (var i = 0; i < dishCount; i++) {
                                     let mealNameList =
                                         data.mealServiceDietInfo[1].row[i]
@@ -1379,19 +1382,16 @@ client.on("ready", async () => {
                                     };
                                     mealInfos.push(mealInfo);
                                 }
-                                const breakfast = mealInfos.find(
+                                let breakfast = mealInfos.find(
                                     (v) => v.name === "조식"
                                 );
-                                const lunch = mealInfos.find(
+                                let lunch = mealInfos.find(
                                     (v) => v.name === "중식"
                                 );
-                                const dinner = mealInfos.find(
+                                let dinner = mealInfos.find(
                                     (v) => v.name === "석식"
                                 );
-                                console.log(`조식: ${breakfast}`);
-                                console.log(`중식: ${lunch}`);
-                                console.log(`석식: ${dinner}`);
-                                const todayMeal = {
+                                let todayMeal = {
                                     color: 0x1aa7ff,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
@@ -1503,6 +1503,9 @@ client.on("ready", async () => {
                                     }
                                 }
                             } catch (e) {
+                                console.warn(
+                                    `[⚠️] 급식 정보가 없거나 검색 실패: ${e}`
+                                );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
                                     .setColor(config.color.info)
@@ -1547,7 +1550,7 @@ client.on("ready", async () => {
 });
 
 client.on("ready", async () => {
-    const jobC = schedule.scheduleJob(`30 7 * * 1-5`, async function () {
+    const jobC = schedule.scheduleJob(`10 51 19 * * 1-5`, async function () {
         const wait = Math.floor(Math.random() * (10 - 0)) + 0;
         client.user.setPresence({
             activities: [
@@ -1628,13 +1631,13 @@ client.on("ready", async () => {
                     var weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
-                    var options = {
+                    let options = {
                         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
                         qs: {
                             KEY: config.services.neis_key,
                             Type: "json",
                             pIndex: 1,
-                            pSize: 1,
+                            pSize: 3,
                             ATPT_OFCDC_SC_CODE: schoolInfo[1],
                             SD_SCHUL_CODE: schoolInfo[2],
                             MLSV_YMD: date1,
@@ -1658,7 +1661,6 @@ client.on("ready", async () => {
                         })
                         .then((data) => {
                             try {
-                                data = JSON.parse(data);
                                 const dishCount =
                                     data.mealServiceDietInfo[0].head[0]
                                         .list_total_count;
@@ -1809,6 +1811,9 @@ client.on("ready", async () => {
                                     }
                                 }
                             } catch (e) {
+                                console.warn(
+                                    `[⚠️] 급식 정보가 없거나 검색 실패: ${e}`
+                                );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
                                     .setColor(config.color.info)
@@ -1891,13 +1896,13 @@ client.on("ready", async () => {
                     var weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
-                    var options = {
+                    let options = {
                         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
                         qs: {
                             KEY: config.services.neis_key,
                             Type: "json",
                             pIndex: 1,
-                            pSize: 1,
+                            pSize: 3,
                             ATPT_OFCDC_SC_CODE: schoolInfo[1],
                             SD_SCHUL_CODE: schoolInfo[2],
                             MLSV_YMD: date1,
@@ -1921,7 +1926,6 @@ client.on("ready", async () => {
                         })
                         .then((data) => {
                             try {
-                                data = JSON.parse(data);
                                 const dishCount =
                                     data.mealServiceDietInfo[0].head[0]
                                         .list_total_count;
@@ -2072,6 +2076,9 @@ client.on("ready", async () => {
                                     }
                                 }
                             } catch (e) {
+                                console.warn(
+                                    `[⚠️] 급식 정보가 없거나 검색 실패: ${e}`
+                                );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
                                     .setColor(config.color.info)
