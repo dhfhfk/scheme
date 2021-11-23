@@ -437,16 +437,16 @@ client.on("ready", async () => {
                 });
             } finally {
                 mongoose.connection.close();
-                const barA = new progress.MultiBar(
-                    {
-                        clearOnComplete: false,
-                        hideCursor: true,
-                    },
-                    progress.Presets.shades_grey
-                );
-                const aa = barA.create(resultAA.length, 0);
-                const ab = barA.create(resultAB.length, 0);
-                const ac = barA.create(resultAC.length, 0);
+                // const barA = new progress.MultiBar(
+                //     {
+                //         clearOnComplete: false,
+                //         hideCursor: true,
+                //     },
+                //     progress.Presets.shades_grey
+                // );
+                // const aa = barA.create(resultAA.length, 0);
+                // const ab = barA.create(resultAB.length, 0);
+                // const ac = barA.create(resultAC.length, 0);
                 for (
                     let i = 0, pending = Promise.resolve();
                     i < resultAA.length;
@@ -703,7 +703,7 @@ client.on("ready", async () => {
                             }
                         });
 
-                    aa.increment();
+                    // aa.increment();
                 }
                 for (var i = 0; i < resultAB.length; i++) {
                     const userInfo = [
@@ -721,7 +721,7 @@ client.on("ready", async () => {
                     } catch (e) {
                         console.log(e);
                     }
-                    ab.increment();
+                    // ab.increment();
                 }
                 for (
                     let i = 0, pending = Promise.resolve();
@@ -967,7 +967,7 @@ client.on("ready", async () => {
                                 }
                             }
                         });
-                    ac.increment();
+                    // ac.increment();
                 }
             }
         });
@@ -1008,16 +1008,16 @@ client.on("ready", async () => {
                 });
             } finally {
                 mongoose.connection.close();
-                const barB = new progress.MultiBar(
-                    {
-                        clearOnComplete: false,
-                        hideCursor: true,
-                    },
-                    progress.Presets.shades_grey
-                );
-                const ba = barB.create(resultBA.length, 0);
-                const bb = barB.create(resultBB.length, 0);
-                const bc = barB.create(resultBC.length, 0);
+                // const barB = new progress.MultiBar(
+                //     {
+                //         clearOnComplete: false,
+                //         hideCursor: true,
+                //     },
+                //     progress.Presets.shades_grey
+                // );
+                // const ba = barB.create(resultBA.length, 0);
+                // const bb = barB.create(resultBB.length, 0);
+                // const bc = barB.create(resultBC.length, 0);
                 for (
                     let i = 0, pending = Promise.resolve();
                     i < resultBA.length;
@@ -1274,7 +1274,7 @@ client.on("ready", async () => {
                             }
                         });
 
-                    ba.increment();
+                    // ba.increment();
                 }
                 for (var i = 0; i < resultBB.length; i++) {
                     const userInfo = [
@@ -1292,7 +1292,7 @@ client.on("ready", async () => {
                     } catch (e) {
                         console.log(e);
                     }
-                    bb.increment();
+                    // bb.increment();
                 }
                 for (
                     var i = 0, pending = Promise.resolve();
@@ -1538,7 +1538,7 @@ client.on("ready", async () => {
                                 }
                             }
                         });
-                    bc.increment();
+                    // bc.increment();
                 }
             }
         });
@@ -1550,7 +1550,7 @@ client.on("ready", async () => {
 });
 
 client.on("ready", async () => {
-    const jobC = schedule.scheduleJob(`10 51 19 * * 1-5`, async function () {
+    const jobC = schedule.scheduleJob(`30 7 * * 1-5`, async function () {
         const wait = Math.floor(Math.random() * (10 - 0)) + 0;
         client.user.setPresence({
             activities: [
@@ -1581,16 +1581,16 @@ client.on("ready", async () => {
                 });
             } finally {
                 mongoose.connection.close();
-                const barC = new progress.MultiBar(
-                    {
-                        clearOnComplete: false,
-                        hideCursor: true,
-                    },
-                    progress.Presets.shades_grey
-                );
-                const ca = barC.create(resultCA.length, 0);
-                const cb = barC.create(resultCB.length, 0);
-                const cc = barC.create(resultCC.length, 0);
+                // const barC = new progress.MultiBar(
+                //     {
+                //         clearOnComplete: false,
+                //         hideCursor: true,
+                //     },
+                //     progress.Presets.shades_grey
+                // );
+                // const ca = barC.create(resultCA.length, 0);
+                // const cb = barC.create(resultCB.length, 0);
+                // const cc = barC.create(resultCC.length, 0);
                 for (
                     let i = 0, pending = Promise.resolve();
                     i < resultCA.length;
@@ -1847,7 +1847,7 @@ client.on("ready", async () => {
                             }
                         });
 
-                    ca.increment();
+                    // ca.increment();
                 }
                 for (var i = 0; i < resultCB.length; i++) {
                     const userInfo = [
@@ -1865,7 +1865,7 @@ client.on("ready", async () => {
                     } catch (e) {
                         console.log(e);
                     }
-                    cb.increment();
+                    // cb.increment();
                 }
                 for (
                     var i = 0, pending = Promise.resolve();
@@ -2111,7 +2111,7 @@ client.on("ready", async () => {
                                 }
                             }
                         });
-                    cc.increment();
+                    // cc.increment();
                 }
             }
         });
