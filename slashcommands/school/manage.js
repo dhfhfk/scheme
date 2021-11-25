@@ -12,7 +12,7 @@ const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
 
 module.exports = {
-    name: "정보",
+    name: "설정",
     description:
         "봇 데이터베이스에 저장된 개인 정보를 조회하거나 삭제를 요청해요.",
     options: [
@@ -139,7 +139,7 @@ module.exports = {
                     }
                     mongoose.connection.close();
                     const info = new MessageEmbed()
-                        .setTitle(`${interaction.member.nickname} 님의 정보`)
+                        .setTitle(`${interaction.user.username} 님의 정보`)
                         .setColor(config.color.info)
                         .addFields({
                             name: `raw:`,
@@ -149,15 +149,15 @@ school: {
     endpoint: ${userInfo[2]},
     sc: ${userInfo[3]},
     sd: ${userInfo[4]},
-    org: ${userInfo[5]}
+    org: ${userInfo[5]} 
 },
 users: [
     {
-        /정보 명령:조회 종류:사용자 
+        /설정 명령:조회 종류:사용자 
     }
 ],
 schedule: {
-    /정보 명령:조회 종류:스케줄 
+    /설정 명령:조회 종류:스케줄 
 }
 \`\`\``,
                             inline: false,
@@ -279,7 +279,7 @@ schedule: {
                     if (validate == 1) {
                         const info = new MessageEmbed()
                             .setTitle(
-                                `${interaction.member.nickname} 님의 사용자 정보`
+                                `${interaction.user.username} 님의 사용자 정보`
                             )
                             .setDescription(`\`${validate}\` 명 조회됨`)
                             .setColor(config.color.info)
@@ -303,7 +303,7 @@ schedule: {
                     if (validate == 2) {
                         const info = new MessageEmbed()
                             .setTitle(
-                                `${interaction.member.nickname} 님의 사용자 정보`
+                                `${interaction.user.username} 님의 사용자 정보`
                             )
                             .setDescription(`\`${validate}\` 명 조회됨`)
                             .setColor(config.color.info)
@@ -340,7 +340,7 @@ schedule: {
                     if (validate == 3) {
                         const info = new MessageEmbed()
                             .setTitle(
-                                `${interaction.member.nickname} 님의 사용자 정보`
+                                `${interaction.user.username} 님의 사용자 정보`
                             )
                             .setDescription(`\`${validate}\` 명 조회됨`)
                             .setColor(config.color.info)
@@ -468,7 +468,7 @@ schedule: {
                     var rawKindsTable = ["A", "B", "C"];
                     mongoose.connection.close();
                     const info = new MessageEmbed()
-                        .setTitle(`${interaction.member.nickname} 님의 정보`)
+                        .setTitle(`${interaction.user.username} 님의 정보`)
                         .setColor(config.color.info)
                         .addFields({
                             name: `raw:`,

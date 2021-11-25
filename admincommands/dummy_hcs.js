@@ -36,8 +36,8 @@ function randomLetter() {
 }
 
 module.exports = {
-    name: "더미사용자",
-    description: "해당 계정에 더미 사용자 등록",
+    name: "dummy_hcs",
+    description: "[관리자] 해당 계정에 더미 사용자 등록",
     options: [
         {
             name: "이름",
