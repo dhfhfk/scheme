@@ -1,0 +1,11 @@
+{
+    "apps": [
+        {
+            "name": "Scheme",
+            "script": "./index.js",
+            "watch": true,
+            "max_restarts": 3,
+            "log_date_format": "YYYY-MM-DDTHH:mm:ss"
+        }
+    ]
+}
