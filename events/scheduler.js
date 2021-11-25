@@ -96,15 +96,14 @@ async function doHcs(userInfo) {
                 .addFields(
                     {
                         name: `상세정보:`,
-                        value: `입력된 값이 올바르지 않습니다.`,
+                        value: `등록된 값이 올바르지 않습니다.`,
                         inline: false,
                     },
                     {
                         name: `해결 방법:`,
                         value: `
-            1. 성명을 제대로 입력했는지 확인하세요.
-            2. 생년월일을 제대로 입력했는지 확인하세요.
-            3. 학교가 제대로 등록되어있는지 확인하세요.`,
+            1. 정보가 변경된 적이 있는지 확인하세요.
+            2. 정보를 삭제하고 다시 등록하세요.`,
                         inline: false,
                     }
                 )
@@ -248,7 +247,7 @@ async function doHcs(userInfo) {
                         },
                         {
                             name: `해결 방법:`,
-                            value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 제대로 입력했는지 곰곰이 확인하세요.`,
+                            value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
                             inline: false,
                         }
                     );
