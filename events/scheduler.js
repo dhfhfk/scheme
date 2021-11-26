@@ -83,7 +83,7 @@ async function doHcs(userInfo) {
             userInfo[2]
         );
         if (!login.success) {
-            console.log("1차 로그인 실패");
+            console.error("1차 로그인 실패");
             const error = new MessageEmbed()
                 .setTitle(`<:red_x:902151708765999104> 로그인에 실패했습니다.`)
                 .setAuthor(
@@ -118,7 +118,7 @@ async function doHcs(userInfo) {
                         .get(String(userInfo[7]))
                         .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
                 } catch (e) {
-                    console.log(
+                    console.error(
                         userInfo[7] + "의",
                         userInfo[6] + "채널을 찾을 수 없음"
                     );
@@ -162,7 +162,7 @@ async function doHcs(userInfo) {
                         .get(String(userInfo[7]))
                         .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
                 } catch (e) {
-                    console.log(
+                    console.error(
                         userInfo[7] + "의",
                         userInfo[6] + "채널을 찾을 수 없음"
                     );
@@ -177,10 +177,10 @@ async function doHcs(userInfo) {
             userInfo[3]
         );
         if (secondLogin.success == false) {
-            console.log("2차 로그인 실패");
+            console.error("2차 로그인 실패");
             const fail = secondLogin;
             if (fail.message) {
-                console.log(`[!?] ${fail.message}`);
+                console.error(`[!?] ${fail.message}`);
                 const error = new MessageEmbed()
                     .setTitle(
                         `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
@@ -216,7 +216,7 @@ async function doHcs(userInfo) {
                             content: "스케줄 채널 설정이 잘못되었어요!",
                         });
                     } catch (e) {
-                        console.log(
+                        console.error(
                             userInfo[7] + "의",
                             userInfo[6] + "채널을 찾을 수 없음"
                         );
@@ -225,7 +225,7 @@ async function doHcs(userInfo) {
                 return;
             }
             if (fail.remainingMinutes) {
-                console.log(
+                console.warn(
                     `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                 );
                 const failed = new MessageEmbed()
@@ -262,7 +262,7 @@ async function doHcs(userInfo) {
                             content: "스케줄 채널 설정이 잘못되었어요!",
                         });
                     } catch (e) {
-                        console.log(
+                        console.error(
                             userInfo[7] + "의",
                             userInfo[6] + "채널을 찾을 수 없음"
                         );
@@ -307,7 +307,7 @@ async function doHcs(userInfo) {
                         .get(String(userInfo[7]))
                         .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
                 } catch (e) {
-                    console.log(
+                    console.error(
                         userInfo[7] + "의",
                         userInfo[6] + "채널을 찾을 수 없음"
                     );
@@ -318,7 +318,7 @@ async function doHcs(userInfo) {
         token = secondLogin.token;
         var hcsresult = await hcs.registerSurvey(userInfo[4], token, survey);
     } catch (e) {
-        console.log("에러", e);
+        console.error(`[⚠️] 내부 오류 발생: ${e}`);
         const error = new MessageEmbed()
             .setTitle(
                 `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
@@ -352,7 +352,7 @@ async function doHcs(userInfo) {
                     .get(userInfo[7])
                     .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
             } catch (e) {
-                console.log(
+                console.error(
                     userInfo[7] + "의",
                     userInfo[6] + "채널을 찾을 수 없음"
                 );
@@ -360,6 +360,57 @@ async function doHcs(userInfo) {
         }
         return;
     }
+    if (hcsresult.registeredAt === undefined) {
+        console.log(`[${userInfo[0]}] 1차 시도 실패`);
+        var hcsresult2 = await hcs.registerSurvey(userInfo[4], token, survey);
+        console.log(`[${userInfo[0]}] ${hcsresult2.registeredAt}`);
+        if (hcsresult2 === undefined) {
+            console.log(`[${userInfo[0]}] 재시도 실패`);
+            const error = new MessageEmbed()
+                .setTitle(
+                    `<:red_x:902151708765999104> 내부 오류로 인한 자가진단 실패`
+                )
+                .setAuthor(
+                    client.users.cache.get(String(userInfo[7])).username,
+                    client.users.cache
+                        .get(String(userInfo[7]))
+                        .displayAvatarURL()
+                )
+                .setColor(config.color.error)
+                .addFields(
+                    {
+                        name: `상세정보:`,
+                        value: `알 수 없는 내부 오류로 인해 자가진단에 실패했습니다.`,
+                        inline: false,
+                    },
+                    {
+                        name: `해결 방법:`,
+                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                        inline: false,
+                    }
+                )
+                .setFooter("Server doesn't respond.");
+            try {
+                client.channels.cache.get(userInfo[6]).send({
+                    content: `<@${String(userInfo[7])}>`,
+                    embeds: [error],
+                });
+            } catch (e) {
+                try {
+                    client.users.cache
+                        .get(userInfo[7])
+                        .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
+                } catch (e) {
+                    console.error(
+                        userInfo[7] + "의",
+                        userInfo[6] + "채널을 찾을 수 없음"
+                    );
+                }
+            }
+            return;
+        }
+    }
+    console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
     var registered = new MessageEmbed()
         .setTitle(
             `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
@@ -386,7 +437,7 @@ async function doHcs(userInfo) {
                 .get(userInfo[7])
                 .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
         } catch (e) {
-            console.log(
+            console.error(
                 userInfo[7] + "의",
                 userInfo[6] + "채널을 찾을 수 없음"
             );
@@ -658,7 +709,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -692,7 +743,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -718,7 +769,7 @@ client.on("ready", async () => {
                     try {
                         doHcs(userInfo);
                     } catch (e) {
-                        console.log(e);
+                        console.error(e);
                     }
                     // ab.increment();
                 }
@@ -923,7 +974,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -957,7 +1008,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1229,7 +1280,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1263,7 +1314,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1289,7 +1340,7 @@ client.on("ready", async () => {
                     try {
                         doHcs(userInfo);
                     } catch (e) {
-                        console.log(e);
+                        console.error(e);
                     }
                     // bb.increment();
                 }
@@ -1494,7 +1545,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1528,7 +1579,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1558,9 +1609,9 @@ client.on("ready", async () => {
             status: "idle",
         });
         console.log(
-            `[🕢 B] ${wait}분 후에 C그룹 스케줄을 시작합니다 ··········`
+            `[🕢 C] ${wait}분 후에 C그룹 스케줄을 시작합니다 ··········`
         );
-        await sleep(wait * 60000);
+        // await sleep(wait * 60000);
         mongo().then(async (mongoose) => {
             try {
                 var resultCA = await schoolSchema.find({
@@ -1802,7 +1853,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1836,7 +1887,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -1862,7 +1913,7 @@ client.on("ready", async () => {
                     try {
                         doHcs(userInfo);
                     } catch (e) {
-                        console.log(e);
+                        console.error(e);
                     }
                     // cb.increment();
                 }
@@ -2067,7 +2118,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
@@ -2101,7 +2152,7 @@ client.on("ready", async () => {
                                                     "스케줄 채널 설정이 잘못되었어요!",
                                             });
                                     } catch (e) {
-                                        console.log(
+                                        console.error(
                                             schoolInfo[4] + "의",
                                             schoolInfo[3] +
                                                 "채널을 찾을 수 없음"
