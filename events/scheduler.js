@@ -76,7 +76,7 @@ async function doHcs(userInfo) {
     //*     result[i].schedule.channelId,
     //* ];
     try {
-        const login = await hcs.login(
+        var login = await hcs.login(
             userInfo[4],
             userInfo[5],
             userInfo[1],
@@ -111,7 +111,10 @@ async function doHcs(userInfo) {
             try {
                 client.channels.cache
                     .get(userInfo[6])
-                    .send({ embeds: [error] });
+                    .send({
+                        content: `<@${String(userInfo[7])}> 로그인 실패`,
+                        embeds: [error],
+                    });
             } catch (e) {
                 try {
                     client.users.cache
@@ -153,7 +156,9 @@ async function doHcs(userInfo) {
                 .setFooter(`개인정보 처리 방침 동의 필요`);
             try {
                 client.channels.cache.get(userInfo[6]).send({
-                    content: `<@${String(userInfo[7])}>`,
+                    content: `<@${String(
+                        userInfo[7]
+                    )}> 개인정보 처리 방침 동의 필요`,
                     embeds: [error],
                 });
             } catch (e) {
@@ -171,6 +176,50 @@ async function doHcs(userInfo) {
             return;
             // await hcs.updateAgreement(school.endpoint, login.token)
         }
+    } catch (e) {
+        console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+        const error = new MessageEmbed()
+            .setTitle(
+                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+            )
+            .setAuthor(
+                client.users.cache.get(String(userInfo[7])).username,
+                client.users.cache.get(String(userInfo[7])).displayAvatarURL()
+            )
+            .setColor(config.color.error)
+            .addFields(
+                {
+                    name: `상세정보:`,
+                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                    inline: false,
+                },
+                {
+                    name: `해결 방법:`,
+                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                    inline: false,
+                }
+            )
+            .setFooter(String(e));
+        try {
+            client.channels.cache.get(userInfo[6]).send({
+                content: `<@${String(userInfo[7])}>`,
+                embeds: [error],
+            });
+        } catch (e) {
+            try {
+                client.users.cache
+                    .get(userInfo[7])
+                    .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
+            } catch (e) {
+                console.error(
+                    userInfo[7] + "의",
+                    userInfo[6] + "채널을 찾을 수 없음"
+                );
+            }
+        }
+        return;
+    }
+    try {
         const secondLogin = await hcs.secondLogin(
             userInfo[4],
             login.token,
@@ -316,9 +365,8 @@ async function doHcs(userInfo) {
             return;
         }
         token = secondLogin.token;
-        var hcsresult = await hcs.registerSurvey(userInfo[4], token, survey);
     } catch (e) {
-        console.error(`[⚠️] 내부 오류 발생: ${e}`);
+        console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
         const error = new MessageEmbed()
             .setTitle(
                 `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
@@ -340,7 +388,7 @@ async function doHcs(userInfo) {
                     inline: false,
                 }
             )
-            .setFooter(e);
+            .setFooter(String(e));
         try {
             client.channels.cache.get(userInfo[6]).send({
                 content: `<@${String(userInfo[7])}>`,
@@ -360,56 +408,7 @@ async function doHcs(userInfo) {
         }
         return;
     }
-    if (hcsresult.registeredAt === undefined) {
-        console.log(`[${userInfo[0]}] 1차 시도 실패`);
-        var hcsresult2 = await hcs.registerSurvey(userInfo[4], token, survey);
-        console.log(`[${userInfo[0]}] ${hcsresult2.registeredAt}`);
-        if (hcsresult2 === undefined) {
-            console.log(`[${userInfo[0]}] 재시도 실패`);
-            const error = new MessageEmbed()
-                .setTitle(
-                    `<:red_x:902151708765999104> 내부 오류로 인한 자가진단 실패`
-                )
-                .setAuthor(
-                    client.users.cache.get(String(userInfo[7])).username,
-                    client.users.cache
-                        .get(String(userInfo[7]))
-                        .displayAvatarURL()
-                )
-                .setColor(config.color.error)
-                .addFields(
-                    {
-                        name: `상세정보:`,
-                        value: `알 수 없는 내부 오류로 인해 자가진단에 실패했습니다.`,
-                        inline: false,
-                    },
-                    {
-                        name: `해결 방법:`,
-                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
-                        inline: false,
-                    }
-                )
-                .setFooter("Server doesn't respond.");
-            try {
-                client.channels.cache.get(userInfo[6]).send({
-                    content: `<@${String(userInfo[7])}>`,
-                    embeds: [error],
-                });
-            } catch (e) {
-                try {
-                    client.users.cache
-                        .get(userInfo[7])
-                        .send({ content: "스케줄 채널 설정이 잘못되었어요!" });
-                } catch (e) {
-                    console.error(
-                        userInfo[7] + "의",
-                        userInfo[6] + "채널을 찾을 수 없음"
-                    );
-                }
-            }
-            return;
-        }
-    }
+    var hcsresult = await hcs.registerSurvey(userInfo[4], token, survey);
     console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
     var registered = new MessageEmbed()
         .setTitle(
@@ -428,7 +427,7 @@ async function doHcs(userInfo) {
         );
     try {
         client.channels.cache.get(userInfo[6]).send({
-            content: `<@${String(userInfo[7])}>`,
+            content: `<@${String(userInfo[7])}> 자가진단 성공!`,
             embeds: [registered],
         });
     } catch (e) {
@@ -519,7 +518,420 @@ client.on("ready", async () => {
                         resultAA[i].schedule.channelId,
                         resultAA[i]._id,
                     ];
-                    doHcs(userInfo);
+                    try {
+                        var login = await hcs.login(
+                            userInfo[4],
+                            userInfo[5],
+                            userInfo[1],
+                            userInfo[2]
+                        );
+                        if (!login.success) {
+                            console.error("1차 로그인 실패");
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `등록된 값이 올바르지 않습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `
+                            1. 정보가 변경된 적이 있는지 확인하세요.
+                            2. 정보를 삭제하고 다시 등록하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(`로그인 실패`);
+                            try {
+                                client.channels.cache
+                                    .get(userInfo[6])
+                                    .send({
+                                        content: `<@${String(
+                                            userInfo[7]
+                                        )}> 로그인 실패`,
+                                        embeds: [error],
+                                    });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        if (login.agreementRequired) {
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `자가진단 개인정보 처리 방침에 동의해야합니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `공식 자가진단 앱/웹에 접속해 개인정보 처리 방침에 동의해주세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(`개인정보 처리 방침 동의 필요`);
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(
+                                        userInfo[7]
+                                    )}> 개인정보 처리 방침 동의 필요`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                            // await hcs.updateAgreement(school.endpoint, login.token)
+                        }
+                    } catch (e) {
+                        console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setAuthor(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(userInfo[7])}>`,
+                                embeds: [error],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
+                        return;
+                    }
+                    try {
+                        const secondLogin = await hcs.secondLogin(
+                            userInfo[4],
+                            login.token,
+                            userInfo[3]
+                        );
+                        if (secondLogin.success == false) {
+                            console.error("2차 로그인 실패");
+                            const fail = secondLogin;
+                            if (fail.message) {
+                                console.error(`[!?] ${fail.message}`);
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(fail.message);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            if (fail.remainingMinutes) {
+                                console.warn(
+                                    `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                );
+                                const failed = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `로그인을 5회 이상 실패해 로그인에 제한을 받았습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
+                                            inline: false,
+                                        }
+                                    );
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [failed],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            const wrongPass = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setDescription(
+                                    "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `로그인 비밀번호가 올바르지 않습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `비밀번호를 제대로 입력했는지 확인하세요.`,
+                                        inline: false,
+                                    }
+                                );
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [wrongPass],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        token = secondLogin.token;
+                    } catch (e) {
+                        console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setAuthor(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(userInfo[7])}>`,
+                                embeds: [error],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
+                        return;
+                    }
+                    var hcsresult = await hcs.registerSurvey(
+                        userInfo[4],
+                        token,
+                        survey
+                    );
+                    console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
+                    var registered = new MessageEmbed()
+                        .setTitle(
+                            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                        )
+                        .setColor(config.color.success)
+                        .addFields({
+                            name: `참여자`,
+                            value: `${userInfo[0]}`,
+                            inline: true,
+                        })
+                        .setTimestamp()
+                        .setFooter(
+                            client.users.cache.get(String(userInfo[7]))
+                                .username,
+                            client.users.cache
+                                .get(String(userInfo[7]))
+                                .displayAvatarURL()
+                        );
+                    try {
+                        client.channels.cache.get(userInfo[6]).send({
+                            content: `<@${String(userInfo[7])}> 자가진단 성공!`,
+                            embeds: [registered],
+                        });
+                    } catch (e) {
+                        try {
+                            client.users.cache.get(userInfo[7]).send({
+                                content: "스케줄 채널 설정이 잘못되었어요!",
+                            });
+                        } catch (e) {
+                            console.error(
+                                userInfo[7] + "의",
+                                userInfo[6] + "채널을 찾을 수 없음"
+                            );
+                        }
+                    }
                     var today = new Date();
                     var year = today.getFullYear();
                     var month = ("0" + (today.getMonth() + 1)).slice(-2);
@@ -767,7 +1179,437 @@ client.on("ready", async () => {
                         resultAB[i]._id,
                     ];
                     try {
-                        doHcs(userInfo);
+                        try {
+                            var login = await hcs.login(
+                                userInfo[4],
+                                userInfo[5],
+                                userInfo[1],
+                                userInfo[2]
+                            );
+                            if (!login.success) {
+                                console.error("1차 로그인 실패");
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `등록된 값이 올바르지 않습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `
+                                1. 정보가 변경된 적이 있는지 확인하세요.
+                                2. 정보를 삭제하고 다시 등록하세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(`로그인 실패`);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}> 로그인 실패`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            if (login.agreementRequired) {
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `자가진단 개인정보 처리 방침에 동의해야합니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `공식 자가진단 앱/웹에 접속해 개인정보 처리 방침에 동의해주세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(`개인정보 처리 방침 동의 필요`);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}> 개인정보 처리 방침 동의 필요`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                                // await hcs.updateAgreement(school.endpoint, login.token)
+                            }
+                        } catch (e) {
+                            console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(String(e));
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache.get(userInfo[7]).send({
+                                        content:
+                                            "스케줄 채널 설정이 잘못되었어요!",
+                                    });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        try {
+                            const secondLogin = await hcs.secondLogin(
+                                userInfo[4],
+                                login.token,
+                                userInfo[3]
+                            );
+                            if (secondLogin.success == false) {
+                                console.error("2차 로그인 실패");
+                                const fail = secondLogin;
+                                if (fail.message) {
+                                    console.error(`[!?] ${fail.message}`);
+                                    const error = new MessageEmbed()
+                                        .setTitle(
+                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        )
+                                        .setAuthor(
+                                            client.users.cache.get(
+                                                String(userInfo[7])
+                                            ).username,
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .displayAvatarURL()
+                                        )
+                                        .setColor(config.color.error)
+                                        .addFields(
+                                            {
+                                                name: `상세정보:`,
+                                                value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                                inline: false,
+                                            },
+                                            {
+                                                name: `해결 방법:`,
+                                                value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                                inline: false,
+                                            }
+                                        )
+                                        .setFooter(fail.message);
+                                    try {
+                                        client.channels.cache
+                                            .get(userInfo[6])
+                                            .send({
+                                                content: `<@${String(
+                                                    userInfo[7]
+                                                )}>`,
+                                                embeds: [error],
+                                            });
+                                    } catch (e) {
+                                        try {
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .send({
+                                                    content:
+                                                        "스케줄 채널 설정이 잘못되었어요!",
+                                                });
+                                        } catch (e) {
+                                            console.error(
+                                                userInfo[7] + "의",
+                                                userInfo[6] +
+                                                    "채널을 찾을 수 없음"
+                                            );
+                                        }
+                                    }
+                                    return;
+                                }
+                                if (fail.remainingMinutes) {
+                                    console.warn(
+                                        `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                    );
+                                    const failed = new MessageEmbed()
+                                        .setTitle(
+                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        )
+                                        .setAuthor(
+                                            client.users.cache.get(
+                                                String(userInfo[7])
+                                            ).username,
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .displayAvatarURL()
+                                        )
+                                        .setColor(config.color.error)
+                                        .addFields(
+                                            {
+                                                name: `상세정보:`,
+                                                value: `로그인을 5회 이상 실패해 로그인에 제한을 받았습니다.`,
+                                                inline: false,
+                                            },
+                                            {
+                                                name: `해결 방법:`,
+                                                value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
+                                                inline: false,
+                                            }
+                                        );
+                                    try {
+                                        client.channels.cache
+                                            .get(userInfo[6])
+                                            .send({
+                                                content: `<@${String(
+                                                    userInfo[7]
+                                                )}>`,
+                                                embeds: [failed],
+                                            });
+                                    } catch (e) {
+                                        try {
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .send({
+                                                    content:
+                                                        "스케줄 채널 설정이 잘못되었어요!",
+                                                });
+                                        } catch (e) {
+                                            console.error(
+                                                userInfo[7] + "의",
+                                                userInfo[6] +
+                                                    "채널을 찾을 수 없음"
+                                            );
+                                        }
+                                    }
+                                    return;
+                                }
+                                const wrongPass = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setDescription(
+                                        "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `로그인 비밀번호가 올바르지 않습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `비밀번호를 제대로 입력했는지 확인하세요.`,
+                                            inline: false,
+                                        }
+                                    );
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [wrongPass],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            token = secondLogin.token;
+                        } catch (e) {
+                            console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(String(e));
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache.get(userInfo[7]).send({
+                                        content:
+                                            "스케줄 채널 설정이 잘못되었어요!",
+                                    });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        var hcsresult = await hcs.registerSurvey(
+                            userInfo[4],
+                            token,
+                            survey
+                        );
+                        console.log(
+                            `[${userInfo[0]}] ${hcsresult.registeredAt}`
+                        );
+                        var registered = new MessageEmbed()
+                            .setTitle(
+                                `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                            )
+                            .setColor(config.color.success)
+                            .addFields({
+                                name: `참여자`,
+                                value: `${userInfo[0]}`,
+                                inline: true,
+                            })
+                            .setTimestamp()
+                            .setFooter(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            );
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(
+                                    userInfo[7]
+                                )}> 자가진단 성공!`,
+                                embeds: [registered],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
                     } catch (e) {
                         console.error(e);
                     }
@@ -1090,7 +1932,420 @@ client.on("ready", async () => {
                         resultBA[i].schedule.channelId,
                         resultBA[i]._id,
                     ];
-                    doHcs(userInfo);
+                    try {
+                        var login = await hcs.login(
+                            userInfo[4],
+                            userInfo[5],
+                            userInfo[1],
+                            userInfo[2]
+                        );
+                        if (!login.success) {
+                            console.error("1차 로그인 실패");
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `등록된 값이 올바르지 않습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `
+                            1. 정보가 변경된 적이 있는지 확인하세요.
+                            2. 정보를 삭제하고 다시 등록하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(`로그인 실패`);
+                            try {
+                                client.channels.cache
+                                    .get(userInfo[6])
+                                    .send({
+                                        content: `<@${String(
+                                            userInfo[7]
+                                        )}> 로그인 실패`,
+                                        embeds: [error],
+                                    });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        if (login.agreementRequired) {
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `자가진단 개인정보 처리 방침에 동의해야합니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `공식 자가진단 앱/웹에 접속해 개인정보 처리 방침에 동의해주세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(`개인정보 처리 방침 동의 필요`);
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(
+                                        userInfo[7]
+                                    )}> 개인정보 처리 방침 동의 필요`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                            // await hcs.updateAgreement(school.endpoint, login.token)
+                        }
+                    } catch (e) {
+                        console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setAuthor(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(userInfo[7])}>`,
+                                embeds: [error],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
+                        return;
+                    }
+                    try {
+                        const secondLogin = await hcs.secondLogin(
+                            userInfo[4],
+                            login.token,
+                            userInfo[3]
+                        );
+                        if (secondLogin.success == false) {
+                            console.error("2차 로그인 실패");
+                            const fail = secondLogin;
+                            if (fail.message) {
+                                console.error(`[!?] ${fail.message}`);
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(fail.message);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            if (fail.remainingMinutes) {
+                                console.warn(
+                                    `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                );
+                                const failed = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `로그인을 5회 이상 실패해 로그인에 제한을 받았습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
+                                            inline: false,
+                                        }
+                                    );
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [failed],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            const wrongPass = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setDescription(
+                                    "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `로그인 비밀번호가 올바르지 않습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `비밀번호를 제대로 입력했는지 확인하세요.`,
+                                        inline: false,
+                                    }
+                                );
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [wrongPass],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        token = secondLogin.token;
+                    } catch (e) {
+                        console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setAuthor(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(userInfo[7])}>`,
+                                embeds: [error],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
+                        return;
+                    }
+                    var hcsresult = await hcs.registerSurvey(
+                        userInfo[4],
+                        token,
+                        survey
+                    );
+                    console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
+                    var registered = new MessageEmbed()
+                        .setTitle(
+                            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                        )
+                        .setColor(config.color.success)
+                        .addFields({
+                            name: `참여자`,
+                            value: `${userInfo[0]}`,
+                            inline: true,
+                        })
+                        .setTimestamp()
+                        .setFooter(
+                            client.users.cache.get(String(userInfo[7]))
+                                .username,
+                            client.users.cache
+                                .get(String(userInfo[7]))
+                                .displayAvatarURL()
+                        );
+                    try {
+                        client.channels.cache.get(userInfo[6]).send({
+                            content: `<@${String(userInfo[7])}> 자가진단 성공!`,
+                            embeds: [registered],
+                        });
+                    } catch (e) {
+                        try {
+                            client.users.cache.get(userInfo[7]).send({
+                                content: "스케줄 채널 설정이 잘못되었어요!",
+                            });
+                        } catch (e) {
+                            console.error(
+                                userInfo[7] + "의",
+                                userInfo[6] + "채널을 찾을 수 없음"
+                            );
+                        }
+                    }
                     var today = new Date();
                     var year = today.getFullYear();
                     var month = ("0" + (today.getMonth() + 1)).slice(-2);
@@ -1338,7 +2593,437 @@ client.on("ready", async () => {
                         resultBB[i]._id,
                     ];
                     try {
-                        doHcs(userInfo);
+                        try {
+                            var login = await hcs.login(
+                                userInfo[4],
+                                userInfo[5],
+                                userInfo[1],
+                                userInfo[2]
+                            );
+                            if (!login.success) {
+                                console.error("1차 로그인 실패");
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `등록된 값이 올바르지 않습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `
+                                1. 정보가 변경된 적이 있는지 확인하세요.
+                                2. 정보를 삭제하고 다시 등록하세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(`로그인 실패`);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}> 로그인 실패`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            if (login.agreementRequired) {
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `자가진단 개인정보 처리 방침에 동의해야합니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `공식 자가진단 앱/웹에 접속해 개인정보 처리 방침에 동의해주세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(`개인정보 처리 방침 동의 필요`);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}> 개인정보 처리 방침 동의 필요`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                                // await hcs.updateAgreement(school.endpoint, login.token)
+                            }
+                        } catch (e) {
+                            console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(String(e));
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache.get(userInfo[7]).send({
+                                        content:
+                                            "스케줄 채널 설정이 잘못되었어요!",
+                                    });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        try {
+                            const secondLogin = await hcs.secondLogin(
+                                userInfo[4],
+                                login.token,
+                                userInfo[3]
+                            );
+                            if (secondLogin.success == false) {
+                                console.error("2차 로그인 실패");
+                                const fail = secondLogin;
+                                if (fail.message) {
+                                    console.error(`[!?] ${fail.message}`);
+                                    const error = new MessageEmbed()
+                                        .setTitle(
+                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        )
+                                        .setAuthor(
+                                            client.users.cache.get(
+                                                String(userInfo[7])
+                                            ).username,
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .displayAvatarURL()
+                                        )
+                                        .setColor(config.color.error)
+                                        .addFields(
+                                            {
+                                                name: `상세정보:`,
+                                                value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                                inline: false,
+                                            },
+                                            {
+                                                name: `해결 방법:`,
+                                                value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                                inline: false,
+                                            }
+                                        )
+                                        .setFooter(fail.message);
+                                    try {
+                                        client.channels.cache
+                                            .get(userInfo[6])
+                                            .send({
+                                                content: `<@${String(
+                                                    userInfo[7]
+                                                )}>`,
+                                                embeds: [error],
+                                            });
+                                    } catch (e) {
+                                        try {
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .send({
+                                                    content:
+                                                        "스케줄 채널 설정이 잘못되었어요!",
+                                                });
+                                        } catch (e) {
+                                            console.error(
+                                                userInfo[7] + "의",
+                                                userInfo[6] +
+                                                    "채널을 찾을 수 없음"
+                                            );
+                                        }
+                                    }
+                                    return;
+                                }
+                                if (fail.remainingMinutes) {
+                                    console.warn(
+                                        `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                    );
+                                    const failed = new MessageEmbed()
+                                        .setTitle(
+                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        )
+                                        .setAuthor(
+                                            client.users.cache.get(
+                                                String(userInfo[7])
+                                            ).username,
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .displayAvatarURL()
+                                        )
+                                        .setColor(config.color.error)
+                                        .addFields(
+                                            {
+                                                name: `상세정보:`,
+                                                value: `로그인을 5회 이상 실패해 로그인에 제한을 받았습니다.`,
+                                                inline: false,
+                                            },
+                                            {
+                                                name: `해결 방법:`,
+                                                value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
+                                                inline: false,
+                                            }
+                                        );
+                                    try {
+                                        client.channels.cache
+                                            .get(userInfo[6])
+                                            .send({
+                                                content: `<@${String(
+                                                    userInfo[7]
+                                                )}>`,
+                                                embeds: [failed],
+                                            });
+                                    } catch (e) {
+                                        try {
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .send({
+                                                    content:
+                                                        "스케줄 채널 설정이 잘못되었어요!",
+                                                });
+                                        } catch (e) {
+                                            console.error(
+                                                userInfo[7] + "의",
+                                                userInfo[6] +
+                                                    "채널을 찾을 수 없음"
+                                            );
+                                        }
+                                    }
+                                    return;
+                                }
+                                const wrongPass = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setDescription(
+                                        "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `로그인 비밀번호가 올바르지 않습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `비밀번호를 제대로 입력했는지 확인하세요.`,
+                                            inline: false,
+                                        }
+                                    );
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [wrongPass],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            token = secondLogin.token;
+                        } catch (e) {
+                            console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(String(e));
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache.get(userInfo[7]).send({
+                                        content:
+                                            "스케줄 채널 설정이 잘못되었어요!",
+                                    });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        var hcsresult = await hcs.registerSurvey(
+                            userInfo[4],
+                            token,
+                            survey
+                        );
+                        console.log(
+                            `[${userInfo[0]}] ${hcsresult.registeredAt}`
+                        );
+                        var registered = new MessageEmbed()
+                            .setTitle(
+                                `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                            )
+                            .setColor(config.color.success)
+                            .addFields({
+                                name: `참여자`,
+                                value: `${userInfo[0]}`,
+                                inline: true,
+                            })
+                            .setTimestamp()
+                            .setFooter(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            );
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(
+                                    userInfo[7]
+                                )}> 자가진단 성공!`,
+                                embeds: [registered],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
                     } catch (e) {
                         console.error(e);
                     }
@@ -1611,7 +3296,7 @@ client.on("ready", async () => {
         console.log(
             `[🕢 C] ${wait}분 후에 C그룹 스케줄을 시작합니다 ··········`
         );
-        // await sleep(wait * 60000);
+        await sleep(wait * 60000);
         mongo().then(async (mongoose) => {
             try {
                 var resultCA = await schoolSchema.find({
@@ -1663,7 +3348,420 @@ client.on("ready", async () => {
                         resultCA[i].schedule.channelId,
                         resultCA[i]._id,
                     ];
-                    doHcs(userInfo);
+                    try {
+                        var login = await hcs.login(
+                            userInfo[4],
+                            userInfo[5],
+                            userInfo[1],
+                            userInfo[2]
+                        );
+                        if (!login.success) {
+                            console.error("1차 로그인 실패");
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `등록된 값이 올바르지 않습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `
+                            1. 정보가 변경된 적이 있는지 확인하세요.
+                            2. 정보를 삭제하고 다시 등록하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(`로그인 실패`);
+                            try {
+                                client.channels.cache
+                                    .get(userInfo[6])
+                                    .send({
+                                        content: `<@${String(
+                                            userInfo[7]
+                                        )}> 로그인 실패`,
+                                        embeds: [error],
+                                    });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        if (login.agreementRequired) {
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `자가진단 개인정보 처리 방침에 동의해야합니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `공식 자가진단 앱/웹에 접속해 개인정보 처리 방침에 동의해주세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(`개인정보 처리 방침 동의 필요`);
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(
+                                        userInfo[7]
+                                    )}> 개인정보 처리 방침 동의 필요`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                            // await hcs.updateAgreement(school.endpoint, login.token)
+                        }
+                    } catch (e) {
+                        console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setAuthor(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(userInfo[7])}>`,
+                                embeds: [error],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
+                        return;
+                    }
+                    try {
+                        const secondLogin = await hcs.secondLogin(
+                            userInfo[4],
+                            login.token,
+                            userInfo[3]
+                        );
+                        if (secondLogin.success == false) {
+                            console.error("2차 로그인 실패");
+                            const fail = secondLogin;
+                            if (fail.message) {
+                                console.error(`[!?] ${fail.message}`);
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(fail.message);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            if (fail.remainingMinutes) {
+                                console.warn(
+                                    `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                );
+                                const failed = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `로그인을 5회 이상 실패해 로그인에 제한을 받았습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
+                                            inline: false,
+                                        }
+                                    );
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [failed],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            const wrongPass = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setDescription(
+                                    "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `로그인 비밀번호가 올바르지 않습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `비밀번호를 제대로 입력했는지 확인하세요.`,
+                                        inline: false,
+                                    }
+                                );
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [wrongPass],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .send({
+                                            content:
+                                                "스케줄 채널 설정이 잘못되었어요!",
+                                        });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        token = secondLogin.token;
+                    } catch (e) {
+                        console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setAuthor(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(userInfo[7])}>`,
+                                embeds: [error],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
+                        return;
+                    }
+                    var hcsresult = await hcs.registerSurvey(
+                        userInfo[4],
+                        token,
+                        survey
+                    );
+                    console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
+                    var registered = new MessageEmbed()
+                        .setTitle(
+                            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                        )
+                        .setColor(config.color.success)
+                        .addFields({
+                            name: `참여자`,
+                            value: `${userInfo[0]}`,
+                            inline: true,
+                        })
+                        .setTimestamp()
+                        .setFooter(
+                            client.users.cache.get(String(userInfo[7]))
+                                .username,
+                            client.users.cache
+                                .get(String(userInfo[7]))
+                                .displayAvatarURL()
+                        );
+                    try {
+                        client.channels.cache.get(userInfo[6]).send({
+                            content: `<@${String(userInfo[7])}> 자가진단 성공!`,
+                            embeds: [registered],
+                        });
+                    } catch (e) {
+                        try {
+                            client.users.cache.get(userInfo[7]).send({
+                                content: "스케줄 채널 설정이 잘못되었어요!",
+                            });
+                        } catch (e) {
+                            console.error(
+                                userInfo[7] + "의",
+                                userInfo[6] + "채널을 찾을 수 없음"
+                            );
+                        }
+                    }
                     var today = new Date();
                     var year = today.getFullYear();
                     var month = ("0" + (today.getMonth() + 1)).slice(-2);
@@ -1911,7 +4009,437 @@ client.on("ready", async () => {
                         resultCB[i]._id,
                     ];
                     try {
-                        doHcs(userInfo);
+                        try {
+                            var login = await hcs.login(
+                                userInfo[4],
+                                userInfo[5],
+                                userInfo[1],
+                                userInfo[2]
+                            );
+                            if (!login.success) {
+                                console.error("1차 로그인 실패");
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `등록된 값이 올바르지 않습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `
+                                1. 정보가 변경된 적이 있는지 확인하세요.
+                                2. 정보를 삭제하고 다시 등록하세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(`로그인 실패`);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}> 로그인 실패`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            if (login.agreementRequired) {
+                                const error = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `자가진단 개인정보 처리 방침에 동의해야합니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `공식 자가진단 앱/웹에 접속해 개인정보 처리 방침에 동의해주세요.`,
+                                            inline: false,
+                                        }
+                                    )
+                                    .setFooter(`개인정보 처리 방침 동의 필요`);
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}> 개인정보 처리 방침 동의 필요`,
+                                            embeds: [error],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                                // await hcs.updateAgreement(school.endpoint, login.token)
+                            }
+                        } catch (e) {
+                            console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(String(e));
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache.get(userInfo[7]).send({
+                                        content:
+                                            "스케줄 채널 설정이 잘못되었어요!",
+                                    });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        try {
+                            const secondLogin = await hcs.secondLogin(
+                                userInfo[4],
+                                login.token,
+                                userInfo[3]
+                            );
+                            if (secondLogin.success == false) {
+                                console.error("2차 로그인 실패");
+                                const fail = secondLogin;
+                                if (fail.message) {
+                                    console.error(`[!?] ${fail.message}`);
+                                    const error = new MessageEmbed()
+                                        .setTitle(
+                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        )
+                                        .setAuthor(
+                                            client.users.cache.get(
+                                                String(userInfo[7])
+                                            ).username,
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .displayAvatarURL()
+                                        )
+                                        .setColor(config.color.error)
+                                        .addFields(
+                                            {
+                                                name: `상세정보:`,
+                                                value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                                inline: false,
+                                            },
+                                            {
+                                                name: `해결 방법:`,
+                                                value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                                inline: false,
+                                            }
+                                        )
+                                        .setFooter(fail.message);
+                                    try {
+                                        client.channels.cache
+                                            .get(userInfo[6])
+                                            .send({
+                                                content: `<@${String(
+                                                    userInfo[7]
+                                                )}>`,
+                                                embeds: [error],
+                                            });
+                                    } catch (e) {
+                                        try {
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .send({
+                                                    content:
+                                                        "스케줄 채널 설정이 잘못되었어요!",
+                                                });
+                                        } catch (e) {
+                                            console.error(
+                                                userInfo[7] + "의",
+                                                userInfo[6] +
+                                                    "채널을 찾을 수 없음"
+                                            );
+                                        }
+                                    }
+                                    return;
+                                }
+                                if (fail.remainingMinutes) {
+                                    console.warn(
+                                        `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                    );
+                                    const failed = new MessageEmbed()
+                                        .setTitle(
+                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        )
+                                        .setAuthor(
+                                            client.users.cache.get(
+                                                String(userInfo[7])
+                                            ).username,
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .displayAvatarURL()
+                                        )
+                                        .setColor(config.color.error)
+                                        .addFields(
+                                            {
+                                                name: `상세정보:`,
+                                                value: `로그인을 5회 이상 실패해 로그인에 제한을 받았습니다.`,
+                                                inline: false,
+                                            },
+                                            {
+                                                name: `해결 방법:`,
+                                                value: `\`${fail.remainingMinutes}\`분 동안 비밀번호를 생각 해보고 다시 등록하세요.`,
+                                                inline: false,
+                                            }
+                                        );
+                                    try {
+                                        client.channels.cache
+                                            .get(userInfo[6])
+                                            .send({
+                                                content: `<@${String(
+                                                    userInfo[7]
+                                                )}>`,
+                                                embeds: [failed],
+                                            });
+                                    } catch (e) {
+                                        try {
+                                            client.users.cache
+                                                .get(String(userInfo[7]))
+                                                .send({
+                                                    content:
+                                                        "스케줄 채널 설정이 잘못되었어요!",
+                                                });
+                                        } catch (e) {
+                                            console.error(
+                                                userInfo[7] + "의",
+                                                userInfo[6] +
+                                                    "채널을 찾을 수 없음"
+                                            );
+                                        }
+                                    }
+                                    return;
+                                }
+                                const wrongPass = new MessageEmbed()
+                                    .setTitle(
+                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    )
+                                    .setAuthor(
+                                        client.users.cache.get(
+                                            String(userInfo[7])
+                                        ).username,
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .displayAvatarURL()
+                                    )
+                                    .setDescription(
+                                        "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
+                                    )
+                                    .setColor(config.color.error)
+                                    .addFields(
+                                        {
+                                            name: `상세정보:`,
+                                            value: `로그인 비밀번호가 올바르지 않습니다.`,
+                                            inline: false,
+                                        },
+                                        {
+                                            name: `해결 방법:`,
+                                            value: `비밀번호를 제대로 입력했는지 확인하세요.`,
+                                            inline: false,
+                                        }
+                                    );
+                                try {
+                                    client.channels.cache
+                                        .get(userInfo[6])
+                                        .send({
+                                            content: `<@${String(
+                                                userInfo[7]
+                                            )}>`,
+                                            embeds: [wrongPass],
+                                        });
+                                } catch (e) {
+                                    try {
+                                        client.users.cache
+                                            .get(String(userInfo[7]))
+                                            .send({
+                                                content:
+                                                    "스케줄 채널 설정이 잘못되었어요!",
+                                            });
+                                    } catch (e) {
+                                        console.error(
+                                            userInfo[7] + "의",
+                                            userInfo[6] + "채널을 찾을 수 없음"
+                                        );
+                                    }
+                                }
+                                return;
+                            }
+                            token = secondLogin.token;
+                        } catch (e) {
+                            console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
+                            const error = new MessageEmbed()
+                                .setTitle(
+                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                )
+                                .setAuthor(
+                                    client.users.cache.get(String(userInfo[7]))
+                                        .username,
+                                    client.users.cache
+                                        .get(String(userInfo[7]))
+                                        .displayAvatarURL()
+                                )
+                                .setColor(config.color.error)
+                                .addFields(
+                                    {
+                                        name: `상세정보:`,
+                                        value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                        inline: false,
+                                    },
+                                    {
+                                        name: `해결 방법:`,
+                                        value: `잠시 기다린 후 \`/자가진단 \`명령어를 이용하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                        inline: false,
+                                    }
+                                )
+                                .setFooter(String(e));
+                            try {
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(userInfo[7])}>`,
+                                    embeds: [error],
+                                });
+                            } catch (e) {
+                                try {
+                                    client.users.cache.get(userInfo[7]).send({
+                                        content:
+                                            "스케줄 채널 설정이 잘못되었어요!",
+                                    });
+                                } catch (e) {
+                                    console.error(
+                                        userInfo[7] + "의",
+                                        userInfo[6] + "채널을 찾을 수 없음"
+                                    );
+                                }
+                            }
+                            return;
+                        }
+                        var hcsresult = await hcs.registerSurvey(
+                            userInfo[4],
+                            token,
+                            survey
+                        );
+                        console.log(
+                            `[${userInfo[0]}] ${hcsresult.registeredAt}`
+                        );
+                        var registered = new MessageEmbed()
+                            .setTitle(
+                                `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                            )
+                            .setColor(config.color.success)
+                            .addFields({
+                                name: `참여자`,
+                                value: `${userInfo[0]}`,
+                                inline: true,
+                            })
+                            .setTimestamp()
+                            .setFooter(
+                                client.users.cache.get(String(userInfo[7]))
+                                    .username,
+                                client.users.cache
+                                    .get(String(userInfo[7]))
+                                    .displayAvatarURL()
+                            );
+                        try {
+                            client.channels.cache.get(userInfo[6]).send({
+                                content: `<@${String(
+                                    userInfo[7]
+                                )}> 자가진단 성공!`,
+                                embeds: [registered],
+                            });
+                        } catch (e) {
+                            try {
+                                client.users.cache.get(userInfo[7]).send({
+                                    content: "스케줄 채널 설정이 잘못되었어요!",
+                                });
+                            } catch (e) {
+                                console.error(
+                                    userInfo[7] + "의",
+                                    userInfo[6] + "채널을 찾을 수 없음"
+                                );
+                            }
+                        }
                     } catch (e) {
                         console.error(e);
                     }
