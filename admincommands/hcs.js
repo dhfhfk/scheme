@@ -108,7 +108,6 @@ module.exports = {
                     return;
                 }
                 await interaction.deferReply({ ephemeral: true });
-                var tokens = new Array();
                 var maskedNames = new Array();
                 var endpoints = new Array();
                 var org = result.school.org;
@@ -120,10 +119,6 @@ module.exports = {
                 for (var i = 0; i < totalCount; i++) {
                     let list = result.users[i].endpoint;
                     endpoints.push(list);
-                }
-                for (var i = 0; i < totalCount; i++) {
-                    let list = result.users[i].token;
-                    tokens.push(list);
                 }
                 for (var i = 0; i < totalCount; i++) {
                     let list = result.users[i].name;
@@ -147,7 +142,7 @@ module.exports = {
                 }
                 if (totalCount == 1) {
                     try {
-                        const login = await hcs.login(
+                        var login = await hcs.login(
                             endpoints[0],
                             org,
                             names[0],
@@ -181,7 +176,35 @@ module.exports = {
                             });
                             return;
                         }
-                        const secondLogin = await hcs.secondLogin(
+                    } catch (e) {
+                        console.error(`[⚠️ 1차 Login] ${e}`);
+                        const error = new MessageEmbed()
+                            .setTitle(
+                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                            )
+                            .setColor(config.color.error)
+                            .addFields(
+                                {
+                                    name: `상세정보:`,
+                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
+                                    inline: false,
+                                },
+                                {
+                                    name: `해결 방법:`,
+                                    value: `잠시 기다린 후 다시 시도하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
+                                    inline: false,
+                                }
+                            )
+                            .setFooter(String(e));
+                        interaction.editReply({
+                            embeds: [error],
+                            components: [],
+                            ephemeral: true,
+                        });
+                        return;
+                    }
+                    try {
+                        var secondLogin = await hcs.secondLogin(
                             endpoints[0],
                             login.token,
                             passwords[0]
@@ -265,13 +288,8 @@ module.exports = {
                             return;
                         }
                         token = secondLogin.token;
-                        var hcsresult = await hcs.registerSurvey(
-                            endpoints[0],
-                            tokens[0],
-                            survey
-                        );
                     } catch (e) {
-                        console.error(`[⚠️] ${e}`);
+                        console.error(`[⚠️ 2차 Login] ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
                                 `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
@@ -289,7 +307,7 @@ module.exports = {
                                     inline: false,
                                 }
                             )
-                            .setFooter(e);
+                            .setFooter(String(e));
                         interaction.editReply({
                             embeds: [error],
                             components: [],
@@ -297,6 +315,11 @@ module.exports = {
                         });
                         return;
                     }
+                    var hcsresult = await hcs.registerSurvey(
+                        endpoints[0],
+                        token,
+                        survey
+                    );
                     console.log(`[👷] (관리자) POST ${maskedNames[0]} hcs`);
                     var registered = new MessageEmbed()
                         .setTitle(
@@ -305,7 +328,7 @@ module.exports = {
                         .setColor(config.color.success)
                         .addFields({
                             name: `참여자`,
-                            value: `${maskedNames[rawanswer]} (${userId})`,
+                            value: `${maskedNames[0]} (${userId})`,
                             inline: true,
                         })
                         .setTimestamp();
@@ -366,7 +389,7 @@ module.exports = {
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
                         try {
-                            const login = await hcs.login(
+                            var login = await hcs.login(
                                 endpoints[rawanswer],
                                 org,
                                 names[rawanswer],
@@ -426,7 +449,7 @@ module.exports = {
                                 return;
                                 // await hcs.updateAgreement(school.endpoint, login.token)
                             }
-                            const secondLogin = await hcs.secondLogin(
+                            var secondLogin = await hcs.secondLogin(
                                 endpoints[rawanswer],
                                 login.token,
                                 passwords[rawanswer]
@@ -625,7 +648,7 @@ module.exports = {
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
                         try {
-                            const login = await hcs.login(
+                            var login = await hcs.login(
                                 endpoints[rawanswer],
                                 org,
                                 names[rawanswer],
@@ -659,7 +682,7 @@ module.exports = {
                                 });
                                 return;
                             }
-                            const secondLogin = await hcs.secondLogin(
+                            var secondLogin = await hcs.secondLogin(
                                 endpoints[rawanswer],
                                 login.token,
                                 passwords[rawanswer]

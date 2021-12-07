@@ -71,14 +71,6 @@ module.exports = {
                     var result = await schoolSchema.findOne({
                         _id: userId,
                     });
-                    var userInfo = [
-                        userId,
-                        result.school.name,
-                        result.school.endpoint,
-                        result.school.sc,
-                        result.school.sd,
-                        result.school.org,
-                    ];
                     try {
                         var validate = result.school.name;
                     } catch (e) {
@@ -138,34 +130,154 @@ module.exports = {
                         return;
                     }
                     mongoose.connection.close();
+                    var timeTable = [
+                        "🕡 오전 06:30 ~ 06:50",
+                        "🕖 오전 07:00 ~ 07:20",
+                        "🕢 오전 07:30 ~ 07:50",
+                    ];
+                    var rawTimeTable = ["A", "B", "C"];
+
+                    var kindsTable = [
+                        "오늘 급식 + 자가진단 알림",
+                        "자가진단 알림",
+                        "오늘 급식 알림",
+                    ];
+
+                    var rawKindsTable = ["A", "B", "C"];
                     const info = new MessageEmbed()
                         .setTitle(`${interaction.user.username} 님의 정보`)
-                        .setColor(config.color.info)
-                        .addFields({
-                            name: `raw:`,
-                            value: `\`\`\`_id: ${userInfo[0]},
-school: {
-    name: ${userInfo[1]},
-    endpoint: ${userInfo[2]},
-    sc: ${userInfo[3]},
-    sd: ${userInfo[4]},
-    org: ${userInfo[5]} 
-},
-users: [
-    {
-        /설정 명령:조회 종류:사용자 
-    }
-],
-schedule: {
-    /설정 명령:조회 종류:스케줄 
-}
-\`\`\``,
-                            inline: false,
-                        });
-                    interaction.editReply({
-                        embeds: [info],
-                        ephemeral: true,
-                    });
+                        .setDescription(
+                            `기능 업데이트 중입니다. 정보가 제대로 표시되지 않을 수 있습니다.`
+                        )
+                        .setColor(config.color.info);
+                    try {
+                        if (
+                            result.users[0] == undefined &&
+                            result.schedule == undefined
+                        ) {
+                            info.fields = [
+                                {
+                                    name: `학교 정보`,
+                                    value: `학교명: \`${result.school.name}\`
+                                    자가진단 교육청 주소: \`${result.school.endpoint}\`
+                                    시도교육청코드: \`${result.school.sc}\`
+                                    표준학교코드: \`${result.school.sd}\`
+                                    기관코드: \`${result.school.org}\``,
+                                },
+                            ];
+                            interaction.editReply({
+                                embeds: [info],
+                                ephemeral: true,
+                            });
+                            return;
+                        } else if (result.users[0] == undefined) {
+                            info.fields = [
+                                {
+                                    name: `학교 정보`,
+                                    value: `학교명: \`${result.school.name}\`
+                                    자가진단 교육청 주소: \`${result.school.endpoint}\`
+                                    시도교육청코드: \`${result.school.sc}\`
+                                    표준학교코드: \`${result.school.sd}\`
+                                    기관코드: \`${result.school.org}\``,
+                                },
+                                {
+                                    name: `스케줄 정보`,
+                                    value: `시간대: \`${
+                                        timeTable[
+                                            rawTimeTable.indexOf(
+                                                result.schedule.type
+                                            )
+                                        ]
+                                    }\`
+                                    전송 정보: \`${
+                                        kindsTable[
+                                            rawKindsTable.indexOf(
+                                                result.schedule.kinds
+                                            )
+                                        ]
+                                    }\`
+                                    전송 채널: <#${result.schedule.channelId}>
+                                    일시정지 여부: \`${
+                                        result.schedule.paused
+                                    }\``,
+                                },
+                            ];
+                            interaction.editReply({
+                                embeds: [info],
+                                ephemeral: true,
+                            });
+                        } else if (result.schedule == undefined) {
+                            info.fields = [
+                                {
+                                    name: `학교 정보`,
+                                    value: `학교명: \`${result.school.name}\`
+                                    자가진단 교육청 주소: \`${result.school.endpoint}\`
+                                    시도교육청코드: \`${result.school.sc}\`
+                                    표준학교코드: \`${result.school.sd}\`
+                                    기관코드: \`${result.school.org}\``,
+                                },
+                                {
+                                    name: `사용자 정보`,
+                                    value: `이름: \`${result.users[0].name}\`
+                                    암호화된 이름: \`${
+                                        result.users[0].encName.substr(0, 14) +
+                                        "..."
+                                    }\`
+                                    암호화된 생년월일: \`${
+                                        result.users[0].encBirth.substr(0, 14) +
+                                        "..."
+                                    }\`
+                                    암호화된 비밀번호: \`${
+                                        result.users[0].password.substr(0, 14) +
+                                        "..."
+                                    }\`
+                                    자가진단 교육청 주소: \`${
+                                        result.users[0].endpoint
+                                    }\``,
+                                },
+                            ];
+                            interaction.editReply({
+                                embeds: [info],
+                                ephemeral: true,
+                            });
+                        } else {
+                            info.fields = [
+                                {
+                                    name: `학교 정보`,
+                                    value: `학교명: \`${result.school.name}\`
+                                    자가진단 교육청 주소: \`${result.school.endpoint}\`
+                                    시도교육청코드: \`${result.school.sc}\`
+                                    표준학교코드: \`${result.school.sd}\`
+                                    기관코드: \`${result.school.org}\``,
+                                },
+                                {
+                                    name: `사용자 정보`,
+                                    value: `이름: \`${result.users[0].name}\`
+                                    암호화된 이름: \`${
+                                        result.users[0].encName.substr(0, 14) +
+                                        "..."
+                                    }\`
+                                    암호화된 생년월일: \`${
+                                        result.users[0].encBirth.substr(0, 14) +
+                                        "..."
+                                    }\`
+                                    암호화된 비밀번호: \`${
+                                        result.users[0].password.substr(0, 14) +
+                                        "..."
+                                    }\`
+                                    자가진단 교육청 주소: \`${
+                                        result.users[0].endpoint
+                                    }\``,
+                                },
+                            ];
+                            interaction.editReply({
+                                embeds: [info],
+                                ephemeral: true,
+                            });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             });
         }
@@ -206,7 +318,6 @@ schedule: {
                             result.users[0].name,
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
-                            result.users[0].token.substr(0, 14) + "...",
                             result.users[0].password.substr(0, 14) + "...",
                         ];
                     }
@@ -215,14 +326,12 @@ schedule: {
                             result.users[0].name,
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
-                            result.users[0].token.substr(0, 14) + "...",
                             result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
-                            result.users[1].token.substr(0, 14) + "...",
                             result.users[1].password.substr(0, 14) + "...",
                         ];
                     }
@@ -231,21 +340,18 @@ schedule: {
                             result.users[0].name,
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
-                            result.users[0].token.substr(0, 14) + "...",
                             result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
-                            result.users[1].token.substr(0, 14) + "...",
                             result.users[1].password.substr(0, 14) + "...",
                         ];
                         var userInfo2 = [
                             result.users[2].name,
                             result.users[2].encName.substr(0, 14) + "...",
                             result.users[2].encBirth.substr(0, 14) + "...",
-                            result.users[2].token.substr(0, 14) + "...",
                             result.users[2].password.substr(0, 14) + "...",
                         ];
                     }
@@ -289,8 +395,7 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]},
-    password: ${userInfo0[4]}
+    password: ${userInfo0[3]}
 }\`\`\``,
                                 inline: false,
                             });
@@ -314,8 +419,7 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]},
-    password: ${userInfo0[4]}
+    password: ${userInfo0[3]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -325,8 +429,7 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]},
-    password: ${userInfo1[4]}
+    password: ${userInfo1[3]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -351,8 +454,7 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]},
-    password: ${userInfo0[4]}
+    password: ${userInfo0[3]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -362,8 +464,7 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]},
-    password: ${userInfo1[4]}
+    password: ${userInfo1[3]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -373,8 +474,7 @@ schedule: {
     name: ${userInfo2[0]},
     encName: ${userInfo2[1]},
     encBirth: ${userInfo2[2]},
-    token: ${userInfo2[3]},
-    password: ${userInfo2[4]}
+    password: ${userInfo2[3]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -484,7 +584,7 @@ schedule: {
                                     rawKindsTable.indexOf(result.schedule.kinds)
                                 ]
                             })
-    channelId: ${result.schedule.channelId}
+    channelId: <#${result.schedule.channelId}>
 }\`\`\``,
                             inline: false,
                         });
@@ -714,7 +814,6 @@ schedule: {
                             result.users[0].name,
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
-                            result.users[0].token.substr(0, 14) + "...",
                             result.users[0].password.substr(0, 14) + "...",
                         ];
                     }
@@ -723,14 +822,12 @@ schedule: {
                             result.users[0].name,
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
-                            result.users[0].token.substr(0, 14) + "...",
                             result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
-                            result.users[1].token.substr(0, 14) + "...",
                             result.users[1].password.substr(0, 14) + "...",
                         ];
                     }
@@ -739,21 +836,18 @@ schedule: {
                             result.users[0].name,
                             result.users[0].encName.substr(0, 14) + "...",
                             result.users[0].encBirth.substr(0, 14) + "...",
-                            result.users[0].token.substr(0, 14) + "...",
                             result.users[0].password.substr(0, 14) + "...",
                         ];
                         var userInfo1 = [
                             result.users[1].name,
                             result.users[1].encName.substr(0, 14) + "...",
                             result.users[1].encBirth.substr(0, 14) + "...",
-                            result.users[1].token.substr(0, 14) + "...",
                             result.users[1].password.substr(0, 14) + "...",
                         ];
                         var userInfo2 = [
                             result.users[2].name,
                             result.users[2].encName.substr(0, 14) + "...",
                             result.users[2].encBirth.substr(0, 14) + "...",
-                            result.users[2].token.substr(0, 14) + "...",
                             result.users[2].password.substr(0, 14) + "...",
                         ];
                     }
@@ -796,8 +890,7 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]},
-    password: ${userInfo0[4]}
+    password: ${userInfo0[3]}
 }\`\`\``,
                                 inline: false,
                             });
@@ -893,7 +986,6 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]},
     password: ${userInfo0[4]}
 }\`\`\``,
                                     inline: false,
@@ -904,8 +996,7 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]},
-    password: ${userInfo1[4]}
+    password: ${userInfo1[3]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -1015,8 +1106,7 @@ schedule: {
     name: ${userInfo0[0]},
     encName: ${userInfo0[1]},
     encBirth: ${userInfo0[2]},
-    token: ${userInfo0[3]},
-    password: ${userInfo0[4]}
+    password: ${userInfo0[3]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -1026,8 +1116,7 @@ schedule: {
     name: ${userInfo1[0]},
     encName: ${userInfo1[1]},
     encBirth: ${userInfo1[2]},
-    token: ${userInfo1[3]},
-    password: ${userInfo1[4]}
+    password: ${userInfo1[3]}
 }\`\`\``,
                                     inline: false,
                                 },
@@ -1037,8 +1126,7 @@ schedule: {
     name: ${userInfo2[0]},
     encName: ${userInfo2[1]},
     encBirth: ${userInfo2[2]},
-    token: ${userInfo2[3]},
-    password: ${userInfo2[4]}
+    password: ${userInfo2[3]}
 }\`\`\``,
                                     inline: false,
                                 }
@@ -1249,7 +1337,7 @@ schedule: {
                                     rawKindsTable.indexOf(result.schedule.kinds)
                                 ]
                             })
-    channelId: ${result.schedule.channelId}}
+    channelId: <#${result.schedule.channelId}>
 }\`\`\``,
                             inline: false,
                         });
@@ -1282,10 +1370,18 @@ schedule: {
                         if (rawanswer === "0") {
                             mongo().then(async (mongoose) => {
                                 try {
-                                    await schoolSchema.findOneAndDelete({
-                                        _id: userId,
-                                        "schedule.type": result.schedule.type,
-                                    });
+                                    await schoolSchema.updateOne(
+                                        {
+                                            _id: userId,
+                                        },
+                                        {
+                                            $unset: {
+                                                schedule: {
+                                                    type: result.schedule.type,
+                                                },
+                                            },
+                                        }
+                                    );
                                 } catch (e) {
                                     console.error(e);
                                 } finally {

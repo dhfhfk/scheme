@@ -332,7 +332,6 @@ module.exports = {
                         password
                     );
                 }
-                let token;
                 const secondLogin = await hcs.secondLogin(
                     userInfo[1],
                     login.token,
@@ -426,8 +425,6 @@ module.exports = {
                         ephemeral: true,
                     });
                     return;
-                } else {
-                    var token2 = secondLogin.token;
                 }
                 const maskedName = maskingName(rawName);
                 try {
@@ -442,7 +439,6 @@ module.exports = {
                                     name: maskedName,
                                     encName: name,
                                     encBirth: birth,
-                                    token: token2,
                                     password: encPassword,
                                     endpoint: userInfo[1],
                                 },
