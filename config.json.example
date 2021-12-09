@@ -16,5 +16,10 @@
         "delete": "#ed4245",
         "success": "#3fbf4f",
         "info": "#1aa7ff"
+    },
+    "emojis": {
+        "done": "<:green_done:918422764778577980>",
+        "x": "<:red_x:918422764757598208>",
+        "delete": "<:delete_forever:901147281485623376>"
     }
 }

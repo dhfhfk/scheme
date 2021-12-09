@@ -37,9 +37,7 @@ function parse(rawresult, rawSchoolName) {
         if (total_count > 5) {
             // 검색 결과 5개 초과
             const embed = new MessageEmbed()
-                .setTitle(
-                    `<:red_x:902151708765999104> 검색 결과가 너무 많아요.`
-                )
+                .setTitle(`${config.emojis.x} 검색 결과가 너무 많아요.`)
                 .setColor(config.color.error)
                 .addFields(
                     {
@@ -93,7 +91,7 @@ function parse(rawresult, rawSchoolName) {
     } catch (e) {
         // 오류로 인해 학교 검색 실패
         const embed = new MessageEmbed()
-            .setTitle(`<:red_x:902151708765999104> 학교를 검색하지 못했어요.`)
+            .setTitle(`${config.emojis.x} 학교를 검색하지 못했어요.`)
             .setColor(config.color.error)
             .addFields(
                 {
@@ -191,7 +189,7 @@ module.exports = {
                             );
                             var registered = new MessageEmbed()
                                 .setTitle(
-                                    `<:green_check:902151708380123137> 학교가 정상적으로 등록되었어요.`
+                                    `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
                                 )
                                 .setColor(config.color.success)
                                 .addFields(
@@ -333,7 +331,7 @@ module.exports = {
                                     );
                                     var registered = new MessageEmbed()
                                         .setTitle(
-                                            `<:green_check:902151708380123137> 학교가 정상적으로 등록되었어요.`
+                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
                                         )
                                         .setColor(config.color.success)
                                         .addFields(
@@ -484,7 +482,7 @@ module.exports = {
                                     );
                                     var registered = new MessageEmbed()
                                         .setTitle(
-                                            `<:green_check:902151708380123137> 학교가 정상적으로 등록되었어요.`
+                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
                                         )
                                         .setColor(config.color.success)
                                         .addFields(
@@ -642,7 +640,7 @@ module.exports = {
                                     );
                                     var registered = new MessageEmbed()
                                         .setTitle(
-                                            `<:green_check:902151708380123137> 학교가 정상적으로 등록되었어요.`
+                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
                                         )
                                         .setColor(config.color.success)
                                         .addFields(
@@ -808,7 +806,7 @@ module.exports = {
                                     );
                                     var registered = new MessageEmbed()
                                         .setTitle(
-                                            `<:green_check:902151708380123137> 학교가 정상적으로 등록되었어요.`
+                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
                                         )
                                         .setColor(config.color.success)
                                         .addFields(

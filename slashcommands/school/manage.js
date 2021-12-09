@@ -76,7 +76,7 @@ module.exports = {
                     } catch (e) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -102,7 +102,7 @@ module.exports = {
                 } catch (e) {
                     const error = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -291,7 +291,7 @@ module.exports = {
                     if (validate == 0) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 사용자 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -357,9 +357,7 @@ module.exports = {
                     }
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `<:red_x:902151708765999104> 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -499,7 +497,7 @@ module.exports = {
                     } catch (e) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 스케줄 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 스케줄 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -525,7 +523,7 @@ module.exports = {
                 } catch (e) {
                     const error = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 스케줄 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 스케줄 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -608,7 +606,7 @@ schedule: {
                     } catch (e) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -647,7 +645,7 @@ schedule: {
                     } catch (e) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -672,7 +670,7 @@ schedule: {
                     mongoose.connection.close();
                     const check = new MessageEmbed()
                         .setTitle(
-                            `<:delete_forever:901147281485623376> 정말 모든 정보를 삭제할까요?`
+                            `${config.emojis.delete} 정말 모든 정보를 삭제할까요?`
                         )
                         .setColor(config.color.delete)
                         .addFields(
@@ -758,7 +756,7 @@ schedule: {
                                     mongoose.connection.close();
                                     const deleted = new MessageEmbed()
                                         .setTitle(
-                                            `<:delete_forever:901147281485623376> 정보가 정상적으로 삭제되었어요.`
+                                            `${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`
                                         )
                                         .setColor(config.color.success)
                                         .setDescription(
@@ -787,7 +785,7 @@ schedule: {
                     if (validate == 0) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 사용자 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -853,9 +851,7 @@ schedule: {
                     }
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `<:red_x:902151708765999104> 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -881,7 +877,7 @@ schedule: {
                     if (validate == 1) {
                         const check = new MessageEmbed()
                             .setTitle(
-                                `<:delete_forever:901147281485623376> 정말 사용자 정보를 삭제할까요?`
+                                `${config.emojis.delete} 정말 사용자 정보를 삭제할까요?`
                             )
                             .setColor(config.color.delete)
                             .addFields({
@@ -944,7 +940,7 @@ schedule: {
                                             mongoose.connection.close();
                                             const deleted = new MessageEmbed()
                                                 .setTitle(
-                                                    `<:delete_forever:901147281485623376> 정보가 정상적으로 삭제되었어요.`
+                                                    `${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`
                                                 )
                                                 .setColor(config.color.success)
                                                 .setDescription(
@@ -976,7 +972,7 @@ schedule: {
                     if (validate == 2) {
                         const info = new MessageEmbed()
                             .setTitle(
-                                `<:delete_forever:901147281485623376> 정말 사용자 정보를 삭제할까요?`
+                                `${config.emojis.delete} 정말 사용자 정보를 삭제할까요?`
                             )
                             .setColor(config.color.delete)
                             .addFields(
@@ -1064,7 +1060,7 @@ schedule: {
                                             mongoose.connection.close();
                                             const deleted = new MessageEmbed()
                                                 .setTitle(
-                                                    `<:delete_forever:901147281485623376> 정보가 정상적으로 삭제되었어요.`
+                                                    `${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`
                                                 )
                                                 .setColor(config.color.success)
                                                 .setDescription(
@@ -1096,7 +1092,7 @@ schedule: {
                     if (validate == 3) {
                         const info = new MessageEmbed()
                             .setTitle(
-                                `<:delete_forever:901147281485623376> 정말 사용자 정보를 삭제할까요?`
+                                `${config.emojis.delete} 정말 사용자 정보를 삭제할까요?`
                             )
                             .setColor(config.color.delete)
                             .addFields(
@@ -1207,7 +1203,7 @@ schedule: {
                                             mongoose.connection.close();
                                             const deleted = new MessageEmbed()
                                                 .setTitle(
-                                                    `<:delete_forever:901147281485623376> 정보가 정상적으로 삭제되었어요.`
+                                                    `${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`
                                                 )
                                                 .setColor(config.color.success)
                                                 .setDescription(
@@ -1250,7 +1246,7 @@ schedule: {
                     } catch (e) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 스케줄 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 스케줄 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -1276,7 +1272,7 @@ schedule: {
                 } catch (e) {
                     const error = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 스케줄 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 스케줄 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -1320,7 +1316,7 @@ schedule: {
                     mongoose.connection.close();
                     const info = new MessageEmbed()
                         .setTitle(
-                            `<:delete_forever:901147281485623376> 정말 스케줄 정보를 삭제할까요?`
+                            `${config.emojis.delete} 정말 스케줄 정보를 삭제할까요?`
                         )
                         .setColor(config.color.delete)
                         .addFields({
@@ -1388,7 +1384,7 @@ schedule: {
                                     mongoose.connection.close();
                                     const deleted = new MessageEmbed()
                                         .setTitle(
-                                            `<:delete_forever:901147281485623376> 정보가 정상적으로 삭제되었어요.`
+                                            `${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`
                                         )
                                         .setColor(config.color.success)
                                         .setDescription(

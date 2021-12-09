@@ -96,7 +96,7 @@ module.exports = {
                     if (users.length >= config.services.user_limit) {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 사용자를 더이상 등록할 수 없어요!`
+                                `${config.emojis.x} 사용자를 더이상 등록할 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -123,7 +123,7 @@ module.exports = {
                 } catch (e) {
                     const error = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -163,7 +163,7 @@ module.exports = {
                 if (rawBirth.length != 6) {
                     const birthError = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 생년월일 입력 형식이 잘못 되었어요!`
+                            `${config.emojis.x} 생년월일 입력 형식이 잘못 되었어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -193,7 +193,7 @@ module.exports = {
                 if (rawPassword.length != 4) {
                     const passError = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 비밀번호 입력 형식이 잘못 되었어요!`
+                            `${config.emojis.x} 비밀번호 입력 형식이 잘못 되었어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -230,9 +230,7 @@ module.exports = {
                 let password = rawPassword;
                 if (!login.success) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `<:red_x:902151708765999104> 로그인에 실패했습니다.`
-                        )
+                        .setTitle(`${config.emojis.x} 로그인에 실패했습니다.`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -269,9 +267,7 @@ module.exports = {
                         .setTitle(`개인정보 처리 방침 동의가 취소되었어요.`)
                         .setColor(config.color.error);
                     const agreement = new MessageEmbed()
-                        .setTitle(
-                            `<:blue_question:907165843165687858> 개인정보 처리 방침 동의 안내`
-                        )
+                        .setTitle(`개인정보 처리 방침 동의 안내`)
                         .setURL("https://hcs.eduro.go.kr/agreement")
                         .setDescription("개인정보 처리 방침에 동의하시나요?")
                         .setColor(config.color.info)
@@ -344,7 +340,7 @@ module.exports = {
                         console.error(`[⚠️] ${fail.message}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -369,7 +365,7 @@ module.exports = {
                     if (fail.remainingMinutes) {
                         const failed = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -397,7 +393,7 @@ module.exports = {
                     }
                     const wrongpass = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                            `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                         )
                         .setDescription(
                             "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
@@ -455,7 +451,7 @@ module.exports = {
                     );
                     var registered = new MessageEmbed()
                         .setTitle(
-                            `<:green_check:902151708380123137> ${counts[count]}번째 사용자가 정상적으로 등록되었어요.`
+                            `${config.emojis.done} ${counts[count]}번째 사용자가 정상적으로 등록되었어요.`
                         )
                         .setDescription(
                             "이제 `/스케줄등록`이 가능하고 `/자가진단` 명령어로 수동 자가진단에 참여할 수 있어요."

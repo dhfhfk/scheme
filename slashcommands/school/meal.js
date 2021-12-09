@@ -82,7 +82,7 @@ module.exports = {
                 } catch (e) {
                     const embed = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -109,7 +109,7 @@ module.exports = {
                     if (mealdate.length != 8) {
                         const embed = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 날짜 입력 형식이 잘못 되었어요!`
+                                `${config.emojis.x} 날짜 입력 형식이 잘못 되었어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -212,7 +212,7 @@ module.exports = {
                         const lunch = mealInfos.find((v) => v.name === "중식");
                         const dinner = mealInfos.find((v) => v.name === "석식");
                         const mealInfoEmbed = {
-                            color: 0x1aa7ff,
+                            color: config.color.info,
                             title: `🏫 ${schoolInfo[0]}`,
                             footer: { text: date2 },
                         };

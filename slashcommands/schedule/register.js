@@ -51,9 +51,7 @@ module.exports = {
         var channelId = args[0];
         if (client.channels.cache.get(channelId).type !== "GUILD_TEXT") {
             const error = new MessageEmbed()
-                .setTitle(
-                    `<:red_x:902151708765999104> 이 채널은 적합하지 않아요!`
-                )
+                .setTitle(`${config.emojis.x} 이 채널은 적합하지 않아요!`)
                 .setColor(config.color.error)
                 .addFields(
                     {
@@ -85,7 +83,7 @@ module.exports = {
                 } catch (e) {
                     const error = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 학교 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -220,7 +218,7 @@ module.exports = {
                         });
                         var registered = new MessageEmbed()
                             .setTitle(
-                                `<:green_check:902151708380123137> 스케줄이 정상적으로 등록되었어요.`
+                                `${config.emojis.done} 스케줄이 정상적으로 등록되었어요.`
                             )
                             .setDescription("아래 정보들을 확인해 보세요.")
                             .setColor(config.color.success)
@@ -368,7 +366,7 @@ module.exports = {
                         });
                         var registered = new MessageEmbed()
                             .setTitle(
-                                `<:green_check:902151708380123137> 스케줄이 정상적으로 등록되었어요.`
+                                `${config.emojis.done} 스케줄이 정상적으로 등록되었어요.`
                             )
                             .setDescription("아래 정보들을 확인해 보세요.")
                             .setColor(config.color.success)

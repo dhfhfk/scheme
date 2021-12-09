@@ -85,7 +85,7 @@ async function doHcs(userInfo) {
         if (!login.success) {
             console.error("1차 로그인 실패");
             const error = new MessageEmbed()
-                .setTitle(`<:red_x:902151708765999104> 로그인에 실패했습니다.`)
+                .setTitle(`${config.emojis.x} 로그인에 실패했습니다.`)
                 .setAuthor(
                     client.users.cache.get(String(userInfo[7])).username,
                     client.users.cache
@@ -109,12 +109,10 @@ async function doHcs(userInfo) {
                 )
                 .setFooter(`로그인 실패`);
             try {
-                client.channels.cache
-                    .get(userInfo[6])
-                    .send({
-                        content: `<@${String(userInfo[7])}> 로그인 실패`,
-                        embeds: [error],
-                    });
+                client.channels.cache.get(userInfo[6]).send({
+                    content: `<@${String(userInfo[7])}> 로그인 실패`,
+                    embeds: [error],
+                });
             } catch (e) {
                 try {
                     client.users.cache
@@ -131,9 +129,7 @@ async function doHcs(userInfo) {
         }
         if (login.agreementRequired) {
             const error = new MessageEmbed()
-                .setTitle(
-                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
-                )
+                .setTitle(`${config.emojis.x} 자가진단 개인정보 처리 방침 안내`)
                 .setAuthor(
                     client.users.cache.get(String(userInfo[7])).username,
                     client.users.cache
@@ -179,9 +175,7 @@ async function doHcs(userInfo) {
     } catch (e) {
         console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
         const error = new MessageEmbed()
-            .setTitle(
-                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
-            )
+            .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
             .setAuthor(
                 client.users.cache.get(String(userInfo[7])).username,
                 client.users.cache.get(String(userInfo[7])).displayAvatarURL()
@@ -231,9 +225,7 @@ async function doHcs(userInfo) {
             if (fail.message) {
                 console.error(`[!?] ${fail.message}`);
                 const error = new MessageEmbed()
-                    .setTitle(
-                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
-                    )
+                    .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                     .setAuthor(
                         client.users.cache.get(String(userInfo[7])).username,
                         client.users.cache
@@ -279,7 +271,7 @@ async function doHcs(userInfo) {
                 );
                 const failed = new MessageEmbed()
                     .setTitle(
-                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                        `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                     )
                     .setAuthor(
                         client.users.cache.get(String(userInfo[7])).username,
@@ -321,7 +313,7 @@ async function doHcs(userInfo) {
             }
             const wrongPass = new MessageEmbed()
                 .setTitle(
-                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                    `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                 )
                 .setAuthor(
                     client.users.cache.get(String(userInfo[7])).username,
@@ -368,9 +360,7 @@ async function doHcs(userInfo) {
     } catch (e) {
         console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
         const error = new MessageEmbed()
-            .setTitle(
-                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
-            )
+            .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
             .setAuthor(
                 client.users.cache.get(String(userInfo[7])).username,
                 client.users.cache.get(String(userInfo[7])).displayAvatarURL()
@@ -412,7 +402,7 @@ async function doHcs(userInfo) {
     console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
     var registered = new MessageEmbed()
         .setTitle(
-            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+            `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
         )
         .setColor(config.color.success)
         .addFields({
@@ -529,7 +519,7 @@ client.on("ready", async () => {
                             console.error("1차 로그인 실패");
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    `${config.emojis.x} 로그인에 실패했습니다.`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -555,14 +545,12 @@ client.on("ready", async () => {
                                 )
                                 .setFooter(`로그인 실패`);
                             try {
-                                client.channels.cache
-                                    .get(userInfo[6])
-                                    .send({
-                                        content: `<@${String(
-                                            userInfo[7]
-                                        )}> 로그인 실패`,
-                                        embeds: [error],
-                                    });
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(
+                                        userInfo[7]
+                                    )}> 로그인 실패`,
+                                    embeds: [error],
+                                });
                             } catch (e) {
                                 try {
                                     client.users.cache
@@ -583,7 +571,7 @@ client.on("ready", async () => {
                         if (login.agreementRequired) {
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -635,7 +623,7 @@ client.on("ready", async () => {
                         console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setAuthor(
                                 client.users.cache.get(String(userInfo[7]))
@@ -690,7 +678,7 @@ client.on("ready", async () => {
                                 console.error(`[!?] ${fail.message}`);
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -746,7 +734,7 @@ client.on("ready", async () => {
                                 );
                                 const failed = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -797,7 +785,7 @@ client.on("ready", async () => {
                             }
                             const wrongPass = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -849,7 +837,7 @@ client.on("ready", async () => {
                         console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setAuthor(
                                 client.users.cache.get(String(userInfo[7]))
@@ -899,7 +887,7 @@ client.on("ready", async () => {
                     console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
                     var registered = new MessageEmbed()
                         .setTitle(
-                            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                            `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
                         )
                         .setColor(config.color.success)
                         .addFields({
@@ -1018,7 +1006,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: 0x1aa7ff,
+                                    color: config.color.info,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -1190,7 +1178,7 @@ client.on("ready", async () => {
                                 console.error("1차 로그인 실패");
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                        `${config.emojis.x} 로그인에 실패했습니다.`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -1245,7 +1233,7 @@ client.on("ready", async () => {
                             if (login.agreementRequired) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                        `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -1300,7 +1288,7 @@ client.on("ready", async () => {
                             console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -1356,7 +1344,7 @@ client.on("ready", async () => {
                                     console.error(`[!?] ${fail.message}`);
                                     const error = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                         )
                                         .setAuthor(
                                             client.users.cache.get(
@@ -1413,7 +1401,7 @@ client.on("ready", async () => {
                                     );
                                     const failed = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                         )
                                         .setAuthor(
                                             client.users.cache.get(
@@ -1465,7 +1453,7 @@ client.on("ready", async () => {
                                 }
                                 const wrongPass = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -1522,7 +1510,7 @@ client.on("ready", async () => {
                             console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -1575,7 +1563,7 @@ client.on("ready", async () => {
                         );
                         var registered = new MessageEmbed()
                             .setTitle(
-                                `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                                `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
                             )
                             .setColor(config.color.success)
                             .addFields({
@@ -1713,7 +1701,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: 0x1aa7ff,
+                                    color: config.color.info,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -1943,7 +1931,7 @@ client.on("ready", async () => {
                             console.error("1차 로그인 실패");
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    `${config.emojis.x} 로그인에 실패했습니다.`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -1969,14 +1957,12 @@ client.on("ready", async () => {
                                 )
                                 .setFooter(`로그인 실패`);
                             try {
-                                client.channels.cache
-                                    .get(userInfo[6])
-                                    .send({
-                                        content: `<@${String(
-                                            userInfo[7]
-                                        )}> 로그인 실패`,
-                                        embeds: [error],
-                                    });
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(
+                                        userInfo[7]
+                                    )}> 로그인 실패`,
+                                    embeds: [error],
+                                });
                             } catch (e) {
                                 try {
                                     client.users.cache
@@ -1997,7 +1983,7 @@ client.on("ready", async () => {
                         if (login.agreementRequired) {
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -2049,7 +2035,7 @@ client.on("ready", async () => {
                         console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setAuthor(
                                 client.users.cache.get(String(userInfo[7]))
@@ -2104,7 +2090,7 @@ client.on("ready", async () => {
                                 console.error(`[!?] ${fail.message}`);
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -2160,7 +2146,7 @@ client.on("ready", async () => {
                                 );
                                 const failed = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -2211,7 +2197,7 @@ client.on("ready", async () => {
                             }
                             const wrongPass = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -2263,7 +2249,7 @@ client.on("ready", async () => {
                         console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setAuthor(
                                 client.users.cache.get(String(userInfo[7]))
@@ -2313,7 +2299,7 @@ client.on("ready", async () => {
                     console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
                     var registered = new MessageEmbed()
                         .setTitle(
-                            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                            `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
                         )
                         .setColor(config.color.success)
                         .addFields({
@@ -2432,7 +2418,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: 0x1aa7ff,
+                                    color: config.color.info,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -2604,7 +2590,7 @@ client.on("ready", async () => {
                                 console.error("1차 로그인 실패");
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                        `${config.emojis.x} 로그인에 실패했습니다.`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -2659,7 +2645,7 @@ client.on("ready", async () => {
                             if (login.agreementRequired) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                        `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -2714,7 +2700,7 @@ client.on("ready", async () => {
                             console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -2770,7 +2756,7 @@ client.on("ready", async () => {
                                     console.error(`[!?] ${fail.message}`);
                                     const error = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                         )
                                         .setAuthor(
                                             client.users.cache.get(
@@ -2827,7 +2813,7 @@ client.on("ready", async () => {
                                     );
                                     const failed = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                         )
                                         .setAuthor(
                                             client.users.cache.get(
@@ -2879,7 +2865,7 @@ client.on("ready", async () => {
                                 }
                                 const wrongPass = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -2936,7 +2922,7 @@ client.on("ready", async () => {
                             console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -2989,7 +2975,7 @@ client.on("ready", async () => {
                         );
                         var registered = new MessageEmbed()
                             .setTitle(
-                                `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                                `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
                             )
                             .setColor(config.color.success)
                             .addFields({
@@ -3127,7 +3113,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 let todayMeal = {
-                                    color: 0x1aa7ff,
+                                    color: config.color.info,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -3359,7 +3345,7 @@ client.on("ready", async () => {
                             console.error("1차 로그인 실패");
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    `${config.emojis.x} 로그인에 실패했습니다.`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -3385,14 +3371,12 @@ client.on("ready", async () => {
                                 )
                                 .setFooter(`로그인 실패`);
                             try {
-                                client.channels.cache
-                                    .get(userInfo[6])
-                                    .send({
-                                        content: `<@${String(
-                                            userInfo[7]
-                                        )}> 로그인 실패`,
-                                        embeds: [error],
-                                    });
+                                client.channels.cache.get(userInfo[6]).send({
+                                    content: `<@${String(
+                                        userInfo[7]
+                                    )}> 로그인 실패`,
+                                    embeds: [error],
+                                });
                             } catch (e) {
                                 try {
                                     client.users.cache
@@ -3413,7 +3397,7 @@ client.on("ready", async () => {
                         if (login.agreementRequired) {
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -3465,7 +3449,7 @@ client.on("ready", async () => {
                         console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setAuthor(
                                 client.users.cache.get(String(userInfo[7]))
@@ -3520,7 +3504,7 @@ client.on("ready", async () => {
                                 console.error(`[!?] ${fail.message}`);
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -3576,7 +3560,7 @@ client.on("ready", async () => {
                                 );
                                 const failed = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -3627,7 +3611,7 @@ client.on("ready", async () => {
                             }
                             const wrongPass = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -3679,7 +3663,7 @@ client.on("ready", async () => {
                         console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setAuthor(
                                 client.users.cache.get(String(userInfo[7]))
@@ -3729,7 +3713,7 @@ client.on("ready", async () => {
                     console.log(`[${userInfo[0]}] ${hcsresult.registeredAt}`);
                     var registered = new MessageEmbed()
                         .setTitle(
-                            `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                            `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
                         )
                         .setColor(config.color.success)
                         .addFields({
@@ -3848,7 +3832,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: 0x1aa7ff,
+                                    color: config.color.info,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -4020,7 +4004,7 @@ client.on("ready", async () => {
                                 console.error("1차 로그인 실패");
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                        `${config.emojis.x} 로그인에 실패했습니다.`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -4075,7 +4059,7 @@ client.on("ready", async () => {
                             if (login.agreementRequired) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                        `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -4130,7 +4114,7 @@ client.on("ready", async () => {
                             console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -4186,7 +4170,7 @@ client.on("ready", async () => {
                                     console.error(`[!?] ${fail.message}`);
                                     const error = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                         )
                                         .setAuthor(
                                             client.users.cache.get(
@@ -4243,7 +4227,7 @@ client.on("ready", async () => {
                                     );
                                     const failed = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                         )
                                         .setAuthor(
                                             client.users.cache.get(
@@ -4295,7 +4279,7 @@ client.on("ready", async () => {
                                 }
                                 const wrongPass = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                     )
                                     .setAuthor(
                                         client.users.cache.get(
@@ -4352,7 +4336,7 @@ client.on("ready", async () => {
                             console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setAuthor(
                                     client.users.cache.get(String(userInfo[7]))
@@ -4405,7 +4389,7 @@ client.on("ready", async () => {
                         );
                         var registered = new MessageEmbed()
                             .setTitle(
-                                `<:green_check:902151708380123137> 오늘의 자가진단에 정상적으로 참여했어요.`
+                                `${config.emojis.done} 오늘의 자가진단에 정상적으로 참여했어요.`
                             )
                             .setColor(config.color.success)
                             .addFields({
@@ -4543,7 +4527,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: 0x1aa7ff,
+                                    color: config.color.info,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };

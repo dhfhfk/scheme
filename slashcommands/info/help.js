@@ -17,7 +17,7 @@ module.exports = {
     run: async (client, interaction, args, message) => {
         const userId = interaction.user.id;
         const info = new MessageEmbed()
-            .setTitle(`<:blue_question:908624656066564136> 도움말`)
+            .setTitle(`도움말`)
             .setDescription(
                 "채팅창에 `/`를 입력해보세요. [선택 인수] <필수 인수>"
             )
