@@ -149,7 +149,7 @@ module.exports = {
                         .setDescription(
                             `기능 업데이트 중입니다. 정보가 제대로 표시되지 않을 수 있습니다.`
                         )
-                        .setColor(config.color.info);
+                        .setColor(config.color.primary);
                     try {
                         if (
                             result.users[0] == undefined &&
@@ -386,7 +386,7 @@ module.exports = {
                                 `${interaction.user.username} 님의 사용자 정보`
                             )
                             .setDescription(`\`${validate}\` 명 조회됨`)
-                            .setColor(config.color.info)
+                            .setColor(config.color.primary)
                             .addFields({
                                 name: `사용자 1`,
                                 value: `\`\`\`{
@@ -409,7 +409,7 @@ module.exports = {
                                 `${interaction.user.username} 님의 사용자 정보`
                             )
                             .setDescription(`\`${validate}\` 명 조회됨`)
-                            .setColor(config.color.info)
+                            .setColor(config.color.primary)
                             .addFields(
                                 {
                                     name: `사용자 1`,
@@ -444,7 +444,7 @@ module.exports = {
                                 `${interaction.user.username} 님의 사용자 정보`
                             )
                             .setDescription(`\`${validate}\` 명 조회됨`)
-                            .setColor(config.color.info)
+                            .setColor(config.color.primary)
                             .addFields(
                                 {
                                     name: `사용자 1`,
@@ -567,7 +567,7 @@ module.exports = {
                     mongoose.connection.close();
                     const info = new MessageEmbed()
                         .setTitle(`${interaction.user.username} 님의 정보`)
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .addFields({
                             name: `raw:`,
                             value: `\`\`\`_id: ${userId},

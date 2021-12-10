@@ -21,7 +21,7 @@ module.exports = {
             .setDescription(
                 "채팅창에 `/`를 입력해보세요. [선택 인수] <필수 인수>"
             )
-            .setColor(config.color.info)
+            .setColor(config.color.primary)
             .addFields(
                 {
                     name: `/학교등록 <학교명>`,

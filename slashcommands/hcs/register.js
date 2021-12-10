@@ -270,7 +270,7 @@ module.exports = {
                         .setTitle(`개인정보 처리 방침 동의 안내`)
                         .setURL("https://hcs.eduro.go.kr/agreement")
                         .setDescription("개인정보 처리 방침에 동의하시나요?")
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .addFields({
                             name: `개인정보 처리 방침`,
                             value: `https://hcs.eduro.go.kr/agreement`,

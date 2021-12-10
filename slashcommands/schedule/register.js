@@ -114,7 +114,7 @@ module.exports = {
                 .setTitle(
                     `자가진단 수행 알림 / 급식 알림을 전송할 시간대를 선택해주세요.`
                 )
-                .setColor(config.color.info)
+                .setColor(config.color.primary)
                 .setDescription(
                     "등록하고싶은 시간대를 하단의 메뉴에서 선택하세요."
                 )
@@ -257,7 +257,7 @@ module.exports = {
                     }
                     const choose = new MessageEmbed()
                         .setTitle(`어떤 정보를 전송할까요?`)
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .setDescription(
                             "받고싶은 메뉴를 하단의 메뉴에서 선택하세요."
                         )

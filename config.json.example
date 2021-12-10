@@ -15,7 +15,7 @@
         "error": "#da2723",
         "delete": "#ed4245",
         "success": "#3fbf4f",
-        "info": "#1aa7ff"
+        "primary": "#e68947"
     },
     "emojis": {
         "done": "<:green_done:918422764778577980>",

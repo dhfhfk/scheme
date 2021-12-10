@@ -1,7 +1,6 @@
 const { Client, Collection, Message, MessageEmbed } = require("discord.js");
 const mongo = require("./mongo");
 const schoolSchema = require("./schemas/school-schema");
-const progress = require("cli-progress");
 const hcs = require("hcs.js");
 const CryptoJS = require("crypto-js");
 const config = require("./config.json");

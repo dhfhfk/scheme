@@ -61,7 +61,7 @@ module.exports = {
                     if (users.length == "0") {
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 사용자 등록 정보를 찾을 수 없어요!`
+                                `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -85,7 +85,7 @@ module.exports = {
                 } catch (e) {
                     const error = new MessageEmbed()
                         .setTitle(
-                            `<:red_x:902151708765999104> 사용자 등록 정보를 찾을 수 없어요!`
+                            `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
                         )
                         .setColor(config.color.error)
                         .addFields(
@@ -156,7 +156,7 @@ module.exports = {
                         if (!login.success) {
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                    `${config.emojis.x} 로그인에 실패했습니다.`
                                 )
                                 .setColor(config.color.error)
                                 .addFields(
@@ -184,7 +184,7 @@ module.exports = {
                         if (login.agreementRequired) {
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                    `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                 )
                                 .setColor(config.color.error)
                                 .addFields(
@@ -218,7 +218,7 @@ module.exports = {
                                 console.error(`[⚠️] ${fail.message}`);
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                        `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                     )
                                     .setColor(config.color.error)
                                     .addFields(
@@ -243,7 +243,7 @@ module.exports = {
                             if (fail.remainingMinutes) {
                                 const failed = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                     )
                                     .setColor(config.color.error)
                                     .addFields(
@@ -266,7 +266,7 @@ module.exports = {
                             }
                             const wrongpass = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                    `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                 )
                                 .setDescription(
                                     "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
@@ -294,16 +294,18 @@ module.exports = {
                             endpoints[0],
                             secondLogin.token
                         );
-                        interaction.editReply({
-                            content: JSON.stringify(userInfo, null, 2),
-                            ephemeral: true,
-                        });
-                        return;
+                        if (userInfo) {
+                            interaction.editReply({
+                                content: JSON.stringify(userInfo, null, 2),
+                                ephemeral: true,
+                            });
+                            return;
+                        }
                     } catch (e) {
                         console.error(`[⚠️] ${e}`);
                         const error = new MessageEmbed()
                             .setTitle(
-                                `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                             )
                             .setColor(config.color.error)
                             .addFields(
@@ -331,7 +333,7 @@ module.exports = {
                     var choose = new MessageEmbed()
                         .setTitle(`어떤 사용자의 자가진단을 참여할까요?`)
                         .setDescription("아래의 선택 메뉴에서 선택하세요.")
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .addFields(
                             {
                                 name: `<:user_1:908624656276287518> 사용자 1`,
@@ -387,7 +389,7 @@ module.exports = {
                             if (!login.success) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                        `${config.emojis.x} 로그인에 실패했습니다.`
                                     )
                                     .setColor(config.color.error)
                                     .addFields(
@@ -415,7 +417,7 @@ module.exports = {
                             if (login.agreementRequired) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                        `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                     )
                                     .setColor(config.color.error)
                                     .addFields(
@@ -449,7 +451,7 @@ module.exports = {
                                     console.error(`[⚠️] ${fail.message}`);
                                     const error = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                         )
                                         .setColor(config.color.error)
                                         .addFields(
@@ -474,7 +476,7 @@ module.exports = {
                                 if (fail.remainingMinutes) {
                                     const failed = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                         )
                                         .setColor(config.color.error)
                                         .addFields(
@@ -497,7 +499,7 @@ module.exports = {
                                 }
                                 const wrongpass = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                     )
                                     .setDescription(
                                         "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
@@ -534,7 +536,7 @@ module.exports = {
                             console.error(`[⚠️] ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setColor(config.color.error)
                                 .addFields(
@@ -564,7 +566,7 @@ module.exports = {
                     var choose = new MessageEmbed()
                         .setTitle(`어떤 사용자의 자가진단을 참여할까요?`)
                         .setDescription("아래의 선택 메뉴에서 선택하세요.")
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .addFields(
                             {
                                 name: `<:user_1:908624656276287518> 사용자 1`,
@@ -631,7 +633,7 @@ module.exports = {
                             if (!login.success) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 로그인에 실패했습니다.`
+                                        `${config.emojis.x} 로그인에 실패했습니다.`
                                     )
                                     .setColor(config.color.error)
                                     .addFields(
@@ -659,7 +661,7 @@ module.exports = {
                             if (login.agreementRequired) {
                                 const error = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 자가진단 개인정보 처리 방침 안내`
+                                        `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
                                     )
                                     .setColor(config.color.error)
                                     .addFields(
@@ -693,7 +695,7 @@ module.exports = {
                                     console.error(`[⚠️] ${fail.message}`);
                                     const error = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                         )
                                         .setColor(config.color.error)
                                         .addFields(
@@ -718,7 +720,7 @@ module.exports = {
                                 if (fail.remainingMinutes) {
                                     const failed = new MessageEmbed()
                                         .setTitle(
-                                            `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
+                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
                                         )
                                         .setColor(config.color.error)
                                         .addFields(
@@ -741,7 +743,7 @@ module.exports = {
                                 }
                                 const wrongpass = new MessageEmbed()
                                     .setTitle(
-                                        `<:red_x:902151708765999104> 비밀번호 로그인 \`${fail.failCount}\`회 실패`
+                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
                                     )
                                     .setDescription(
                                         "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
@@ -778,7 +780,7 @@ module.exports = {
                             console.error(`[⚠️] ${e}`);
                             const error = new MessageEmbed()
                                 .setTitle(
-                                    `<:red_x:902151708765999104> 내부 오류로 인한 로그인 실패`
+                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
                                 )
                                 .setColor(config.color.error)
                                 .addFields(

@@ -344,7 +344,7 @@ module.exports = {
                     var choose = new MessageEmbed()
                         .setTitle(`어떤 사용자의 자가진단을 참여할까요?`)
                         .setDescription("아래의 선택 메뉴에서 선택하세요.")
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .addFields(
                             {
                                 name: `<:user_1:908624656276287518> 사용자 1`,
@@ -600,7 +600,7 @@ module.exports = {
                     var choose = new MessageEmbed()
                         .setTitle(`어떤 사용자의 자가진단을 참여할까요?`)
                         .setDescription("아래의 선택 메뉴에서 선택하세요.")
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .addFields(
                             {
                                 name: `<:user_1:908624656276287518> 사용자 1`,

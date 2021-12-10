@@ -3,7 +3,6 @@ const mongo = require("../mongo");
 const schedule = require("node-schedule");
 const schoolSchema = require("../schemas/school-schema");
 const { Client, Message, MessageEmbed } = require("discord.js");
-const progress = require("cli-progress");
 const hcs = require("hcs.js");
 const CryptoJS = require("crypto-js");
 const config = require("../config.json");
@@ -476,16 +475,6 @@ client.on("ready", async () => {
                 });
             } finally {
                 mongoose.connection.close();
-                // const barA = new progress.MultiBar(
-                //     {
-                //         clearOnComplete: false,
-                //         hideCursor: true,
-                //     },
-                //     progress.Presets.shades_grey
-                // );
-                // const aa = barA.create(resultAA.length, 0);
-                // const ab = barA.create(resultAB.length, 0);
-                // const ac = barA.create(resultAC.length, 0);
                 for (
                     let i = 0, pending = Promise.resolve();
                     i < resultAA.length;
@@ -1006,7 +995,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: config.color.info,
+                                    color: config.color.primary,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -1122,7 +1111,7 @@ client.on("ready", async () => {
                                 );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
-                                    .setColor(config.color.info)
+                                    .setColor(config.color.primary)
                                     .setDescription("급식 정보가 없어요.")
                                     .setFooter(`${date2}`);
                                 try {
@@ -1701,7 +1690,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: config.color.info,
+                                    color: config.color.primary,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -1817,7 +1806,7 @@ client.on("ready", async () => {
                                 );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
-                                    .setColor(config.color.info)
+                                    .setColor(config.color.primary)
                                     .setDescription("급식 정보가 없어요.")
                                     .setFooter(`${date2}`);
                                 try {
@@ -1888,16 +1877,6 @@ client.on("ready", async () => {
                 });
             } finally {
                 mongoose.connection.close();
-                // const barB = new progress.MultiBar(
-                //     {
-                //         clearOnComplete: false,
-                //         hideCursor: true,
-                //     },
-                //     progress.Presets.shades_grey
-                // );
-                // const ba = barB.create(resultBA.length, 0);
-                // const bb = barB.create(resultBB.length, 0);
-                // const bc = barB.create(resultBC.length, 0);
                 for (
                     let i = 0, pending = Promise.resolve();
                     i < resultBA.length;
@@ -2418,7 +2397,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: config.color.info,
+                                    color: config.color.primary,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -2534,7 +2513,7 @@ client.on("ready", async () => {
                                 );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
-                                    .setColor(config.color.info)
+                                    .setColor(config.color.primary)
                                     .setDescription("급식 정보가 없어요.")
                                     .setFooter(`${date2}`);
                                 try {
@@ -3113,7 +3092,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 let todayMeal = {
-                                    color: config.color.info,
+                                    color: config.color.primary,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -3229,7 +3208,7 @@ client.on("ready", async () => {
                                 );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
-                                    .setColor(config.color.info)
+                                    .setColor(config.color.primary)
                                     .setDescription("급식 정보가 없어요.")
                                     .setFooter(`${date2}`);
                                 try {
@@ -3302,16 +3281,6 @@ client.on("ready", async () => {
                 });
             } finally {
                 mongoose.connection.close();
-                // const barC = new progress.MultiBar(
-                //     {
-                //         clearOnComplete: false,
-                //         hideCursor: true,
-                //     },
-                //     progress.Presets.shades_grey
-                // );
-                // const ca = barC.create(resultCA.length, 0);
-                // const cb = barC.create(resultCB.length, 0);
-                // const cc = barC.create(resultCC.length, 0);
                 for (
                     let i = 0, pending = Promise.resolve();
                     i < resultCA.length;
@@ -3832,7 +3801,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: config.color.info,
+                                    color: config.color.primary,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -3948,7 +3917,7 @@ client.on("ready", async () => {
                                 );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
-                                    .setColor(config.color.info)
+                                    .setColor(config.color.primary)
                                     .setDescription("급식 정보가 없어요.")
                                     .setFooter(`${date2}`);
                                 try {
@@ -4527,7 +4496,7 @@ client.on("ready", async () => {
                                     (v) => v.name === "석식"
                                 );
                                 const todayMeal = {
-                                    color: config.color.info,
+                                    color: config.color.primary,
                                     title: `🏫 ${schoolInfo[0]} 오늘 급식`,
                                     footer: { text: date2 },
                                 };
@@ -4643,7 +4612,7 @@ client.on("ready", async () => {
                                 );
                                 const todayMeal = new MessageEmbed()
                                     .setTitle(`🏫 ${schoolInfo[0]} 오늘 급식`)
-                                    .setColor(config.color.info)
+                                    .setColor(config.color.primary)
                                     .setDescription("급식 정보가 없어요.")
                                     .setFooter(`${date2}`);
                                 try {

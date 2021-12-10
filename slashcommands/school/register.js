@@ -226,7 +226,7 @@ module.exports = {
                 } else if (count === 2) {
                     const embed = new MessageEmbed()
                         .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
                         )
@@ -285,7 +285,7 @@ module.exports = {
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
                                 .setTitle(`학교 등록중...`)
-                                .setColor(config.color.info)
+                                .setColor(config.color.primary)
                                 .addFields(
                                     {
                                         name: `등록된 학교`,
@@ -370,7 +370,7 @@ module.exports = {
                 } else if (count === 3) {
                     const embed = new MessageEmbed()
                         .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
                         )
@@ -436,7 +436,7 @@ module.exports = {
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
                                 .setTitle(`학교 등록중...`)
-                                .setColor(config.color.info)
+                                .setColor(config.color.primary)
                                 .addFields(
                                     {
                                         name: `등록된 학교`,
@@ -521,7 +521,7 @@ module.exports = {
                 } else if (count === 4) {
                     const embed = new MessageEmbed()
                         .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
                         )
@@ -594,7 +594,7 @@ module.exports = {
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
                                 .setTitle(`학교 등록중...`)
-                                .setColor(config.color.info)
+                                .setColor(config.color.primary)
                                 .addFields(
                                     {
                                         name: `등록된 학교`,
@@ -679,7 +679,7 @@ module.exports = {
                 } else if (count === 5) {
                     const embed = new MessageEmbed()
                         .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
-                        .setColor(config.color.info)
+                        .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
                         )
@@ -760,7 +760,7 @@ module.exports = {
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
                                 .setTitle(`학교 등록중...`)
-                                .setColor(config.color.info)
+                                .setColor(config.color.primary)
                                 .addFields(
                                     {
                                         name: `등록된 학교`,

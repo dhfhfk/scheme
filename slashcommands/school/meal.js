@@ -41,7 +41,7 @@ function parse(data) {
         console.warn(`[⚠️] 급식 정보가 없거나 검색 실패: ${e}`);
         const embed = new MessageEmbed()
             .setTitle(`🏫 ${schoolName}`)
-            .setColor(config.color.info)
+            .setColor(config.color.primary)
             .setDescription("급식 정보가 없어요.")
             .setFooter(`${date2}`);
         interaction.editReply({
@@ -212,7 +212,7 @@ module.exports = {
                         const lunch = mealInfos.find((v) => v.name === "중식");
                         const dinner = mealInfos.find((v) => v.name === "석식");
                         const mealInfoEmbed = {
-                            color: config.color.info,
+                            color: config.color.primary,
                             title: `🏫 ${schoolInfo[0]}`,
                             footer: { text: date2 },
                         };
@@ -301,7 +301,7 @@ module.exports = {
                     } catch (e) {
                         const embed = new MessageEmbed()
                             .setTitle(`🏫 ${schoolName}`)
-                            .setColor(config.color.info)
+                            .setColor(config.color.primary)
                             .setDescription("급식 정보가 없어요.")
                             .setFooter(`${date2}`);
                         interaction.editReply({
