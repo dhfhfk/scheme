@@ -582,7 +582,8 @@ schedule: {
                                     rawKindsTable.indexOf(result.schedule.kinds)
                                 ]
                             })
-    channelId: <#${result.schedule.channelId}>
+    channelId: <#${result.schedule.channelId}>,
+    paused: ${result.schedule.paused}
 }\`\`\``,
                             inline: false,
                         });
@@ -1333,7 +1334,8 @@ schedule: {
                                     rawKindsTable.indexOf(result.schedule.kinds)
                                 ]
                             })
-    channelId: <#${result.schedule.channelId}>
+    channelId: <#${result.schedule.channelId}>,
+    paused: ${result.schedule.paused}
 }\`\`\``,
                             inline: false,
                         });

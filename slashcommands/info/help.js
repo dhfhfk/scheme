@@ -53,6 +53,11 @@ module.exports = {
                     inline: false,
                 },
                 {
+                    name: `/스케줄토글`,
+                    value: `스케줄의 일시정지 여부를 전환할 수 있어요.`,
+                    inline: false,
+                },
+                {
                     name: `/설정 <명령>`,
                     value: `등록된 정보를 \`명령: 조회\`로 **조회**하거나 \`명령: 삭제\`로 **삭제**할 수 있어요.`,
                     inline: false,
