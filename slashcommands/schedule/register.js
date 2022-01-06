@@ -225,7 +225,7 @@ module.exports = {
                             .addFields(
                                 {
                                     name: `스케줄 등록 정보`,
-                                    value: `${timeTable[time]} 시간 사이에 <#${channelId}> 채널로 오늘 급식 알림을 전송할 거예요.`,
+                                    value: `${timeTable[time]} 분 사이에 <#${channelId}> 채널로 오늘 급식 알림을 전송할 거예요.`,
                                     inline: true,
                                 },
                                 {
@@ -373,7 +373,7 @@ module.exports = {
                             .addFields(
                                 {
                                     name: `스케줄 등록 정보`,
-                                    value: `${timeTable[time]} 시간 사이에 <#${channelId}> 채널로 ${kindsTable[kinds]}을 전송할 거예요.`,
+                                    value: `${timeTable[time]} 분 사이에 <#${channelId}> 채널로 ${kindsTable[kinds]}을 전송할 거예요.`,
                                     inline: true,
                                 },
                                 {

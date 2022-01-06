@@ -18,6 +18,10 @@ module.exports = {
         const userId = interaction.user.id;
         const info = new MessageEmbed()
             .setTitle(`도움말`)
+            .setAuthor(
+                client.user.username,
+                `https://cdn.discordapp.com/avatars/${client.user.id}/${client.user.avatar}.webp`
+            )
             .setDescription(
                 "채팅창에 `/`를 입력해보세요. [선택 인수] <필수 인수>"
             )
@@ -54,8 +58,8 @@ module.exports = {
                     inline: false,
                 },
                 {
-                    name: `/문의 <내용>`,
-                    value: `버그나 오류, 보완점 등을 **문의**해요.`,
+                    name: `/정보`,
+                    value: `봇의 초대 링크와 각종 정보를 확인할 수 있어요.`,
                     inline: false,
                 }
             );

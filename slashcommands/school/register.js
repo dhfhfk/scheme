@@ -191,6 +191,10 @@ module.exports = {
                                 .setTitle(
                                     `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
                                 )
+                                .setDescription(
+                                    `이제 자가진단 사용자를 등록하거나 자동 급식 알림 스케줄을 등록할 수 있어요! 
+(\`/사용자등록\` \`/스케줄등록\`)`
+                                )
                                 .setColor(config.color.success)
                                 .addFields(
                                     {
@@ -205,14 +209,10 @@ module.exports = {
                                     },
                                     {
                                         name: `Q1. 등록된 학교를 변경하려면?`,
-                                        value: `\`/학교등록\` 명령어를 다시 사용하면 기존의 학교에 덮어씌울 수 있어요.`,
+                                        value: `\`/학교등록\` 명령어를 다시 사용하면 기존의 학교에 덮어씌울 수 있습니다.`,
                                     },
                                     {
-                                        name: `Q2. 다른 서버에서도 사용하려면?`,
-                                        value: `지금 등록한 학교 정보는 다시 등록할 필요 없이 다른 서버에서도 사용할 수 있어요. 스케줄도 하나만 등록할 수 있어요.`,
-                                    },
-                                    {
-                                        name: `Q3. 개인 정보를 삭제하려면?`,
+                                        name: `Q2. 개인 정보를 삭제하려면?`,
                                         value: `\`/설정 명령:조회\` 명령어로 개인 정보를 조회할 수 있고 \`/설정 명령:삭제\` 명령어로 개인 정보를 삭제할 수 있습니다.`,
                                     }
                                 );
@@ -225,7 +225,7 @@ module.exports = {
                     });
                 } else if (count === 2) {
                     const embed = new MessageEmbed()
-                        .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
+                        .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
@@ -369,7 +369,7 @@ module.exports = {
                     });
                 } else if (count === 3) {
                     const embed = new MessageEmbed()
-                        .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
+                        .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
@@ -520,7 +520,7 @@ module.exports = {
                     });
                 } else if (count === 4) {
                     const embed = new MessageEmbed()
-                        .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
+                        .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
@@ -678,7 +678,7 @@ module.exports = {
                     });
                 } else if (count === 5) {
                     const embed = new MessageEmbed()
-                        .setTitle(`\`${count}\` 개의 검색 결과를 찾았어요.`)
+                        .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
                         .setDescription(
                             "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
