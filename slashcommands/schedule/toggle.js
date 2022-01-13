@@ -1,17 +1,7 @@
-const {
-    Client,
-    Message,
-    MessageEmbed,
-    MessageActionRow,
-    MessageSelectMenu,
-    MessageButton,
-} = require("discord.js");
-const request = require("request");
-const { guilds } = require("../..");
+const { Client, Message, MessageEmbed } = require("discord.js");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
-const hcs = require("hcs.js");
 
 var timeTable = [
     "🕡 오전 06:30 ~ 06:50",

@@ -1,21 +1,15 @@
 const {
     Client,
-    CommandInteraction,
-    DataResolver,
     Message,
     MessageEmbed,
     MessageActionRow,
     MessageButton,
-    ButtonInteraction,
-    User,
 } = require("discord.js");
-const request = require("request");
-const { guilds } = require("../..");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-const hcs = require("hcs.js");
+const hcs = require("../../hcs");
 const JSEncrypt = require("jsencrypt");
 const CryptoJS = require("crypto-js");
 

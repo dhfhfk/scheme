@@ -5,11 +5,10 @@ const {
     MessageActionRow,
     MessageSelectMenu,
 } = require("discord.js");
-const request = require("request");
 const mongo = require("../mongo");
 const schoolSchema = require("../schemas/school-schema");
 const config = require("../config.json");
-const hcs = require("hcs.js");
+const hcs = require("../hcs");
 const CryptoJS = require("crypto-js");
 
 var secretKey = "79SDFGN4THU9BJK9X890HJL2399VU";

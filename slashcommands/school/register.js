@@ -6,12 +6,11 @@ const {
     MessageButton,
 } = require("discord.js");
 const request = require("request");
-const { guilds } = require("../..");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-const hcs = require("hcs.js");
+const hcs = require("../../hcs");
 
 const cancelled = new MessageEmbed()
     .setTitle(`학교 등록이 취소되었어요.`)

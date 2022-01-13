@@ -1,10 +1,4 @@
-const { Client, Collection, Message, MessageEmbed } = require("discord.js");
-const mongo = require("./mongo");
-const schoolSchema = require("./schemas/school-schema");
-const hcs = require("hcs.js");
-const CryptoJS = require("crypto-js");
-const config = require("./config.json");
-const request = require("request");
+const { Client, Collection } = require("discord.js");
 
 const client = new Client({
     intents: 32767,

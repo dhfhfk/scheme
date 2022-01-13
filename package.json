@@ -5,22 +5,22 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "dev": "nodemon --watch commands --watch slashcommands --watch events --watch handler --watch schemas --watch mongo.js --watch index.js index.js"
+        "dev": "nodemon --watch ."
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "crypto-js": "^4.1.1",
-        "discord-buttons-pages": "^1.1.7",
         "discord.js": "^13.2.0",
         "glob": "^7.1.7",
-        "hcs.js": "^2.0.3",
         "jsencrypt": "^3.2.1",
         "mongoose": "^6.0.2",
         "node-schedule": "^2.0.0",
         "request": "^2.88.2",
-        "request-promise-native": "^1.0.9"
+        "fetch-cookie": "^1.0.0",
+        "jsbn": "^1.1.0",
+        "node-fetch": "^2.6.1"
     },
     "devDependencies": {
         "eslint": "^8.2.0"

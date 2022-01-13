@@ -2,6 +2,7 @@
     "apps": [
         {
             "name": "Scheme",
+            "interpreter": "/usr/local/n/versions/node/17.3.0/bin/node",
             "script": "./index.js",
             "watch": false,
             "max_restarts": 3,

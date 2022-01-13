@@ -5,8 +5,6 @@ const {
     MessageActionRow,
     MessageButton,
 } = require("discord.js");
-const request = require("request");
-const { guilds } = require("../..");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
