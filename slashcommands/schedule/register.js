@@ -1,27 +1,12 @@
-const {
-    Client,
-    Message,
-    MessageEmbed,
-    MessageActionRow,
-    MessageSelectMenu,
-    MessageButton,
-} = require("discord.js");
+const { Client, Message, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require("discord.js");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
 
-var timeTable = [
-    "🕡 오전 06:30 ~ 06:50",
-    "🕖 오전 07:00 ~ 07:20",
-    "🕢 오전 07:30 ~ 07:50",
-];
+var timeTable = ["🕡 오전 06:30 ~ 06:50", "🕖 오전 07:00 ~ 07:20", "🕢 오전 07:30 ~ 07:50"];
 var rawTimeTable = ["A", "B", "C"];
 
-var kindsTable = [
-    "오늘 급식 + 자가진단 알림",
-    "자가진단 알림",
-    "오늘 급식 알림",
-];
+var kindsTable = ["오늘 급식 + 자가진단 알림", "자가진단 알림", "오늘 급식 알림"];
 
 var rawKindsTable = ["A", "B", "C"];
 
@@ -33,6 +18,7 @@ module.exports = {
             name: "채널",
             description: "무슨 채널에 알림을 전송할까요?",
             type: "CHANNEL",
+            channelTypes: ["GUILD_TEXT"],
             required: true,
         },
     ],
@@ -46,29 +32,29 @@ module.exports = {
         const userId = interaction.user.id;
         const userName = interaction.user.username;
         var channelId = args[0];
-        if (client.channels.cache.get(channelId).type !== "GUILD_TEXT") {
-            const error = new MessageEmbed()
-                .setTitle(`${config.emojis.x} 이 채널은 적합하지 않아요!`)
-                .setColor(config.color.error)
-                .addFields(
-                    {
-                        name: `상세정보:`,
-                        value: `텍스트 채널을 지정하지 않았어요.`,
-                        inline: false,
-                    },
-                    {
-                        name: `해결 방법:`,
-                        value: `채널을 선택할 때 텍스트 채널만 선택하세요.`,
-                        inline: false,
-                    }
-                )
-                .setFooter(`channels.type !== "GUILD_TEXT"`);
-            interaction.editReply({
-                embeds: [error],
-                ephemeral: true,
-            });
-            return;
-        }
+        // if (client.channels.cache.get(channelId).type !== "GUILD_TEXT") {
+        //     const error = new MessageEmbed()
+        //         .setTitle(`${config.emojis.x} 이 채널은 적합하지 않아요!`)
+        //         .setColor(config.color.error)
+        //         .addFields(
+        //             {
+        //                 name: `상세정보:`,
+        //                 value: `텍스트 채널을 지정하지 않았어요.`,
+        //                 inline: false,
+        //             },
+        //             {
+        //                 name: `해결 방법:`,
+        //                 value: `채널을 선택할 때 텍스트 채널만 선택하세요.`,
+        //                 inline: false,
+        //             }
+        //         )
+        //         .setFooter(`channels.type !== "GUILD_TEXT"`);
+        //     interaction.editReply({
+        //         embeds: [error],
+        //         ephemeral: true,
+        //     });
+        //     return;
+        // }
         const user_id = interaction.user.id;
         await mongo().then(async (mongoose) => {
             try {
@@ -79,9 +65,7 @@ module.exports = {
                     var validate = result.school.name;
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -107,28 +91,20 @@ module.exports = {
                 mongoose.connection.close();
             }
 
-            const choose = new MessageEmbed()
-                .setTitle(
-                    `자가진단 수행 알림 / 급식 알림을 전송할 시간대를 선택해주세요.`
-                )
-                .setColor(config.color.primary)
-                .setDescription(
-                    "등록하고싶은 시간대를 하단의 메뉴에서 선택하세요."
-                )
-                .addFields(
-                    {
-                        name: `🕡 A그룹`,
-                        value: `오전 \`06:30 ~ 06:50\` 사이에 알림을 보내요.`,
-                    },
-                    {
-                        name: `🕖 B그룹`,
-                        value: `오전 \`07:00 ~ 07:20\` 사이에 알림을 보내요.`,
-                    },
-                    {
-                        name: `🕢 C그룹`,
-                        value: `오전 \`07:30 ~ 07:50\` 사이에 알림을 보내요.`,
-                    }
-                );
+            const choose = new MessageEmbed().setTitle(`자가진단 수행 알림 / 급식 알림을 전송할 시간대를 선택해주세요.`).setColor(config.color.primary).setDescription("등록하고싶은 시간대를 하단의 메뉴에서 선택하세요.").addFields(
+                {
+                    name: `🕡 A그룹`,
+                    value: `오전 \`06:30 ~ 06:50\` 사이에 알림을 보내요.`,
+                },
+                {
+                    name: `🕖 B그룹`,
+                    value: `오전 \`07:00 ~ 07:20\` 사이에 알림을 보내요.`,
+                },
+                {
+                    name: `🕢 C그룹`,
+                    value: `오전 \`07:30 ~ 07:50\` 사이에 알림을 보내요.`,
+                }
+            );
             const row = new MessageActionRow().addComponents(
                 new MessageSelectMenu()
                     .setCustomId("select")
@@ -154,33 +130,23 @@ module.exports = {
                         },
                     ])
             );
-            const cancel = new MessageActionRow().addComponents(
-                new MessageButton()
-                    .setCustomId("0")
-                    .setLabel("취소")
-                    .setStyle("DANGER")
-            );
+            const cancel = new MessageActionRow().addComponents(new MessageButton().setCustomId("0").setLabel("취소").setStyle("DANGER"));
 
             interaction.editReply({
                 embeds: [choose],
                 components: [row, cancel],
                 ephemeral: true,
             });
-            var collector = interaction.channel.createMessageComponentCollector(
-                {
-                    max: 1,
-                }
-            );
-            var collector2 =
-                interaction.channel.createMessageComponentCollector({
-                    max: 1,
-                });
+            var collector = interaction.channel.createMessageComponentCollector({
+                max: 1,
+            });
+            var collector2 = interaction.channel.createMessageComponentCollector({
+                max: 1,
+            });
             collector.on("end", async (ButtonInteraction) => {
                 var answer = ButtonInteraction.first().customId;
                 if (answer == "0") {
-                    const cancelled = new MessageEmbed()
-                        .setTitle(`스케줄 등록이 취소되었어요.`)
-                        .setColor(config.color.error);
+                    const cancelled = new MessageEmbed().setTitle(`스케줄 등록이 취소되었어요.`).setColor(config.color.error);
                     interaction.editReply({
                         embeds: [cancelled],
                         components: [],
@@ -208,15 +174,11 @@ module.exports = {
                                 );
                             } finally {
                                 mongoose.connection.close();
-                                console.log(
-                                    `[✅] (${userId}, ${userName}) REGISTER ${rawTimeTable[time]}${rawKindsTable[2]} schedule`
-                                );
+                                console.log(`[✅] (${userId}, ${userName}) REGISTER ${rawTimeTable[time]}${rawKindsTable[2]} schedule`);
                             }
                         });
                         var registered = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.done} 스케줄이 정상적으로 등록되었어요.`
-                            )
+                            .setTitle(`${config.emojis.done} 스케줄이 정상적으로 등록되었어요.`)
                             .setDescription("아래 정보들을 확인해 보세요.")
                             .setColor(config.color.success)
                             .addFields(
@@ -252,26 +214,20 @@ module.exports = {
                         });
                         return;
                     }
-                    const choose = new MessageEmbed()
-                        .setTitle(`어떤 정보를 전송할까요?`)
-                        .setColor(config.color.primary)
-                        .setDescription(
-                            "받고싶은 메뉴를 하단의 메뉴에서 선택하세요."
-                        )
-                        .addFields(
-                            {
-                                name: `오늘 급식 + 자가진단 알림`,
-                                value: `오늘 급식과 자가진단 수행 완료 알림을 받아요.`,
-                            },
-                            {
-                                name: `자가진단 알림`,
-                                value: `자가진단 수행 완료 알림만 받아요.`,
-                            },
-                            {
-                                name: `오늘 급식 알림`,
-                                value: `오늘 급식 알림만 받아요.`,
-                            }
-                        );
+                    const choose = new MessageEmbed().setTitle(`어떤 정보를 전송할까요?`).setColor(config.color.primary).setDescription("받고싶은 메뉴를 하단의 메뉴에서 선택하세요.").addFields(
+                        {
+                            name: `오늘 급식 + 자가진단 알림`,
+                            value: `오늘 급식과 자가진단 수행 완료 알림을 받아요.`,
+                        },
+                        {
+                            name: `자가진단 알림`,
+                            value: `자가진단 수행 완료 알림만 받아요.`,
+                        },
+                        {
+                            name: `오늘 급식 알림`,
+                            value: `오늘 급식 알림만 받아요.`,
+                        }
+                    );
                     const chooseInfo = new MessageActionRow().addComponents(
                         new MessageSelectMenu()
                             .setCustomId("select")
@@ -294,31 +250,22 @@ module.exports = {
                                 },
                             ])
                     );
-                    const cancel = new MessageActionRow().addComponents(
-                        new MessageButton()
-                            .setCustomId("0")
-                            .setLabel("취소")
-                            .setStyle("DANGER")
-                    );
+                    const cancel = new MessageActionRow().addComponents(new MessageButton().setCustomId("0").setLabel("취소").setStyle("DANGER"));
                     interaction.editReply({
                         embeds: [choose],
                         components: [chooseInfo, cancel],
                         ephemeral: true,
                     });
-                    var collector3 =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
-                    var collector4 =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    var collector3 = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
+                    var collector4 = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
                     collector3.on("end", async (ButtonInteraction) => {
                         var answer = ButtonInteraction.first().customId;
                         if (answer == "0") {
-                            const cancelled = new MessageEmbed()
-                                .setTitle(`스케줄 등록이 취소되었어요.`)
-                                .setColor(config.color.error);
+                            const cancelled = new MessageEmbed().setTitle(`스케줄 등록이 취소되었어요.`).setColor(config.color.error);
                             interaction.editReply({
                                 embeds: [cancelled],
                                 components: [],
@@ -329,9 +276,7 @@ module.exports = {
                     collector4.on("end", async (SelectMenuInteraction) => {
                         var kinds = SelectMenuInteraction.first().values;
                         if (!kinds) {
-                            const cancelled = new MessageEmbed()
-                                .setTitle(`스케줄 등록이 취소되었어요.`)
-                                .setColor(config.color.error);
+                            const cancelled = new MessageEmbed().setTitle(`스케줄 등록이 취소되었어요.`).setColor(config.color.error);
                             await interaction.editReply({
                                 embeds: [cancelled],
                                 components: [],
@@ -356,15 +301,11 @@ module.exports = {
                                 );
                             } finally {
                                 mongoose.connection.close();
-                                console.log(
-                                    `[✅] (${userId}, ${userName}) REGISTER ${rawTimeTable[time]}${rawKindsTable[kinds]} schedule`
-                                );
+                                console.log(`[✅] (${userId}, ${userName}) REGISTER ${rawTimeTable[time]}${rawKindsTable[kinds]} schedule`);
                             }
                         });
                         var registered = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.done} 스케줄이 정상적으로 등록되었어요.`
-                            )
+                            .setTitle(`${config.emojis.done} 스케줄이 정상적으로 등록되었어요.`)
                             .setDescription("아래 정보들을 확인해 보세요.")
                             .setColor(config.color.success)
                             .addFields(
