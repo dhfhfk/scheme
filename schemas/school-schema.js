@@ -40,6 +40,6 @@ const schoolSchema = new mongoose.Schema(
     { versionKey: false }
 );
 
-module.exports = mongoose.model("school", schoolSchema);
+module.exports = mongoose.model("users", schoolSchema);
 
 //* $push: { users: { rawName: "test" } },
