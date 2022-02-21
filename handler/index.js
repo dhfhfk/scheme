@@ -25,9 +25,7 @@ module.exports = async (client) => {
     eventFiles.map((value) => require(value));
 
     // Slash Commands
-    const slashCommands = await globPromise(
-        `${process.cwd()}/slashcommands/*/*.js`
-    );
+    const slashCommands = await globPromise(`${process.cwd()}/slashcommands/*/*.js`);
     const arrayOfSlashCommands = [];
 
     slashCommands.map((value) => {
@@ -39,9 +37,7 @@ module.exports = async (client) => {
         arrayOfSlashCommands.push(file);
     });
 
-    const adminCommands = await globPromise(
-        `${process.cwd()}/admincommands/*.js`
-    );
+    const adminCommands = await globPromise(`${process.cwd()}/admincommands/*.js`);
     const arrayOfAdminCommands = [];
 
     adminCommands.map((value2) => {
@@ -55,9 +51,7 @@ module.exports = async (client) => {
 
     client.on("ready", async () => {
         // Register for a single guild
-        await client.guilds.cache
-            .get(client.config.bot.guild_id)
-            .commands.set(arrayOfAdminCommands);
+        await client.guilds.cache.get(client.config.bot.guild_id).commands.set(arrayOfAdminCommands);
         // Register for all the guilds the bot is in
         await client.application.commands.set(arrayOfSlashCommands);
     });

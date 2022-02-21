@@ -1,10 +1,4 @@
-const {
-    Client,
-    Message,
-    MessageEmbed,
-    MessageActionRow,
-    MessageSelectMenu,
-} = require("discord.js");
+const { Client, Message, MessageEmbed, MessageActionRow, MessageSelectMenu } = require("discord.js");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
@@ -51,23 +45,18 @@ module.exports = {
                 try {
                     var users = result.users;
                     if (users.length == "0") {
-                        const error = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
-                            )
-                            .setColor(config.color.error)
-                            .addFields(
-                                {
-                                    name: `상세정보:`,
-                                    value: `DB에서 유저 식별 ID에 등록된 사용자를 찾지 못했어요.`,
-                                    inline: false,
-                                },
-                                {
-                                    name: `해결 방법:`,
-                                    value: `\`/사용자등록 이름:<이름> 생년월일:<생년월일> 비밀번호:<비밀번호> \` 명령어로 사용자를 등록하세요. `,
-                                    inline: false,
-                                }
-                            );
+                        const error = new MessageEmbed().setTitle(`${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`).setColor(config.color.error).addFields(
+                            {
+                                name: `상세정보:`,
+                                value: `DB에서 유저 식별 ID에 등록된 사용자를 찾지 못했어요.`,
+                                inline: false,
+                            },
+                            {
+                                name: `해결 방법:`,
+                                value: `\`/사용자등록 이름:<이름> 생년월일:<생년월일> 비밀번호:<비밀번호> \` 명령어로 사용자를 등록하세요. `,
+                                inline: false,
+                            }
+                        );
                         interaction.reply({
                             embeds: [error],
                             ephemeral: true,
@@ -76,9 +65,7 @@ module.exports = {
                     }
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -134,17 +121,10 @@ module.exports = {
                 }
                 if (totalCount == 1) {
                     try {
-                        var login = await hcs.login(
-                            endpoints[0],
-                            org,
-                            names[0],
-                            births[0]
-                        );
+                        var login = await hcs.login(endpoints[0], org, names[0], births[0]);
                         if (!login.success) {
                             const error = new MessageEmbed()
-                                .setTitle(
-                                    `${config.emojis.x} 로그인에 실패했습니다.`
-                                )
+                                .setTitle(`${config.emojis.x} 로그인에 실패했습니다.`)
                                 .setColor(config.color.error)
                                 .addFields(
                                     {
@@ -171,9 +151,7 @@ module.exports = {
                     } catch (e) {
                         console.error(`[⚠️] 1차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                            )
+                            .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                             .setColor(config.color.error)
                             .addFields(
                                 {
@@ -196,19 +174,13 @@ module.exports = {
                         return;
                     }
                     try {
-                        var secondLogin = await hcs.secondLogin(
-                            endpoints[0],
-                            login.token,
-                            passwords[0]
-                        );
+                        var secondLogin = await hcs.secondLogin(endpoints[0], login.token, passwords[0]);
                         if (secondLogin.success == false) {
                             const fail = secondLogin;
                             if (fail.message) {
                                 console.error(`[⚠️] ${fail.message}`);
                                 const error = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                                    )
+                                    .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -231,9 +203,7 @@ module.exports = {
                             }
                             if (fail.remainingMinutes) {
                                 const failed = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
-                                    )
+                                    .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`)
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -254,12 +224,8 @@ module.exports = {
                                 return;
                             }
                             const wrongpass = new MessageEmbed()
-                                .setTitle(
-                                    `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
-                                )
-                                .setDescription(
-                                    "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
-                                )
+                                .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`)
+                                .setDescription("5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다.")
                                 .setColor(config.color.error)
                                 .addFields(
                                     {
@@ -283,9 +249,7 @@ module.exports = {
                     } catch (e) {
                         console.error(`[⚠️] 2차 로그인 중 오류 발생: ${e}`);
                         const error = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                            )
+                            .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                             .setColor(config.color.error)
                             .addFields(
                                 {
@@ -307,18 +271,10 @@ module.exports = {
                         });
                         return;
                     }
-                    var hcsresult = await hcs.registerSurvey(
-                        endpoints[0],
-                        token,
-                        survey
-                    );
-                    console.log(
-                        `[✅] (${userId}, ${userName}) POST ${maskedNames[0]} hcs`
-                    );
+                    var hcsresult = await hcs.registerSurvey(endpoints[0], token, survey);
+                    console.log(`[✅] (${userId}, ${userName}) POST ${maskedNames[0]} hcs`);
                     var registered = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.done} 자가진단에 정상적으로 참여했어요.`
-                        )
+                        .setTitle(`${config.emojis.done} 자가진단에 정상적으로 참여했어요.`)
                         .setColor(config.color.success)
                         .addFields({
                             name: `참여자`,
@@ -326,12 +282,7 @@ module.exports = {
                             inline: true,
                         })
                         .setTimestamp()
-                        .setFooter(
-                            client.users.cache.get(String(userId)).username,
-                            client.users.cache
-                                .get(String(userId))
-                                .displayAvatarURL()
-                        );
+                        .setFooter(client.users.cache.get(String(userId)).username, client.users.cache.get(String(userId)).displayAvatarURL());
                     interaction.editReply({
                         embeds: [registered],
                         ephemeral: true,
@@ -358,9 +309,7 @@ module.exports = {
                     const row = new MessageActionRow().addComponents(
                         new MessageSelectMenu()
                             .setCustomId("select")
-                            .setPlaceholder(
-                                "어떤 사용자의 자가진단을 참여할까요?"
-                            )
+                            .setPlaceholder("어떤 사용자의 자가진단을 참여할까요?")
                             .addOptions([
                                 {
                                     label: `사용자 1 (${maskedNames[0]})`,
@@ -382,24 +331,16 @@ module.exports = {
                         ephemeral: true,
                     });
 
-                    var collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    var collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
                         try {
-                            var login = await hcs.login(
-                                endpoints[rawanswer],
-                                org,
-                                names[rawanswer],
-                                births[rawanswer]
-                            );
+                            var login = await hcs.login(endpoints[rawanswer], org, names[rawanswer], births[rawanswer]);
                             if (!login.success) {
                                 const error = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 로그인에 실패했습니다.`
-                                    )
+                                    .setTitle(`${config.emojis.x} 로그인에 실패했습니다.`)
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -425,9 +366,7 @@ module.exports = {
                             }
                             if (login.agreementRequired) {
                                 const error = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 자가진단 개인정보 처리 방침 안내`
-                                    )
+                                    .setTitle(`${config.emojis.x} 자가진단 개인정보 처리 방침 안내`)
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -449,19 +388,13 @@ module.exports = {
                                 return;
                                 // await hcs.updateAgreement(school.endpoint, login.token)
                             }
-                            const secondLogin = await hcs.secondLogin(
-                                endpoints[rawanswer],
-                                login.token,
-                                passwords[rawanswer]
-                            );
+                            const secondLogin = await hcs.secondLogin(endpoints[rawanswer], login.token, passwords[rawanswer]);
                             if (secondLogin.success == false) {
                                 const fail = secondLogin;
                                 if (fail.message) {
                                     console.error(`[⚠️] ${fail.message}`);
                                     const error = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                                        )
+                                        .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                                         .setColor(config.color.error)
                                         .addFields(
                                             {
@@ -484,9 +417,7 @@ module.exports = {
                                 }
                                 if (fail.remainingMinutes) {
                                     const failed = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
-                                        )
+                                        .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`)
                                         .setColor(config.color.error)
                                         .addFields(
                                             {
@@ -507,12 +438,8 @@ module.exports = {
                                     return;
                                 }
                                 const wrongpass = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
-                                    )
-                                    .setDescription(
-                                        "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
-                                    )
+                                    .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`)
+                                    .setDescription("5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다.")
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -533,17 +460,11 @@ module.exports = {
                                 return;
                             }
                             token = secondLogin.token;
-                            var hcsresult = await hcs.registerSurvey(
-                                endpoints[rawanswer],
-                                token,
-                                survey
-                            );
+                            var hcsresult = await hcs.registerSurvey(endpoints[rawanswer], token, survey);
                         } catch (e) {
                             console.error(`[⚠️] ${e}`);
                             const error = new MessageEmbed()
-                                .setTitle(
-                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                                )
+                                .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                                 .setColor(config.color.error)
                                 .addFields(
                                     {
@@ -565,13 +486,9 @@ module.exports = {
                             });
                             return;
                         }
-                        console.log(
-                            `[✅] (${userId}, ${userName}) POST ${maskedNames[rawanswer]} hcs`
-                        );
+                        console.log(`[✅] (${userId}, ${userName}) POST ${maskedNames[rawanswer]} hcs`);
                         var registered = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.done} 자가진단에 정상적으로 참여했어요.`
-                            )
+                            .setTitle(`${config.emojis.done} 자가진단에 정상적으로 참여했어요.`)
                             .setColor(config.color.success)
                             .addFields({
                                 name: `참여자`,
@@ -579,12 +496,7 @@ module.exports = {
                                 inline: true,
                             })
                             .setTimestamp()
-                            .setFooter(
-                                client.users.cache.get(String(userId)).username,
-                                client.users.cache
-                                    .get(String(userId))
-                                    .displayAvatarURL()
-                            );
+                            .setFooter(client.users.cache.get(String(userId)).username, client.users.cache.get(String(userId)).displayAvatarURL());
                         interaction.editReply({
                             embeds: [registered],
                             components: [],
@@ -619,9 +531,7 @@ module.exports = {
                     const row = new MessageActionRow().addComponents(
                         new MessageSelectMenu()
                             .setCustomId("select")
-                            .setPlaceholder(
-                                "어떤 사용자의 자가진단을 참여할까요?"
-                            )
+                            .setPlaceholder("어떤 사용자의 자가진단을 참여할까요?")
                             .addOptions([
                                 {
                                     label: `사용자 1 (${maskedNames[0]})`,
@@ -649,24 +559,16 @@ module.exports = {
                         ephemeral: true,
                     });
 
-                    var collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    var collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
                         try {
-                            var login = await hcs.login(
-                                endpoints[rawanswer],
-                                org,
-                                names[rawanswer],
-                                births[rawanswer]
-                            );
+                            var login = await hcs.login(endpoints[rawanswer], org, names[rawanswer], births[rawanswer]);
                             if (!login.success) {
                                 const error = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 로그인에 실패했습니다.`
-                                    )
+                                    .setTitle(`${config.emojis.x} 로그인에 실패했습니다.`)
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -690,19 +592,13 @@ module.exports = {
                                 });
                                 return;
                             }
-                            const secondLogin = await hcs.secondLogin(
-                                endpoints[rawanswer],
-                                login.token,
-                                passwords[rawanswer]
-                            );
+                            const secondLogin = await hcs.secondLogin(endpoints[rawanswer], login.token, passwords[rawanswer]);
                             if (secondLogin.success == false) {
                                 const fail = secondLogin;
                                 if (fail.message) {
                                     console.error(`[⚠️] ${fail.message}`);
                                     const error = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                                        )
+                                        .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                                         .setColor(config.color.error)
                                         .addFields(
                                             {
@@ -725,9 +621,7 @@ module.exports = {
                                 }
                                 if (fail.remainingMinutes) {
                                     const failed = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
-                                        )
+                                        .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`)
                                         .setColor(config.color.error)
                                         .addFields(
                                             {
@@ -748,12 +642,8 @@ module.exports = {
                                     return;
                                 }
                                 const wrongpass = new MessageEmbed()
-                                    .setTitle(
-                                        `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
-                                    )
-                                    .setDescription(
-                                        "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
-                                    )
+                                    .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`)
+                                    .setDescription("5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다.")
                                     .setColor(config.color.error)
                                     .addFields(
                                         {
@@ -774,17 +664,11 @@ module.exports = {
                                 return;
                             }
                             token = secondLogin.token;
-                            var hcsresult = await hcs.registerSurvey(
-                                endpoints[rawanswer],
-                                token,
-                                survey
-                            );
+                            var hcsresult = await hcs.registerSurvey(endpoints[rawanswer], token, survey);
                         } catch (e) {
                             console.error(`[⚠️] ${e}`);
                             const error = new MessageEmbed()
-                                .setTitle(
-                                    `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                                )
+                                .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                                 .setColor(config.color.error)
                                 .addFields(
                                     {
@@ -806,13 +690,9 @@ module.exports = {
                             });
                             return;
                         }
-                        console.log(
-                            `[✅] (${userId}, ${userName}) POST ${maskedNames[rawanswer]} hcs`
-                        );
+                        console.log(`[✅] (${userId}, ${userName}) POST ${maskedNames[rawanswer]} hcs`);
                         var registered = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.done} 자가진단에 정상적으로 참여했어요.`
-                            )
+                            .setTitle(`${config.emojis.done} 자가진단에 정상적으로 참여했어요.`)
                             .setColor(config.color.success)
                             .addFields({
                                 name: `참여자`,
@@ -820,12 +700,7 @@ module.exports = {
                                 inline: true,
                             })
                             .setTimestamp()
-                            .setFooter(
-                                client.users.cache.get(String(userId)).username,
-                                client.users.cache
-                                    .get(String(userId))
-                                    .displayAvatarURL()
-                            );
+                            .setFooter(client.users.cache.get(String(userId)).username, client.users.cache.get(String(userId)).displayAvatarURL());
                         interaction.editReply({
                             embeds: [registered],
                             components: [],

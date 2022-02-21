@@ -3,19 +3,10 @@ const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
 
-var timeTable = [
-    "🕡 오전 06:30 ~ 06:50",
-    "🕖 오전 07:00 ~ 07:20",
-    "🕢 오전 07:30 ~ 07:50",
-];
+var timeTable = ["🕡 오전 06:30 ~ 06:50", "🕖 오전 07:00 ~ 07:20", "🕢 오전 07:30 ~ 07:50"];
 var rawTimeTable = ["A", "B", "C"];
 
-var kindsTable = [
-    "오늘 급식 + 자가진단 알림",
-    "자가진단 알림",
-    "오늘 급식 알림",
-];
-
+var kindsTable = ["오늘 급식 + 자가진단 알림", "자가진단 알림", "오늘 급식 알림"];
 var rawKindsTable = ["A", "B", "C"];
 
 module.exports = {
@@ -27,7 +18,7 @@ module.exports = {
      * @param {String[]} args
      */
     run: async (client, interaction, args, message) => {
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ ephemeral: false });
         const userId = interaction.user.id;
         const userName = interaction.user.username;
         await mongo().then(async (mongoose) => {
@@ -39,9 +30,7 @@ module.exports = {
                     var validate = result.schedule.type;
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 스케줄 등록 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 스케줄 등록 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -58,7 +47,7 @@ module.exports = {
                         .setFooter(`${e}`);
                     interaction.editReply({
                         embeds: [error],
-                        ephemeral: true,
+                        ephemeral: false,
                     });
                     mongoose.connection.close();
                     return;
@@ -82,20 +71,11 @@ module.exports = {
                         );
                     } finally {
                         mongoose.connection.close();
-                        console.log(
-                            `[✅] (${userId}, ${userName}) PAUSE schedule`
-                        );
-                        var paused = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.done} 스케줄이 정상적으로 일시정지 되었어요.`
-                            )
-                            .setDescription(
-                                `다시 명령어를 사용하면 일시정지를 해제할 수 있어요.`
-                            )
-                            .setColor(config.color.success);
+                        console.log(`[✅] (${userId}, ${userName}) PAUSE schedule`);
+                        var paused = new MessageEmbed().setTitle(`${config.emojis.done} 스케줄이 정상적으로 일시정지 되었어요.`).setDescription(`다시 명령어를 사용하면 일시정지를 해제할 수 있어요.`).setColor(config.color.success);
                         interaction.editReply({
                             embeds: [paused],
-                            ephemeral: true,
+                            ephemeral: false,
                         });
                         return;
                     }
@@ -116,39 +96,19 @@ module.exports = {
                         );
                     } finally {
                         mongoose.connection.close();
-                        console.log(
-                            `[✅] (${userId}, ${userName}) UNPAUSE schedule`
-                        );
+                        console.log(`[✅] (${userId}, ${userName}) UNPAUSE schedule`);
                         var unpaused = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.done} 스케줄 일시정지가 정상적으로 해제되었어요.`
-                            )
-                            .setDescription(
-                                `이제 다음 스케줄부터 알림을 받을 수 있어요.`
-                            )
+                            .setTitle(`${config.emojis.done} 스케줄 일시정지가 정상적으로 해제되었어요.`)
+                            .setDescription(`아래의 스케줄 등록 정보를 확인해보세요.`)
                             .addFields({
                                 name: `스케줄 등록 정보`,
-                                value: `${
-                                    timeTable[
-                                        rawTimeTable.indexOf(
-                                            result.schedule.type
-                                        )
-                                    ]
-                                } 분 사이에 <#${
-                                    result.schedule.channelId
-                                }> 채널로 ${
-                                    kindsTable[
-                                        rawKindsTable.indexOf(
-                                            result.schedule.kinds
-                                        )
-                                    ]
-                                }을 전송할 거예요.`,
+                                value: `${timeTable[rawTimeTable.indexOf(result.schedule.type)]} 분 사이에 <#${result.schedule.channelId}> 채널로 ${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]}을 전송할 거예요.`,
                                 inline: true,
                             })
                             .setColor(config.color.success);
                         interaction.editReply({
                             embeds: [unpaused],
-                            ephemeral: true,
+                            ephemeral: false,
                         });
                         return;
                     }

@@ -1,10 +1,4 @@
-const {
-    Client,
-    Message,
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
-} = require("discord.js");
+const { Client, Message, MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const request = require("request");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
@@ -12,14 +6,10 @@ const config = require("../../config.json");
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const hcs = require("../../hcs");
 
-const cancelled = new MessageEmbed()
-    .setTitle(`학교 등록이 취소되었어요.`)
-    .setColor(config.color.error);
+const cancelled = new MessageEmbed().setTitle(`학교 등록이 취소되었어요.`).setColor(config.color.error);
 
 function schoolfind(rawSchoolName) {
-    let url = encodeURI(
-        `http://open.neis.go.kr/hub/schoolInfo?KEY=${config.services.neis_key}&Type=json&pIndex=1&pSize=5&SCHUL_NM=${rawSchoolName}`
-    );
+    let url = encodeURI(`http://open.neis.go.kr/hub/schoolInfo?KEY=${config.services.neis_key}&Type=json&pIndex=1&pSize=5&SCHUL_NM=${rawSchoolName}`);
     return new Promise((resolve) => {
         request(url, function (error, response, body) {
             if (error) throw error;
@@ -183,13 +173,9 @@ module.exports = {
                             console.error(e);
                         } finally {
                             mongoose.connection.close();
-                            console.log(
-                                `[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`
-                            );
+                            console.log(`[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`);
                             var registered = new MessageEmbed()
-                                .setTitle(
-                                    `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
-                                )
+                                .setTitle(`${config.emojis.done} 학교가 정상적으로 등록되었어요.`)
                                 .setDescription(
                                     `이제 자가진단 사용자를 등록하거나 자동 급식 알림 스케줄을 등록할 수 있어요! 
 (\`/사용자등록\` \`/스케줄등록\`)`
@@ -226,41 +212,20 @@ module.exports = {
                     const embed = new MessageEmbed()
                         .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
-                        .setDescription(
-                            "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
-                        )
-                        .addFields(
-                            { name: `1. ${school[0]}`, value: `${address[0]}` },
-                            { name: `2. ${school[1]}`, value: `${address[1]}` }
-                        );
+                        .setDescription("등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요.")
+                        .addFields({ name: `1. ${school[0]}`, value: `${address[0]}` }, { name: `2. ${school[1]}`, value: `${address[1]}` });
                     const choose = new MessageActionRow()
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("0")
-                                .setLabel("1")
-                                .setStyle("PRIMARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("1")
-                                .setLabel("2")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("6")
-                                .setLabel("취소")
-                                .setStyle("DANGER")
-                        );
+                        .addComponents(new MessageButton().setCustomId("0").setLabel("1").setStyle("PRIMARY"))
+                        .addComponents(new MessageButton().setCustomId("1").setLabel("2").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("6").setLabel("취소").setStyle("DANGER"));
                     interaction.editReply({
                         embeds: [embed],
                         components: [choose],
                         ephemeral: true,
                     });
-                    const collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    const collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
 
                     collector.on("end", async (ButtonInteraction) => {
                         {
@@ -283,7 +248,7 @@ module.exports = {
                             const schoolEndpoint = school2.endpoint;
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
-                                .setTitle(`학교 등록중...`)
+                                .setTitle(`학교 등록 중...`)
                                 .setColor(config.color.primary)
                                 .addFields(
                                     {
@@ -325,13 +290,9 @@ module.exports = {
                                     );
                                 } finally {
                                     mongoose.connection.close();
-                                    console.log(
-                                        `[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`
-                                    );
+                                    console.log(`[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`);
                                     var registered = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
-                                        )
+                                        .setTitle(`${config.emojis.done} 학교가 정상적으로 등록되었어요.`)
                                         .setColor(config.color.success)
                                         .addFields(
                                             {
@@ -370,48 +331,21 @@ module.exports = {
                     const embed = new MessageEmbed()
                         .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
-                        .setDescription(
-                            "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
-                        )
-                        .addFields(
-                            { name: `1. ${school[0]}`, value: `${address[0]}` },
-                            { name: `2. ${school[1]}`, value: `${address[1]}` },
-                            { name: `3. ${school[2]}`, value: `${address[2]}` }
-                        );
+                        .setDescription("등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요.")
+                        .addFields({ name: `1. ${school[0]}`, value: `${address[0]}` }, { name: `2. ${school[1]}`, value: `${address[1]}` }, { name: `3. ${school[2]}`, value: `${address[2]}` });
                     const choose = new MessageActionRow()
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("0")
-                                .setLabel("1")
-                                .setStyle("PRIMARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("1")
-                                .setLabel("2")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("2")
-                                .setLabel("3")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("6")
-                                .setLabel("취소")
-                                .setStyle("DANGER")
-                        );
+                        .addComponents(new MessageButton().setCustomId("0").setLabel("1").setStyle("PRIMARY"))
+                        .addComponents(new MessageButton().setCustomId("1").setLabel("2").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("2").setLabel("3").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("6").setLabel("취소").setStyle("DANGER"));
                     interaction.editReply({
                         embeds: [embed],
                         components: [choose],
                         ephemeral: true,
                     });
-                    const collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    const collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
 
                     collector.on("end", async (ButtonInteraction) => {
                         {
@@ -434,7 +368,7 @@ module.exports = {
                             const schoolEndpoint = school2.endpoint;
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
-                                .setTitle(`학교 등록중...`)
+                                .setTitle(`학교 등록 중...`)
                                 .setColor(config.color.primary)
                                 .addFields(
                                     {
@@ -476,13 +410,9 @@ module.exports = {
                                     );
                                 } finally {
                                     mongoose.connection.close();
-                                    console.log(
-                                        `[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`
-                                    );
+                                    console.log(`[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`);
                                     var registered = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
-                                        )
+                                        .setTitle(`${config.emojis.done} 학교가 정상적으로 등록되었어요.`)
                                         .setColor(config.color.success)
                                         .addFields(
                                             {
@@ -521,9 +451,7 @@ module.exports = {
                     const embed = new MessageEmbed()
                         .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
-                        .setDescription(
-                            "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
-                        )
+                        .setDescription("등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요.")
                         .addFields(
                             { name: `1. ${school[0]}`, value: `${address[0]}` },
                             { name: `2. ${school[1]}`, value: `${address[1]}` },
@@ -531,45 +459,19 @@ module.exports = {
                             { name: `4. ${school[3]}`, value: `${address[3]}` }
                         );
                     const choose = new MessageActionRow()
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("0")
-                                .setLabel("1")
-                                .setStyle("PRIMARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("1")
-                                .setLabel("2")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("2")
-                                .setLabel("3")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("3")
-                                .setLabel("4")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("6")
-                                .setLabel("취소")
-                                .setStyle("DANGER")
-                        );
+                        .addComponents(new MessageButton().setCustomId("0").setLabel("1").setStyle("PRIMARY"))
+                        .addComponents(new MessageButton().setCustomId("1").setLabel("2").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("2").setLabel("3").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("3").setLabel("4").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("6").setLabel("취소").setStyle("DANGER"));
                     interaction.editReply({
                         embeds: [embed],
                         components: [choose],
                         ephemeral: true,
                     });
-                    const collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    const collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
 
                     collector.on("end", async (ButtonInteraction) => {
                         {
@@ -592,7 +494,7 @@ module.exports = {
                             const schoolEndpoint = school2.endpoint;
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
-                                .setTitle(`학교 등록중...`)
+                                .setTitle(`학교 등록 중...`)
                                 .setColor(config.color.primary)
                                 .addFields(
                                     {
@@ -634,13 +536,9 @@ module.exports = {
                                     );
                                 } finally {
                                     mongoose.connection.close();
-                                    console.log(
-                                        `[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`
-                                    );
+                                    console.log(`[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`);
                                     var registered = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
-                                        )
+                                        .setTitle(`${config.emojis.done} 학교가 정상적으로 등록되었어요.`)
                                         .setColor(config.color.success)
                                         .addFields(
                                             {
@@ -679,9 +577,7 @@ module.exports = {
                     const embed = new MessageEmbed()
                         .setTitle(`🔍 \`${count}\` 개의 검색 결과를 찾았어요.`)
                         .setColor(config.color.primary)
-                        .setDescription(
-                            "등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요."
-                        )
+                        .setDescription("등록하고싶은 학교의 번호를 하단의 버튼에서 선택하세요.")
                         .addFields(
                             { name: `1. ${school[0]}`, value: `${address[0]}` },
                             { name: `2. ${school[1]}`, value: `${address[1]}` },
@@ -690,52 +586,21 @@ module.exports = {
                             { name: `5. ${school[4]}`, value: `${address[4]}` }
                         );
                     const choose = new MessageActionRow()
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("0")
-                                .setLabel("1")
-                                .setStyle("PRIMARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("1")
-                                .setLabel("2")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("2")
-                                .setLabel("3")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("3")
-                                .setLabel("4")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("4")
-                                .setLabel("5")
-                                .setStyle("SECONDARY")
-                        );
-                    const cancel = new MessageActionRow().addComponents(
-                        new MessageButton()
-                            .setCustomId("6")
-                            .setLabel("취소")
-                            .setStyle("DANGER")
-                    );
+                        .addComponents(new MessageButton().setCustomId("0").setLabel("1").setStyle("PRIMARY"))
+                        .addComponents(new MessageButton().setCustomId("1").setLabel("2").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("2").setLabel("3").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("3").setLabel("4").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setCustomId("4").setLabel("5").setStyle("SECONDARY"));
+                    const cancel = new MessageActionRow().addComponents(new MessageButton().setCustomId("6").setLabel("취소").setStyle("DANGER"));
 
                     interaction.editReply({
                         embeds: [embed],
                         components: [choose, cancel],
                         ephemeral: true,
                     });
-                    const collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    const collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
 
                     collector.on("end", async (ButtonInteraction) => {
                         {
@@ -758,7 +623,7 @@ module.exports = {
                             const schoolEndpoint = school2.endpoint;
                             const schoolCode = school2.schoolCode;
                             const registering = new MessageEmbed()
-                                .setTitle(`학교 등록중...`)
+                                .setTitle(`학교 등록 중...`)
                                 .setColor(config.color.primary)
                                 .addFields(
                                     {
@@ -800,13 +665,9 @@ module.exports = {
                                     );
                                 } finally {
                                     mongoose.connection.close();
-                                    console.log(
-                                        `[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`
-                                    );
+                                    console.log(`[✅] (${userId}, ${userName}) REGISTER ${schoolName} school`);
                                     var registered = new MessageEmbed()
-                                        .setTitle(
-                                            `${config.emojis.done} 학교가 정상적으로 등록되었어요.`
-                                        )
+                                        .setTitle(`${config.emojis.done} 학교가 정상적으로 등록되었어요.`)
                                         .setColor(config.color.success)
                                         .addFields(
                                             {

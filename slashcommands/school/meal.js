@@ -38,11 +38,7 @@ function parse(data) {
     } catch (e) {
         //! 오류로 인해 급식 검색 실패시
         console.warn(`[⚠️] 급식 정보가 없거나 검색 실패: ${e}`);
-        const embed = new MessageEmbed()
-            .setTitle(`🏫 ${schoolName}`)
-            .setColor(config.color.primary)
-            .setDescription("급식 정보가 없어요.")
-            .setFooter(`${date2}`);
+        const embed = new MessageEmbed().setTitle(`🏫 ${schoolName}`).setColor(config.color.primary).setDescription("급식 정보가 없어요.").setFooter(`${date2}`);
         interaction.editReply({
             embeds: [embed],
             ephemeral: false,
@@ -80,9 +76,7 @@ module.exports = {
                     var schoolName = result.school.name;
                 } catch (e) {
                     const embed = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -107,9 +101,7 @@ module.exports = {
                 if (mealdate !== "null") {
                     if (mealdate.length != 8) {
                         const embed = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 날짜 입력 형식이 잘못 되었어요!`
-                            )
+                            .setTitle(`${config.emojis.x} 날짜 입력 형식이 잘못 되었어요!`)
                             .setColor(config.color.error)
                             .addFields(
                                 {
@@ -139,17 +131,8 @@ module.exports = {
                         let year = date1.substring(0, 4);
                         let month = date1.substring(4, 6);
                         let day = date1.substring(6, 8);
-                        const weeks = new Array(
-                            "일",
-                            "월",
-                            "화",
-                            "수",
-                            "목",
-                            "금",
-                            "토"
-                        );
-                        const weekLabel =
-                            weeks[new Date(`${year}-${month}-${day}`).getDay()];
+                        const weeks = new Array("일", "월", "화", "수", "목", "금", "토");
+                        const weekLabel = weeks[new Date(`${year}-${month}-${day}`).getDay()];
                         var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
                     }
                 } else {
@@ -157,47 +140,25 @@ module.exports = {
                     const year = today.getFullYear();
                     const month = ("0" + (today.getMonth() + 1)).slice(-2);
                     const day = ("0" + today.getDate()).slice(-2);
-                    const weeks = new Array(
-                        "일",
-                        "월",
-                        "화",
-                        "수",
-                        "목",
-                        "금",
-                        "토"
-                    );
+                    const weeks = new Array("일", "월", "화", "수", "목", "금", "토");
                     const week = today.getDay();
                     const weekLabel = weeks[week];
                     var date1 = year + month + day;
                     var date2 = `${year}년 ${month}월 ${day}일 (${weekLabel})`;
                 }
-                schoolInfo = [
-                    result.school.name,
-                    result.school.sc,
-                    result.school.sd,
-                ];
-                console.log(
-                    `[🔍] (${userId}, ${userName}) GET ${schoolName} meal on ${date1}`
-                );
+                schoolInfo = [result.school.name, result.school.sc, result.school.sd];
+                console.log(`[🔍] (${userId}, ${userName}) GET ${schoolName} meal on ${date1}`);
                 getmeal(schoolInfo, date1).then(function (data) {
                     try {
                         data = JSON.parse(data);
-                        const dishCount =
-                            data.mealServiceDietInfo[0].head[0]
-                                .list_total_count;
+                        const dishCount = data.mealServiceDietInfo[0].head[0].list_total_count;
                         var mealInfos = new Array();
                         for (var i = 0; i < dishCount; i++) {
-                            let mealNameList =
-                                data.mealServiceDietInfo[1].row[i].MMEAL_SC_NM;
-                            let mealList =
-                                data.mealServiceDietInfo[1].row[i].DDISH_NM;
+                            let mealNameList = data.mealServiceDietInfo[1].row[i].MMEAL_SC_NM;
+                            let mealList = data.mealServiceDietInfo[1].row[i].DDISH_NM;
                             mealList = mealList.replace(/<br\/>/g, "\n"); //? <br/> 줄바꿈
-                            mealList = mealList.replace(
-                                /\*|[0-9]()+|g|\./g,
-                                ""
-                            ); //? 알레르기 정보와 필요 없는 정보 제거
-                            let calList =
-                                data.mealServiceDietInfo[1].row[i].CAL_INFO;
+                            mealList = mealList.replace(/\*|[0-9]()+|g|\./g, ""); //? 알레르기 정보와 필요 없는 정보 제거
+                            let calList = data.mealServiceDietInfo[1].row[i].CAL_INFO;
                             let mealInfo = {
                                 name: mealNameList,
                                 meal: mealList,
@@ -205,9 +166,7 @@ module.exports = {
                             };
                             mealInfos.push(mealInfo);
                         }
-                        const breakfast = mealInfos.find(
-                            (v) => v.name === "조식"
-                        );
+                        const breakfast = mealInfos.find((v) => v.name === "조식");
                         const lunch = mealInfos.find((v) => v.name === "중식");
                         const dinner = mealInfos.find((v) => v.name === "석식");
                         const mealInfoEmbed = {
@@ -298,11 +257,7 @@ module.exports = {
 
                         interaction.editReply({ embeds: [mealInfoEmbed] });
                     } catch (e) {
-                        const embed = new MessageEmbed()
-                            .setTitle(`🏫 ${schoolName}`)
-                            .setColor(config.color.primary)
-                            .setDescription("급식 정보가 없어요.")
-                            .setFooter(`${date2}`);
+                        const embed = new MessageEmbed().setTitle(`🏫 ${schoolName}`).setColor(config.color.primary).setDescription("급식 정보가 없어요.").setFooter(`${date2}`);
                         interaction.editReply({
                             embeds: [embed],
                             ephemeral: false,

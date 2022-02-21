@@ -1,10 +1,4 @@
-const {
-    Client,
-    Message,
-    MessageEmbed,
-    MessageActionRow,
-    MessageButton,
-} = require("discord.js");
+const { Client, Message, MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
@@ -60,8 +54,7 @@ module.exports = {
         },
         {
             name: "생년월일",
-            description:
-                "생년월일 6자리를 입력해주세요. (입력 예: 040602, yyMMDD)",
+            description: "생년월일 6자리를 입력해주세요. (입력 예: 040602, yyMMDD)",
             type: "STRING",
             required: true,
         },
@@ -89,9 +82,7 @@ module.exports = {
                     var users = result.users;
                     if (users.length >= config.services.user_limit) {
                         const error = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 사용자를 더이상 등록할 수 없어요!`
-                            )
+                            .setTitle(`${config.emojis.x} 사용자를 더이상 등록할 수 없어요!`)
                             .setColor(config.color.error)
                             .addFields(
                                 {
@@ -105,9 +96,7 @@ module.exports = {
                                     inline: false,
                                 }
                             )
-                            .setFooter(
-                                `RangeError: The maximum of users.length is ${config.services.user_limit}.`
-                            );
+                            .setFooter(`RangeError: The maximum of users.length is ${config.services.user_limit}.`);
                         interaction.reply({
                             embeds: [error],
                             ephemeral: true,
@@ -116,9 +105,7 @@ module.exports = {
                     }
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 학교 등록 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -139,11 +126,7 @@ module.exports = {
                     });
                     return;
                 }
-                userInfo = [
-                    result.school.name,
-                    result.school.endpoint,
-                    result.school.org,
-                ];
+                userInfo = [result.school.name, result.school.endpoint, result.school.org];
                 const userId = interaction.user.id;
                 const userName = interaction.user.username;
                 const guildId = interaction.guildId;
@@ -156,9 +139,7 @@ module.exports = {
                 await interaction.deferReply({ ephemeral: true });
                 if (rawBirth.length != 6) {
                     const birthError = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 생년월일 입력 형식이 잘못 되었어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 생년월일 입력 형식이 잘못 되었어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -186,9 +167,7 @@ module.exports = {
                 }
                 if (rawPassword.length != 4) {
                     const passError = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 비밀번호 입력 형식이 잘못 되었어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 비밀번호 입력 형식이 잘못 되었어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -215,12 +194,7 @@ module.exports = {
                     return;
                 }
 
-                const login = await hcs.login(
-                    userInfo[1],
-                    userInfo[2],
-                    name,
-                    birth
-                );
+                const login = await hcs.login(userInfo[1], userInfo[2], name, birth);
                 let password = rawPassword;
                 if (!login.success) {
                     const error = new MessageEmbed()
@@ -257,47 +231,24 @@ module.exports = {
                     return;
                 }
                 if (login.agreementRequired) {
-                    const cancelled = new MessageEmbed()
-                        .setTitle(`개인정보 처리 방침 동의가 취소되었어요.`)
-                        .setColor(config.color.error);
-                    const agreement = new MessageEmbed()
-                        .setTitle(`개인정보 처리 방침 동의 안내`)
-                        .setURL("https://hcs.eduro.go.kr/agreement")
-                        .setDescription("개인정보 처리 방침에 동의하시나요?")
-                        .setColor(config.color.primary)
-                        .addFields({
-                            name: `개인정보 처리 방침`,
-                            value: `https://hcs.eduro.go.kr/agreement`,
-                            inline: false,
-                        });
+                    const cancelled = new MessageEmbed().setTitle(`개인정보 처리 방침 동의가 취소되었어요.`).setColor(config.color.error);
+                    const agreement = new MessageEmbed().setTitle(`개인정보 처리 방침 동의 안내`).setURL("https://hcs.eduro.go.kr/agreement").setDescription("개인정보 처리 방침에 동의하시나요?").setColor(config.color.primary).addFields({
+                        name: `개인정보 처리 방침`,
+                        value: `https://hcs.eduro.go.kr/agreement`,
+                        inline: false,
+                    });
                     const choose = new MessageActionRow()
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("0")
-                                .setLabel("네")
-                                .setStyle("SUCCESS")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setCustomId("1")
-                                .setLabel("아니요")
-                                .setStyle("SECONDARY")
-                        )
-                        .addComponents(
-                            new MessageButton()
-                                .setLink("https://hcs.eduro.go.kr/agreement")
-                                .setLabel("개인정보 처리 방침")
-                                .setStyle("LINK")
-                        );
+                        .addComponents(new MessageButton().setCustomId("0").setLabel("네").setStyle("SUCCESS"))
+                        .addComponents(new MessageButton().setCustomId("1").setLabel("아니요").setStyle("SECONDARY"))
+                        .addComponents(new MessageButton().setLink("https://hcs.eduro.go.kr/agreement").setLabel("개인정보 처리 방침").setStyle("LINK"));
                     interaction.editReply({
                         embeds: [agreement],
                         components: [choose],
                         ephemeral: true,
                     });
-                    const collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    const collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
                     collector.on("end", async (ButtonInteraction) => {
                         let rawanswer = ButtonInteraction.first().customId;
                         if (rawanswer === "1") {
@@ -311,31 +262,18 @@ module.exports = {
                         await hcs.updateAgreement(userInfo[1], login.token);
                     });
                 }
-                const passwordExists = await hcs.passwordExists(
-                    userInfo[1],
-                    login.token
-                );
+                const passwordExists = await hcs.passwordExists(userInfo[1], login.token);
                 if (!passwordExists) {
-                    await hcs.registerPassword(
-                        userInfo[1],
-                        login.token,
-                        password
-                    );
+                    await hcs.registerPassword(userInfo[1], login.token, password);
                 }
-                const secondLogin = await hcs.secondLogin(
-                    userInfo[1],
-                    login.token,
-                    password
-                );
+                const secondLogin = await hcs.secondLogin(userInfo[1], login.token, password);
                 if (secondLogin.success == false) {
                     const fail = secondLogin;
 
                     if (fail.message) {
                         console.error(`[⚠️] ${fail.message}`);
                         const error = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 내부 오류로 인한 로그인 실패`
-                            )
+                            .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                             .setColor(config.color.error)
                             .addFields(
                                 {
@@ -358,9 +296,7 @@ module.exports = {
                     }
                     if (fail.remainingMinutes) {
                         const failed = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`
-                            )
+                            .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`)
                             .setColor(config.color.error)
                             .addFields(
                                 {
@@ -386,12 +322,8 @@ module.exports = {
                         return;
                     }
                     const wrongpass = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`
-                        )
-                        .setDescription(
-                            "5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다."
-                        )
+                        .setTitle(`${config.emojis.x} 비밀번호 로그인 \`${fail.failCount}\`회 실패`)
+                        .setDescription("5회 이상 실패시 약 5분동안 로그인에 제한을 받습니다.")
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -440,16 +372,10 @@ module.exports = {
                     mongoose.connection.close();
                     var counts = ["첫", "첫", "두", "세"];
                     var count = users.length;
-                    console.log(
-                        `[✅] (${userId}, ${userName}) REGISTER ${maskedName} user`
-                    );
+                    console.log(`[✅] (${userId}, ${userName}) REGISTER ${maskedName} user`);
                     var registered = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.done} ${counts[count]}번째 사용자가 정상적으로 등록되었어요.`
-                        )
-                        .setDescription(
-                            "이제 `/스케줄등록`이 가능하고 `/자가진단` 명령어로 수동 자가진단에 참여할 수 있어요."
-                        )
+                        .setTitle(`${config.emojis.done} ${counts[count]}번째 사용자가 정상적으로 등록되었어요.`)
+                        .setDescription("이제 `/스케줄등록`이 가능하고 `/자가진단` 명령어로 수동 자가진단에 참여할 수 있어요.")
                         .setColor(config.color.success)
                         .addFields(
                             {

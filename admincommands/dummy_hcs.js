@@ -3,7 +3,7 @@ const request = require("request");
 const mongo = require("../mongo");
 const schoolSchema = require("../schemas/school-schema");
 const config = require("../config.json");
-const hcs = require("../hcs");
+const hcs = require("../hcs/dist");
 const JSEncrypt = require("jsencrypt");
 
 var maskingName = function (strName) {
