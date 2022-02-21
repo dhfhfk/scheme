@@ -14,13 +14,8 @@ module.exports = {
         const userId = interaction.user.id;
         const info = new MessageEmbed()
             .setTitle(`도움말`)
-            .setAuthor(
-                client.user.username,
-                `https://cdn.discordapp.com/avatars/${client.user.id}/${client.user.avatar}.webp`
-            )
-            .setDescription(
-                "채팅창에 `/`를 입력해보세요. [선택 인수] <필수 인수>"
-            )
+            .setAuthor(client.user.username, `https://cdn.discordapp.com/avatars/${client.user.id}/${client.user.avatar}.webp`)
+            .setDescription("채팅창에 `/`를 입력해보세요. [선택 인수] <필수 인수>")
             .setColor(config.color.primary)
             .addFields(
                 {
