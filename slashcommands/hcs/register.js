@@ -22,11 +22,6 @@ function encrypt2(message) {
     return CryptoJS.AES.encrypt(JSON.stringify(message), secretKey).toString();
 }
 
-function decrypt2(message) {
-    const bytes = CryptoJS.AES.decrypt(message, secretKey);
-    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-}
-
 var maskingName = function (strName) {
     if (strName.length > 2) {
         var originName = strName.split("");
@@ -60,7 +55,7 @@ module.exports = {
         },
         {
             name: "비밀번호",
-            description: "비밀번호 4자리를 입력해주세요. (입력 예: 1234)",
+            description: "비밀번호 4자리를 입력해주세요. (정수 입력)",
             type: "STRING",
             required: true,
         },
@@ -231,6 +226,7 @@ module.exports = {
                     return;
                 }
                 if (login.agreementRequired) {
+                    console.log("개인정보 처리 방침 동의");
                     const cancelled = new MessageEmbed().setTitle(`개인정보 처리 방침 동의가 취소되었어요.`).setColor(config.color.error);
                     const agreement = new MessageEmbed().setTitle(`개인정보 처리 방침 동의 안내`).setURL("https://hcs.eduro.go.kr/agreement").setDescription("개인정보 처리 방침에 동의하시나요?").setColor(config.color.primary).addFields({
                         name: `개인정보 처리 방침`,
@@ -240,7 +236,7 @@ module.exports = {
                     const choose = new MessageActionRow()
                         .addComponents(new MessageButton().setCustomId("0").setLabel("네").setStyle("SUCCESS"))
                         .addComponents(new MessageButton().setCustomId("1").setLabel("아니요").setStyle("SECONDARY"))
-                        .addComponents(new MessageButton().setLink("https://hcs.eduro.go.kr/agreement").setLabel("개인정보 처리 방침").setStyle("LINK"));
+                        .addComponents(new MessageButton().setURL("https://hcs.eduro.go.kr/agreement").setLabel("개인정보 처리 방침").setStyle("LINK"));
                     interaction.editReply({
                         embeds: [agreement],
                         components: [choose],
@@ -249,7 +245,7 @@ module.exports = {
                     const collector = interaction.channel.createMessageComponentCollector({
                         max: 1,
                     });
-                    collector.on("end", async (ButtonInteraction) => {
+                    await collector.on("end", async (ButtonInteraction) => {
                         let rawanswer = ButtonInteraction.first().customId;
                         if (rawanswer === "1") {
                             interaction.editReply({
@@ -259,7 +255,9 @@ module.exports = {
                             });
                             return;
                         }
-                        await hcs.updateAgreement(userInfo[1], login.token);
+                        if (rawanswer === "0") {
+                            await hcs.updateAgreement(userInfo[1], login.token);
+                        }
                     });
                 }
                 const passwordExists = await hcs.passwordExists(userInfo[1], login.token);
@@ -275,18 +273,11 @@ module.exports = {
                         const error = new MessageEmbed()
                             .setTitle(`${config.emojis.x} 내부 오류로 인한 로그인 실패`)
                             .setColor(config.color.error)
-                            .addFields(
-                                {
-                                    name: `상세정보:`,
-                                    value: `알 수 없는 내부 오류로 인해 로그인에 실패했습니다.`,
-                                    inline: false,
-                                },
-                                {
-                                    name: `해결 방법:`,
-                                    value: `잠시 기다린 후 다시 시도하세요. 그래도 해결되지 않는다면 \`/문의 <내용>\`에 아래의 코드를 적어 관리자에게 문의하세요.`,
-                                    inline: false,
-                                }
-                            )
+                            .addFields({
+                                name: `상세정보:`,
+                                value: fail.message,
+                                inline: false,
+                            })
                             .setFooter(fail.message);
                         interaction.editReply({
                             embeds: [error],
@@ -369,12 +360,12 @@ module.exports = {
                         { new: true, upsert: true }
                     );
                 } finally {
-                    mongoose.connection.close();
-                    var counts = ["첫", "첫", "두", "세"];
+                    await mongoose.connection.close();
+                    var counts = ["첫", "두", "세", "네"];
                     var count = users.length;
                     console.log(`[✅] (${userId}, ${userName}) REGISTER ${maskedName} user`);
                     var registered = new MessageEmbed()
-                        .setTitle(`${config.emojis.done} ${counts[count]}번째 사용자가 정상적으로 등록되었어요.`)
+                        .setTitle(`${config.emojis.done} ${counts[count]}번째 사용자가 등록되었어요.`)
                         .setDescription("이제 `/스케줄등록`이 가능하고 `/자가진단` 명령어로 수동 자가진단에 참여할 수 있어요.")
                         .setColor(config.color.success)
                         .addFields(
@@ -395,7 +386,7 @@ module.exports = {
                                 value: `현재 디스코드 계정당 \`${config.services.user_limit}\`명의 사용자만 등록 가능합니다.`,
                             }
                         );
-                    interaction.editReply({
+                    await interaction.editReply({
                         embeds: [registered],
                         ephemeral: true,
                     });
