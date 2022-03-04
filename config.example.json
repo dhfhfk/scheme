@@ -9,7 +9,8 @@
     },
     "services": {
         "neis_key": "open.neis.go.kr token",
-        "user_limit": 1
+        "user_limit": 3,
+        "secret_key": "N2FL0vMfvSu2ytz3RieRbtZq7R13W57HrcXcJdM1NA92Ck3zCYWsuU8AxJ9Y5lpwvdz9giHCqspZcoXYC8GxM17qyIETdg3BKtXbzF05xj4IXDEoWhQfyreSrZKqrFEa"
     },
     "color": {
         "error": "#da2723",
