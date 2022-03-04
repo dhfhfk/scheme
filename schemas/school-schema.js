@@ -27,6 +27,7 @@ const schoolSchema = new mongoose.Schema(
                 token: { type: String, required: true },
                 password: { type: String, required: true },
                 endpoint: { type: String, required: true },
+                org: { type: String, required: true },
                 _id: false,
             },
         ],
