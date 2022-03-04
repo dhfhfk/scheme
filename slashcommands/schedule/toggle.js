@@ -72,7 +72,7 @@ module.exports = {
                     } finally {
                         mongoose.connection.close();
                         console.log(`[✅] (${userId}, ${userName}) PAUSE schedule`);
-                        var paused = new MessageEmbed().setTitle(`${config.emojis.done} 스케줄이 정상적으로 일시정지 되었어요.`).setDescription(`다시 명령어를 사용하면 일시정지를 해제할 수 있어요.`).setColor(config.color.success);
+                        var paused = new MessageEmbed().setTitle(`${config.emojis.done} 스케줄이 _**일시정지**__ 되었어요.`).setDescription(`다시 명령어를 사용하면 일시정지를 해제할 수 있어요.`).setColor(config.color.success);
                         interaction.editReply({
                             embeds: [paused],
                             ephemeral: false,
@@ -98,7 +98,7 @@ module.exports = {
                         mongoose.connection.close();
                         console.log(`[✅] (${userId}, ${userName}) UNPAUSE schedule`);
                         var unpaused = new MessageEmbed()
-                            .setTitle(`${config.emojis.done} 스케줄 일시정지가 정상적으로 해제되었어요.`)
+                            .setTitle(`${config.emojis.done} 스케줄 __**일시정지가 해제**__되었어요.`)
                             .setDescription(`아래의 스케줄 등록 정보를 확인해보세요.`)
                             .addFields({
                                 name: `스케줄 등록 정보`,

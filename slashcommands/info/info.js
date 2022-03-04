@@ -13,13 +13,11 @@ module.exports = {
     run: async (client, interaction, args, message) => {
         const info = new MessageEmbed()
             .setTitle(`안녕하세요! 👋`)
-            .setAuthor(
-                client.user.username,
-                `https://cdn.discordapp.com/avatars/${client.user.id}/${client.user.avatar}.webp`
-            )
-            .setDescription(
-                `귀찮게 여러 앱 설치할 필요 없이 급식을 조회하고 불편한 자가진단 앱 대신 디스코드로 간편히 해결할 수 있어요, 게다가 자동으로!`
-            )
+            .setAuthor({
+                name: client.user.username,
+                iconURL: `https://cdn.discordapp.com/avatars/${client.user.id}/${client.user.avatar}.webp`,
+            })
+            .setDescription(`귀찮게 여러 앱 설치할 필요 없이 급식을 조회하고 불편한 자가진단 앱 대신 디스코드로 간편히 해결할 수 있어요, 게다가 자동으로!`)
             .addFields(
                 {
                     name: `🔗 초대 및 공유`,
