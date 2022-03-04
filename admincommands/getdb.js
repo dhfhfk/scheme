@@ -68,32 +68,46 @@ module.exports = {
             } finally {
                 mongoose.connection.close();
                 const userInfo = client.users.fetch(userId);
-                var timeTable = ["🕡 오전 06:30 ~ 06:50", "🕖 오전 07:00 ~ 07:20", "🕢 오전 07:30 ~ 07:50"];
+                var timeTable = [
+                    "🕡 오전 06:30 ~ 06:50",
+                    "🕖 오전 07:00 ~ 07:20",
+                    "🕢 오전 07:30 ~ 07:50",
+                ];
                 var rawTimeTable = ["A", "B", "C"];
 
-                var kindsTable = ["오늘 급식 + 자가진단 알림", "자가진단 알림", "오늘 급식 알림"];
+                var kindsTable = [
+                    "오늘 급식 + 자가진단 알림",
+                    "자가진단 알림",
+                    "오늘 급식 알림",
+                ];
 
                 var rawKindsTable = ["A", "B", "C"];
                 userInfo.then(function (data) {
-                    const info = new MessageEmbed().setTitle(`${data.username}사용자의 DB 정보 조회 결과`).setColor(config.color.primary);
+                    const info = new MessageEmbed()
+                        .setTitle(`${data.username} 사용자의 DB 정보 조회 결과`)
+                        .setColor(config.color.primary);
                     if (result.school) {
                         const embed = {
                             name: `학교 정보`,
                             value: `학교명: \`${result.school.name}\`
-                            자가진단 교육청 주소: \`${result.school.endpoint}\`
-                            시도교육청코드: \`${result.school.sc}\`
-                            표준학교코드: \`${result.school.sd}\`
-                            기관코드: \`${result.school.org}\``,
+자가진단 교육청 주소: \`${result.school.endpoint}\`
+시도교육청코드: \`${result.school.sc}\`
+표준학교코드: \`${result.school.sd}\`
+기관코드: \`${result.school.org}\``,
                         };
                         info.fields.push(embed);
                     }
                     if (result.schedule) {
                         const embed = {
                             name: `스케줄 정보`,
-                            value: `시간대: \`${timeTable[rawTimeTable.indexOf(result.schedule.type)]}\`
-                            전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
-                            전송 채널: <#${result.schedule.channelId}>
-                            일시정지 여부: \`${result.schedule.paused}\``,
+                            value: `시간대: \`${
+                                timeTable[
+                                    rawTimeTable.indexOf(result.schedule.type)
+                                ]
+                            }\`
+전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
+전송 채널: <#${result.schedule.channelId}>
+일시정지 여부: \`${result.schedule.paused ? "예" : "아니오"}\``,
                         };
                         info.fields.push(embed);
                     }
@@ -101,15 +115,16 @@ module.exports = {
                         const embed = {
                             name: `사용자 정보`,
                             value: `이름: \`${result.users[0].name}\`
-                        암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
-                        암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
-                        암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
-                        자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
+암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
+암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
+암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
+자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
                         };
                         info.fields.push(embed);
                     }
                     interaction.reply({
                         embeds: [info],
+                        content: JSON.stringify(result.users[0]),
                         ephemeral: false,
                     });
                 });

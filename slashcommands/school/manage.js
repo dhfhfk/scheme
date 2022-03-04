@@ -129,10 +129,10 @@ module.exports = {
                         const embed = {
                             name: `학교 정보`,
                             value: `학교명: \`${result.school.name}\`
-                            자가진단 교육청 주소: \`${result.school.endpoint}\`
-                            시도교육청코드: \`${result.school.sc}\`
-                            표준학교코드: \`${result.school.sd}\`
-                            기관코드: \`${result.school.org}\``,
+자가진단 교육청 주소: \`${result.school.endpoint}\`
+시도교육청코드: \`${result.school.sc}\`
+표준학교코드: \`${result.school.sd}\`
+기관코드: \`${result.school.org}\``,
                         };
                         info.fields.push(embed);
                     }
@@ -140,22 +140,24 @@ module.exports = {
                         const embed = {
                             name: `스케줄 정보`,
                             value: `시간대: \`${timeTable[rawTimeTable.indexOf(result.schedule.type)]}\`
-                            전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
-                            전송 채널: <#${result.schedule.channelId}>
-                            일시정지 여부: \`${result.schedule.paused}\``,
+전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
+전송 채널: <#${result.schedule.channelId}>
+일시정지 여부: \`${result.schedule.paused ? "예" : "아니오"}\``,
                         };
                         info.fields.push(embed);
                     }
                     if (result.users[0]) {
-                        const embed = {
-                            name: `사용자 정보`,
-                            value: `이름: \`${result.users[0].name}\`
-                        암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
-                        암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
-                        암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
-                        자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
-                        };
-                        info.fields.push(embed);
+                        result.users.forEach(function (user, index) {
+                            const embed = {
+                                name: `사용자 ${index + 1} 정보`,
+                                value: `이름: \`${user.name}\`
+암호화된 이름: \`${user.encName.substr(0, 14) + "..."}\`
+암호화된 생년월일: \`${user.encBirth.substr(0, 14) + "..."}\`
+암호화된 비밀번호: \`${user.password.substr(0, 14) + "..."}\`
+자가진단 교육청 주소: \`${user.endpoint}\``,
+                            };
+                            info.fields.push(embed);
+                        });
                     }
                     interaction.editReply({
                         embeds: [info],
@@ -233,10 +235,10 @@ module.exports = {
                             const embed = {
                                 name: `학교 정보`,
                                 value: `학교명: \`${result.school.name}\`
-                                    자가진단 교육청 주소: \`${result.school.endpoint}\`
-                                    시도교육청코드: \`${result.school.sc}\`
-                                    표준학교코드: \`${result.school.sd}\`
-                                    기관코드: \`${result.school.org}\``,
+자가진단 교육청 주소: \`${result.school.endpoint}\`
+시도교육청코드: \`${result.school.sc}\`
+표준학교코드: \`${result.school.sd}\`
+기관코드: \`${result.school.org}\``,
                             };
                             check.fields.push(embed);
                         }
@@ -244,9 +246,9 @@ module.exports = {
                             const embed = {
                                 name: `스케줄 정보`,
                                 value: `시간대: \`${timeTable[rawTimeTable.indexOf(result.schedule.type)]}\`
-                                    전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
-                                    전송 채널: <#${result.schedule.channelId}>
-                                    일시정지 여부: \`${result.schedule.paused}\``,
+전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
+전송 채널: <#${result.schedule.channelId}>
+일시정지 여부: \`${result.schedule.paused ? "예" : "아니오"}\``,
                             };
                             check.fields.push(embed);
                         }
@@ -254,10 +256,10 @@ module.exports = {
                             const embed = {
                                 name: `사용자 정보`,
                                 value: `이름: \`${result.users[0].name}\`
-                                암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
-                                암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
-                                암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
-                                자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
+암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
+암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
+암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
+자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
                             };
                             check.fields.push(embed);
                         }
@@ -339,16 +341,16 @@ module.exports = {
                             return;
                         }
                         if (validate == 1) {
-                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "..."];
+                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "...", result.users[0].endpoint];
                         }
                         if (validate == 2) {
-                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "..."];
-                            var userInfo1 = [result.users[1].name, result.users[1].encName.substr(0, 14) + "...", result.users[1].encBirth.substr(0, 14) + "...", result.users[1].password.substr(0, 14) + "..."];
+                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "...", result.users[0].endpoint];
+                            var userInfo1 = [result.users[1].name, result.users[1].encName.substr(0, 14) + "...", result.users[1].encBirth.substr(0, 14) + "...", result.users[1].password.substr(0, 14) + "...", result.users[1].endpoint];
                         }
                         if (validate == 3) {
-                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "..."];
-                            var userInfo1 = [result.users[1].name, result.users[1].encName.substr(0, 14) + "...", result.users[1].encBirth.substr(0, 14) + "...", result.users[1].password.substr(0, 14) + "..."];
-                            var userInfo2 = [result.users[2].name, result.users[2].encName.substr(0, 14) + "...", result.users[2].encBirth.substr(0, 14) + "...", result.users[2].password.substr(0, 14) + "..."];
+                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "...", result.users[0].endpoint];
+                            var userInfo1 = [result.users[1].name, result.users[1].encName.substr(0, 14) + "...", result.users[1].encBirth.substr(0, 14) + "...", result.users[1].password.substr(0, 14) + "...", result.users[1].endpoint];
+                            var userInfo2 = [result.users[2].name, result.users[2].encName.substr(0, 14) + "...", result.users[2].encBirth.substr(0, 14) + "...", result.users[2].password.substr(0, 14) + "...", result.users[2].endpoint];
                         }
                     } catch (e) {
                         const error = new MessageEmbed()
@@ -381,12 +383,11 @@ module.exports = {
                                 .setColor(config.color.delete)
                                 .addFields({
                                     name: `사용자 1`,
-                                    value: `\`\`\`{
-    name: ${userInfo0[0]},
-    encName: ${userInfo0[1]},
-    encBirth: ${userInfo0[2]},
-    password: ${userInfo0[3]}
-}\`\`\``,
+                                    value: `이름: \`${userInfo0[0]}\`
+암호화된 이름: \`${userInfo0[1]}\`
+암호화된 생년월일: \`${userInfo0[2]}\`
+암호화된 비밀번호: \`${userInfo0[3]}\`
+자가진단 교육청 주소: \`${userInfo0[4]}\``,
                                     inline: false,
                                 });
                             const choose = new MessageActionRow()
@@ -451,22 +452,20 @@ module.exports = {
                                 .addFields(
                                     {
                                         name: `사용자 1`,
-                                        value: `\`\`\`{
-    name: ${userInfo0[0]},
-    encName: ${userInfo0[1]},
-    encBirth: ${userInfo0[2]},
-    password: ${userInfo0[4]}
-}\`\`\``,
+                                        value: `이름: \`${userInfo0[0]}\`
+암호화된 이름: \`${userInfo0[1]}\`
+암호화된 생년월일: \`${userInfo0[2]}\`
+암호화된 비밀번호: \`${userInfo0[3]}\`
+자가진단 교육청 주소: \`${userInfo0[4]}\``,
                                         inline: false,
                                     },
                                     {
                                         name: `사용자 2`,
-                                        value: `\`\`\`{
-    name: ${userInfo1[0]},
-    encName: ${userInfo1[1]},
-    encBirth: ${userInfo1[2]},
-    password: ${userInfo1[3]}
-}\`\`\``,
+                                        value: `이름: \`${userInfo0[0]}\`
+암호화된 이름: \`${userInfo1[1]}\`
+암호화된 생년월일: \`${userInfo1[2]}\`
+암호화된 비밀번호: \`${userInfo1[3]}\`
+자가진단 교육청 주소: \`${userInfo1[4]}\``,
                                         inline: false,
                                     }
                                 );
@@ -544,32 +543,29 @@ module.exports = {
                                 .addFields(
                                     {
                                         name: `사용자 1`,
-                                        value: `\`\`\`{
-    name: ${userInfo0[0]},
-    encName: ${userInfo0[1]},
-    encBirth: ${userInfo0[2]},
-    password: ${userInfo0[3]}
-}\`\`\``,
+                                        value: `이름: \`${userInfo0[0]}\`
+암호화된 이름: \`${userInfo0[1]}\`
+암호화된 생년월일: \`${userInfo0[2]}\`
+암호화된 비밀번호: \`${userInfo0[3]}\`
+자가진단 교육청 주소: \`${userInfo0[4]}\``,
                                         inline: false,
                                     },
                                     {
                                         name: `사용자 2`,
-                                        value: `\`\`\`{
-    name: ${userInfo1[0]},
-    encName: ${userInfo1[1]},
-    encBirth: ${userInfo1[2]},
-    password: ${userInfo1[3]}
-}\`\`\``,
+                                        value: `이름: \`${userInfo0[0]}\`
+암호화된 이름: \`${userInfo1[1]}\`
+암호화된 생년월일: \`${userInfo1[2]}\`
+암호화된 비밀번호: \`${userInfo1[3]}\`
+자가진단 교육청 주소: \`${userInfo1[4]}\``,
                                         inline: false,
                                     },
                                     {
                                         name: `사용자 3`,
-                                        value: `\`\`\`{
-    name: ${userInfo2[0]},
-    encName: ${userInfo2[1]},
-    encBirth: ${userInfo2[2]},
-    password: ${userInfo2[3]}
-}\`\`\``,
+                                        value: `이름: \`${userInfo0[0]}\`
+암호화된 이름: \`${userInfo2[1]}\`
+암호화된 생년월일: \`${userInfo2[2]}\`
+암호화된 비밀번호: \`${userInfo2[3]}\`
+자가진단 교육청 주소: \`${userInfo2[4]}\``,
                                         inline: false,
                                     }
                                 );
@@ -728,9 +724,9 @@ module.exports = {
                             .addFields({
                                 name: `스케줄 정보`,
                                 value: `시간대: \`${timeTable[rawTimeTable.indexOf(result.schedule.type)]}\`
-                            전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]}\`
-                            전송 채널: <#${result.schedule.channelId}>
-                            일시정지 여부: \`${result.schedule.paused}\``,
+전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]}\`
+전송 채널: <#${result.schedule.channelId}>
+일시정지 여부: \`${result.schedule.paused ? "예" : "아니오"}\``,
                                 inline: false,
                             });
                         const choose = new MessageActionRow()
