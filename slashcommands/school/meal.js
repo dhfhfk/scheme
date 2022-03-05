@@ -5,11 +5,6 @@ const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
-const pageController = new MessageActionRow()
-    .addComponents(new MessageButton().setCustomId("today").setLabel("오늘").setStyle("PRIMARY"))
-    .addComponents(new MessageButton().setCustomId("prev").setLabel("<").setStyle("SECONDARY"))
-    .addComponents(new MessageButton().setCustomId("next").setLabel(">").setStyle("SECONDARY"));
-
 async function getMeal(schoolInfo, today) {
     var options = {
         uri: "http://open.neis.go.kr/hub/mealServiceDietInfo",
@@ -101,6 +96,12 @@ module.exports = {
                 }
             } finally {
                 mongoose.connection.close();
+                const randomKey = Math.random().toString(16).slice(2);
+                const pageController = new MessageActionRow()
+                    .addComponents(new MessageButton().setCustomId(`today-${randomKey}`).setLabel("오늘").setStyle("PRIMARY"))
+                    .addComponents(new MessageButton().setCustomId(`prev-${randomKey}`).setLabel("<").setStyle("SECONDARY"))
+                    .addComponents(new MessageButton().setCustomId(`spec-${randomKey}`).setLabel("📅 입력").setStyle("SECONDARY"))
+                    .addComponents(new MessageButton().setCustomId(`next-${randomKey}`).setLabel(">").setStyle("SECONDARY"));
                 let today = new Date();
                 const weeks = new Array("일", "월", "화", "수", "목", "금", "토");
                 let date2 = `${today.getFullYear()}년 ${("0" + (today.getMonth() + 1)).slice(-2)}월 ${("0" + today.getDate()).slice(-2)}일 (${weeks[today.getDay()]})`;
@@ -118,8 +119,21 @@ module.exports = {
                                 inline: false,
                             };
                         });
+                        await interaction.editReply({
+                            embeds: [
+                                {
+                                    title: `🏫 ${school.name} 급식`,
+                                    color: config.color.primary,
+                                    fields: [chooseEmbed],
+                                    footer: {
+                                        text: date2,
+                                    },
+                                },
+                            ],
+                            components: [pageController],
+                        });
                     } catch {
-                        return await interaction.editReply({
+                        await interaction.editReply({
                             embeds: [
                                 {
                                     title: `🏫 ${school.name} 급식`,
@@ -130,26 +144,73 @@ module.exports = {
                                     },
                                 },
                             ],
+                            components: [pageController],
                         });
                     }
-                    await interaction.editReply({
-                        embeds: [
-                            {
-                                title: `🏫 ${school.name} 급식`,
-                                color: config.color.primary,
-                                fields: [chooseEmbed],
-                                footer: {
-                                    text: date2,
-                                },
-                            },
-                        ],
-                        components: [pageController],
-                    });
-
-                    const collector = await interaction.channel.createMessageComponentCollector({ componentType: "BUTTON", time: 60000 });
+                    const collector = interaction.channel.createMessageComponentCollector({ componentType: "BUTTON" });
 
                     collector.on("collect", async (i) => {
-                        if (i.customId == "next") {
+                        if (i.customId == `spec-${randomKey}`) {
+                            i.reply({ ephemeral: false, content: `<@${i.user.id}> 급식을 조회할 날짜를 입력해주세요. 예) 2022년 3월 5일은 \`20220305\`로 입력하세요.` }).then(async () => {
+                                setTimeout(() => i.deleteReply().catch(() => {}), 20000);
+                            });
+                            const filter = (m) => i.user.id == m.author.id;
+                            const collector = interaction.channel.createMessageCollector({ filter, time: 20000 });
+                            collector.on("collect", async (m) => {
+                                await m.delete();
+                                await i.deleteReply();
+                                collector.stop();
+                                if (m.content.length < 8 || m.content.length > 8) {
+                                    collector.stop();
+                                    return i.followUp({ ephemeral: true, content: `날짜 입력 형식이 잘못되었어요. 다시 버튼을 누르고 입력해주세요. 예) 2022년 3월 5일은 \`20220305\`로 입력하세요.`, ephemeral: false }).then(async (m) => {
+                                        setTimeout(() => m.delete().catch(() => {}), 5000);
+                                    });
+                                }
+                                const year = Number(m.content.substring(0, 4));
+                                const month = Number(m.content.substring(4, 6));
+                                const day = Number(m.content.substring(6, 8));
+                                today = new Date(year, month - 1, day + 0);
+                                date2 = `${today.getFullYear()}년 ${("0" + (today.getMonth() + 1)).slice(-2)}월 ${("0" + today.getDate()).slice(-2)}일 (${weeks[today.getDay()]})`;
+                                getMeal(school, today).then(async function (data) {
+                                    try {
+                                        var chooseEmbed = parse(data).map((meal) => {
+                                            return {
+                                                name: `${meal.type} ${meal.cal}`,
+                                                value: meal.meal,
+                                                inline: false,
+                                            };
+                                        });
+                                    } catch {
+                                        return await interaction.editReply({
+                                            embeds: [
+                                                {
+                                                    title: `🏫 ${school.name} 급식`,
+                                                    description: "급식 정보가 없어요.",
+                                                    color: config.color.primary,
+                                                    footer: {
+                                                        text: date2,
+                                                    },
+                                                },
+                                            ],
+                                        });
+                                    }
+                                    await interaction.editReply({
+                                        embeds: [
+                                            {
+                                                title: `🏫 ${school.name} 급식`,
+                                                color: config.color.primary,
+                                                fields: [chooseEmbed],
+                                                footer: {
+                                                    text: date2,
+                                                },
+                                            },
+                                        ],
+                                        components: [pageController],
+                                    });
+                                });
+                            });
+                        }
+                        if (i.customId == `next-${randomKey}`) {
                             await i.deferUpdate();
                             today.setDate(today.getDate() + 1);
                             date2 = `${today.getFullYear()}년 ${("0" + (today.getMonth() + 1)).slice(-2)}월 ${("0" + today.getDate()).slice(-2)}일 (${weeks[today.getDay()]})`;
@@ -176,10 +237,6 @@ module.exports = {
                                         ],
                                     });
                                 }
-                                const pageController = new MessageActionRow()
-                                    .addComponents(new MessageButton().setCustomId("today").setLabel("오늘").setStyle("PRIMARY"))
-                                    .addComponents(new MessageButton().setCustomId("prev").setLabel("<").setStyle("SECONDARY"))
-                                    .addComponents(new MessageButton().setCustomId("next").setLabel(">").setStyle("SECONDARY"));
                                 await interaction.editReply({
                                     embeds: [
                                         {
@@ -194,7 +251,7 @@ module.exports = {
                                     components: [pageController],
                                 });
                             });
-                        } else if (i.customId == "prev") {
+                        } else if (i.customId == `prev-${randomKey}`) {
                             await i.deferUpdate();
                             today.setDate(today.getDate() - 1);
                             date2 = `${today.getFullYear()}년 ${("0" + (today.getMonth() + 1)).slice(-2)}월 ${("0" + today.getDate()).slice(-2)}일 (${weeks[today.getDay()]})`;
@@ -221,10 +278,6 @@ module.exports = {
                                         ],
                                     });
                                 }
-                                const pageController = new MessageActionRow()
-                                    .addComponents(new MessageButton().setCustomId("today").setLabel("오늘").setStyle("PRIMARY"))
-                                    .addComponents(new MessageButton().setCustomId("prev").setLabel("<").setStyle("SECONDARY"))
-                                    .addComponents(new MessageButton().setCustomId("next").setLabel(">").setStyle("SECONDARY"));
                                 await interaction.editReply({
                                     embeds: [
                                         {
@@ -239,7 +292,7 @@ module.exports = {
                                     components: [pageController],
                                 });
                             });
-                        } else if (i.customId == "today") {
+                        } else if (i.customId == `today-${randomKey}`) {
                             await i.deferUpdate();
                             today = new Date();
                             date2 = `${today.getFullYear()}년 ${("0" + (today.getMonth() + 1)).slice(-2)}월 ${("0" + today.getDate()).slice(-2)}일 (${weeks[today.getDay()]})`;
@@ -266,10 +319,6 @@ module.exports = {
                                         ],
                                     });
                                 }
-                                const pageController = new MessageActionRow()
-                                    .addComponents(new MessageButton().setCustomId("today").setLabel("오늘").setStyle("PRIMARY"))
-                                    .addComponents(new MessageButton().setCustomId("prev").setLabel("<").setStyle("SECONDARY"))
-                                    .addComponents(new MessageButton().setCustomId("next").setLabel(">").setStyle("SECONDARY"));
                                 await interaction.editReply({
                                     embeds: [
                                         {
