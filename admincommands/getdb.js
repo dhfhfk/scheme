@@ -68,24 +68,14 @@ module.exports = {
             } finally {
                 mongoose.connection.close();
                 const userInfo = client.users.fetch(userId);
-                var timeTable = [
-                    "🕡 오전 06:30 ~ 06:50",
-                    "🕖 오전 07:00 ~ 07:20",
-                    "🕢 오전 07:30 ~ 07:50",
-                ];
+                var timeTable = ["🕡 오전 06:30 ~ 06:50", "🕖 오전 07:00 ~ 07:20", "🕢 오전 07:30 ~ 07:50"];
                 var rawTimeTable = ["A", "B", "C"];
 
-                var kindsTable = [
-                    "오늘 급식 + 자가진단 알림",
-                    "자가진단 알림",
-                    "오늘 급식 알림",
-                ];
+                var kindsTable = ["오늘 급식 + 자가진단 알림", "자가진단 알림", "오늘 급식 알림"];
 
                 var rawKindsTable = ["A", "B", "C"];
                 userInfo.then(function (data) {
-                    const info = new MessageEmbed()
-                        .setTitle(`${data.username} 사용자의 DB 정보 조회 결과`)
-                        .setColor(config.color.primary);
+                    const info = new MessageEmbed().setTitle(`${data.username} 사용자의 DB 정보 조회 결과`).setColor(config.color.primary);
                     if (result.school) {
                         const embed = {
                             name: `학교 정보`,
@@ -100,11 +90,7 @@ module.exports = {
                     if (result.schedule) {
                         const embed = {
                             name: `스케줄 정보`,
-                            value: `시간대: \`${
-                                timeTable[
-                                    rawTimeTable.indexOf(result.schedule.type)
-                                ]
-                            }\`
+                            value: `시간대: \`${timeTable[rawTimeTable.indexOf(result.schedule.type)]}\`
 전송 정보: \`${kindsTable[rawKindsTable.indexOf(result.schedule.kinds)]} 받기\`
 전송 채널: <#${result.schedule.channelId}>
 일시정지 여부: \`${result.schedule.paused ? "예" : "아니오"}\``,
@@ -112,15 +98,17 @@ module.exports = {
                         info.fields.push(embed);
                     }
                     if (result.users[0]) {
-                        const embed = {
-                            name: `사용자 정보`,
-                            value: `이름: \`${result.users[0].name}\`
-암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
-암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
-암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
-자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
-                        };
-                        info.fields.push(embed);
+                        result.users.forEach(function (user, index) {
+                            const embed = {
+                                name: `사용자 ${index + 1} 정보`,
+                                value: `이름: \`${user.name}\`
+암호화된 이름: \`${user.encName.substr(0, 14) + "..."}\`
+암호화된 생년월일: \`${user.encBirth.substr(0, 14) + "..."}\`
+암호화된 비밀번호: \`${user.password.substr(0, 14) + "..."}\`
+자가진단 교육청 주소: \`${user.endpoint}\``,
+                            };
+                            info.fields.push(embed);
+                        });
                     }
                     interaction.reply({
                         embeds: [info],

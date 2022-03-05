@@ -1,4 +1,4 @@
-const { Client, Message, MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const { Client, Message, MessageEmbed, MessageActionRow, MessageButton, MessageSelectMenu } = require("discord.js");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
@@ -53,10 +53,10 @@ module.exports = {
      */
     run: async (client, interaction, args, message) => {
         await interaction.deferReply({ ephemeral: true });
+        const randomKey = Math.random().toString(16).slice(2);
         const userId = interaction.user.id;
         const userName = interaction.user.username;
         let command = interaction.options.getSubcommand();
-        console.log(`[📄] (${userId}, ${userName}) ${command}`);
         if (command === "조회") {
             await mongo().then(async (mongoose) => {
                 try {
@@ -253,19 +253,31 @@ module.exports = {
                             check.fields.push(embed);
                         }
                         if (result.users[0]) {
-                            const embed = {
-                                name: `사용자 정보`,
-                                value: `이름: \`${result.users[0].name}\`
-암호화된 이름: \`${result.users[0].encName.substr(0, 14) + "..."}\`
-암호화된 생년월일: \`${result.users[0].encBirth.substr(0, 14) + "..."}\`
-암호화된 비밀번호: \`${result.users[0].password.substr(0, 14) + "..."}\`
-자가진단 교육청 주소: \`${result.users[0].endpoint}\``,
-                            };
-                            check.fields.push(embed);
+                            result.users.forEach(function (user, index) {
+                                const embed = {
+                                    name: `사용자 ${index + 1} 정보`,
+                                    value: `이름: \`${user.name}\`
+    암호화된 이름: \`${user.encName.substr(0, 14) + "..."}\`
+    암호화된 생년월일: \`${user.encBirth.substr(0, 14) + "..."}\`
+    암호화된 비밀번호: \`${user.password.substr(0, 14) + "..."}\`
+    자가진단 교육청 주소: \`${user.endpoint}\``,
+                                };
+                                check.fields.push(embed);
+                            });
                         }
                         const choose = new MessageActionRow()
-                            .addComponents(new MessageButton().setCustomId("0").setLabel("네. 삭제합니다.").setStyle("DANGER"))
-                            .addComponents(new MessageButton().setCustomId("1").setLabel("아니요").setStyle("SECONDARY"));
+                            .addComponents(
+                                new MessageButton()
+                                    .setCustomId("0" + randomKey)
+                                    .setLabel("네. 삭제합니다.")
+                                    .setStyle("DANGER")
+                            )
+                            .addComponents(
+                                new MessageButton()
+                                    .setCustomId("1" + randomKey)
+                                    .setLabel("아니요")
+                                    .setStyle("SECONDARY")
+                            );
                         interaction.editReply({
                             embeds: [check],
                             components: [choose],
@@ -277,7 +289,7 @@ module.exports = {
                         collector.on("end", async (ButtonInteraction) => {
                             {
                                 var rawanswer = ButtonInteraction.first().customId;
-                                if (rawanswer == "1") {
+                                if (rawanswer == "1" + randomKey) {
                                     const cancelled = new MessageEmbed().setTitle(`정보 삭제가 취소되었어요.`).setColor(config.color.error);
                                     interaction.editReply({
                                         embeds: [cancelled],
@@ -340,18 +352,6 @@ module.exports = {
                             });
                             return;
                         }
-                        if (validate == 1) {
-                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "...", result.users[0].endpoint];
-                        }
-                        if (validate == 2) {
-                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "...", result.users[0].endpoint];
-                            var userInfo1 = [result.users[1].name, result.users[1].encName.substr(0, 14) + "...", result.users[1].encBirth.substr(0, 14) + "...", result.users[1].password.substr(0, 14) + "...", result.users[1].endpoint];
-                        }
-                        if (validate == 3) {
-                            var userInfo0 = [result.users[0].name, result.users[0].encName.substr(0, 14) + "...", result.users[0].encBirth.substr(0, 14) + "...", result.users[0].password.substr(0, 14) + "...", result.users[0].endpoint];
-                            var userInfo1 = [result.users[1].name, result.users[1].encName.substr(0, 14) + "...", result.users[1].encBirth.substr(0, 14) + "...", result.users[1].password.substr(0, 14) + "...", result.users[1].endpoint];
-                            var userInfo2 = [result.users[2].name, result.users[2].encName.substr(0, 14) + "...", result.users[2].encBirth.substr(0, 14) + "...", result.users[2].password.substr(0, 14) + "...", result.users[2].endpoint];
-                        }
                     } catch (e) {
                         const error = new MessageEmbed()
                             .setTitle(`${config.emojis.x} 정보를 찾을 수 없어요!`)
@@ -377,17 +377,119 @@ module.exports = {
                         return;
                     } finally {
                         mongoose.connection.close();
-                        if (validate == 1) {
+                        if (result.users.length > 1) {
+                            const chooseEmbed = result.users.map((user, index) => {
+                                return {
+                                    name: `사용자 ${index + 1}`,
+                                    value: `\`${user.name}\` 사용자 정보를 제거해요.`,
+                                    inline: false,
+                                };
+                            });
+                            const chooseMenu = result.users.map((user, index) => {
+                                return {
+                                    label: `사용자 ${index + 1}`,
+                                    description: `\`${user.name}\` 사용자 정보를 제거해요.`,
+                                    value: String(index) + randomKey,
+                                };
+                            });
+                            const choose = {
+                                title: `어떤 사용자의 정보를 제거할까요?`,
+                                description: "아래의 선택 메뉴에서 선택하세요.",
+                                color: config.color.primary,
+                                fields: [
+                                    {
+                                        name: `모든 사용자`,
+                                        value: `모든 사용자 정보를 제거해요.`,
+                                        inline: false,
+                                    },
+                                    chooseEmbed,
+                                ],
+                            };
+                            const row = new MessageActionRow().addComponents(
+                                new MessageSelectMenu()
+                                    .setCustomId("select" + randomKey)
+                                    .setPlaceholder("어떤 사용자 정보를 제거할까요?")
+                                    .addOptions([
+                                        {
+                                            label: `모든 사용자`,
+                                            description: `모든 사용자 정보를 제거해요.`,
+                                            value: "all" + randomKey,
+                                        },
+                                        chooseMenu,
+                                    ])
+                            );
+                            interaction.editReply({
+                                embeds: [choose],
+                                components: [row],
+                                ephemeral: true,
+                            });
+
+                            const collector = interaction.channel.createMessageComponentCollector({
+                                max: 1,
+                            });
+                            collector.on("end", async (SelectMenuInteraction) => {
+                                let rawanswer = SelectMenuInteraction.first().values;
+                                let response;
+                                try {
+                                    if (rawanswer[0] == "all" + randomKey) {
+                                        await mongo().then(async (mongoose) => {
+                                            try {
+                                                result.users.forEach(async (user, index) => {
+                                                    await schoolSchema.updateOne(
+                                                        {
+                                                            _id: userId,
+                                                        },
+                                                        {
+                                                            $pull: {
+                                                                users: {
+                                                                    name: result.users[index].name,
+                                                                },
+                                                            },
+                                                        }
+                                                    );
+                                                });
+                                            } catch (e) {}
+                                        });
+                                    } else {
+                                        mongo().then(async (mongoose) => {
+                                            try {
+                                                const reg = new RegExp(randomKey, "g");
+                                                await schoolSchema.updateOne(
+                                                    {
+                                                        _id: userId,
+                                                    },
+                                                    {
+                                                        $pull: {
+                                                            users: {
+                                                                name: result.users[rawanswer[0].replace(reg, "")].name,
+                                                            },
+                                                        },
+                                                    }
+                                                );
+                                            } finally {
+                                                await mongoose.connection.close();
+                                            }
+                                        });
+                                    }
+                                    const deleted = new MessageEmbed().setTitle(`${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`).setColor(config.color.success).setDescription("서비스를 이용해주셔서 감사합니다.");
+                                    return await interaction.editReply({
+                                        embeds: [deleted],
+                                        components: [],
+                                        ephemeral: true,
+                                    });
+                                } catch (e) {
+                                    console.error(e);
+                                } finally {
+                                }
+                            });
+                            return;
+                        } else if (result.users.length == 1) {
                             const check = new MessageEmbed()
                                 .setTitle(`${config.emojis.delete} 정말 사용자 정보를 삭제할까요?`)
                                 .setColor(config.color.delete)
                                 .addFields({
                                     name: `사용자 1`,
-                                    value: `이름: \`${userInfo0[0]}\`
-암호화된 이름: \`${userInfo0[1]}\`
-암호화된 생년월일: \`${userInfo0[2]}\`
-암호화된 비밀번호: \`${userInfo0[3]}\`
-자가진단 교육청 주소: \`${userInfo0[4]}\``,
+                                    value: `${result.users[0].name} 사용자를 삭제해요.`,
                                     inline: false,
                                 });
                             const choose = new MessageActionRow()
@@ -443,211 +545,8 @@ module.exports = {
                                     }
                                 }
                             });
-                            return;
                         }
-                        if (validate == 2) {
-                            const info = new MessageEmbed()
-                                .setTitle(`${config.emojis.delete} 정말 사용자 정보를 삭제할까요?`)
-                                .setColor(config.color.delete)
-                                .addFields(
-                                    {
-                                        name: `사용자 1`,
-                                        value: `이름: \`${userInfo0[0]}\`
-암호화된 이름: \`${userInfo0[1]}\`
-암호화된 생년월일: \`${userInfo0[2]}\`
-암호화된 비밀번호: \`${userInfo0[3]}\`
-자가진단 교육청 주소: \`${userInfo0[4]}\``,
-                                        inline: false,
-                                    },
-                                    {
-                                        name: `사용자 2`,
-                                        value: `이름: \`${userInfo0[0]}\`
-암호화된 이름: \`${userInfo1[1]}\`
-암호화된 생년월일: \`${userInfo1[2]}\`
-암호화된 비밀번호: \`${userInfo1[3]}\`
-자가진단 교육청 주소: \`${userInfo1[4]}\``,
-                                        inline: false,
-                                    }
-                                );
-                            const choose = new MessageActionRow()
-                                .addComponents(new MessageButton().setCustomId("0").setLabel("네. 삭제합니다.").setStyle("DANGER"))
-                                .addComponents(new MessageButton().setCustomId("1").setLabel("아니요").setStyle("SECONDARY"));
-                            interaction.editReply({
-                                embeds: [info],
-                                components: [choose],
-                                ephemeral: true,
-                            });
-                            const collector = interaction.channel.createMessageComponentCollector({
-                                max: 1,
-                            });
-                            collector.on("end", async (ButtonInteraction) => {
-                                {
-                                    var rawanswer = ButtonInteraction.first().customId;
-                                    if (rawanswer === "0") {
-                                        mongo().then(async (mongoose) => {
-                                            try {
-                                                await schoolSchema.updateOne(
-                                                    {
-                                                        _id: userId,
-                                                    },
-                                                    {
-                                                        $pull: {
-                                                            users: {
-                                                                name: result.users[0].name,
-                                                            },
-                                                        },
-                                                    }
-                                                );
-                                                await schoolSchema.updateOne(
-                                                    {
-                                                        _id: userId,
-                                                    },
-                                                    {
-                                                        $pull: {
-                                                            users: {
-                                                                name: result.users[1].name,
-                                                            },
-                                                        },
-                                                    }
-                                                );
-                                            } catch (e) {
-                                                console.error(e);
-                                            } finally {
-                                                mongoose.connection.close();
-                                                const deleted = new MessageEmbed().setTitle(`${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`).setColor(config.color.success).setDescription("서비스를 이용해주셔서 감사합니다.");
-                                                interaction.editReply({
-                                                    embeds: [deleted],
-                                                    components: [],
-                                                    ephemeral: true,
-                                                });
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        const cancelled = new MessageEmbed().setTitle(`정보 삭제가 취소되었어요.`).setColor(config.color.error);
-                                        interaction.editReply({
-                                            embeds: [cancelled],
-                                            components: [],
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    }
-                                }
-                            });
-                            return;
-                        }
-                        if (validate == 3) {
-                            const info = new MessageEmbed()
-                                .setTitle(`${config.emojis.delete} 정말 사용자 정보를 삭제할까요?`)
-                                .setColor(config.color.delete)
-                                .addFields(
-                                    {
-                                        name: `사용자 1`,
-                                        value: `이름: \`${userInfo0[0]}\`
-암호화된 이름: \`${userInfo0[1]}\`
-암호화된 생년월일: \`${userInfo0[2]}\`
-암호화된 비밀번호: \`${userInfo0[3]}\`
-자가진단 교육청 주소: \`${userInfo0[4]}\``,
-                                        inline: false,
-                                    },
-                                    {
-                                        name: `사용자 2`,
-                                        value: `이름: \`${userInfo0[0]}\`
-암호화된 이름: \`${userInfo1[1]}\`
-암호화된 생년월일: \`${userInfo1[2]}\`
-암호화된 비밀번호: \`${userInfo1[3]}\`
-자가진단 교육청 주소: \`${userInfo1[4]}\``,
-                                        inline: false,
-                                    },
-                                    {
-                                        name: `사용자 3`,
-                                        value: `이름: \`${userInfo0[0]}\`
-암호화된 이름: \`${userInfo2[1]}\`
-암호화된 생년월일: \`${userInfo2[2]}\`
-암호화된 비밀번호: \`${userInfo2[3]}\`
-자가진단 교육청 주소: \`${userInfo2[4]}\``,
-                                        inline: false,
-                                    }
-                                );
-                            const choose = new MessageActionRow()
-                                .addComponents(new MessageButton().setCustomId("0").setLabel("네. 삭제합니다.").setStyle("DANGER"))
-                                .addComponents(new MessageButton().setCustomId("1").setLabel("아니요").setStyle("SECONDARY"));
-                            interaction.editReply({
-                                embeds: [info],
-                                components: [choose],
-                                ephemeral: true,
-                            });
-                            const collector = interaction.channel.createMessageComponentCollector({
-                                max: 1,
-                            });
-                            collector.on("end", async (ButtonInteraction) => {
-                                {
-                                    var rawanswer = ButtonInteraction.first().customId;
-                                    if (rawanswer === "0") {
-                                        mongo().then(async (mongoose) => {
-                                            try {
-                                                await schoolSchema.updateOne(
-                                                    {
-                                                        _id: userId,
-                                                    },
-                                                    {
-                                                        $pull: {
-                                                            users: {
-                                                                name: result.users[0].name,
-                                                            },
-                                                        },
-                                                    }
-                                                );
-                                                await schoolSchema.updateOne(
-                                                    {
-                                                        _id: userId,
-                                                    },
-                                                    {
-                                                        $pull: {
-                                                            users: {
-                                                                name: result.users[1].name,
-                                                            },
-                                                        },
-                                                    }
-                                                );
-                                                await schoolSchema.updateOne(
-                                                    {
-                                                        _id: userId,
-                                                    },
-                                                    {
-                                                        $pull: {
-                                                            users: {
-                                                                name: result.users[2].name,
-                                                            },
-                                                        },
-                                                    }
-                                                );
-                                            } catch (e) {
-                                                console.error(e);
-                                            } finally {
-                                                mongoose.connection.close();
-                                                const deleted = new MessageEmbed().setTitle(`${config.emojis.delete} 정보가 정상적으로 삭제되었어요.`).setColor(config.color.success).setDescription("서비스를 이용해주셔서 감사합니다.");
-                                                interaction.editReply({
-                                                    embeds: [deleted],
-                                                    components: [],
-                                                    ephemeral: true,
-                                                });
-                                                return;
-                                            }
-                                        });
-                                    } else {
-                                        const cancelled = new MessageEmbed().setTitle(`정보 삭제가 취소되었어요.`).setColor(config.color.error);
-                                        interaction.editReply({
-                                            embeds: [cancelled],
-                                            components: [],
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    }
-                                }
-                            });
-                            return;
-                        }
+                        return;
                     }
                 });
             }
@@ -730,8 +629,18 @@ module.exports = {
                                 inline: false,
                             });
                         const choose = new MessageActionRow()
-                            .addComponents(new MessageButton().setCustomId("0").setLabel("네. 삭제합니다.").setStyle("DANGER"))
-                            .addComponents(new MessageButton().setCustomId("1").setLabel("아니요").setStyle("SECONDARY"));
+                            .addComponents(
+                                new MessageButton()
+                                    .setCustomId("0" + randomKey)
+                                    .setLabel("네. 삭제합니다.")
+                                    .setStyle("DANGER")
+                            )
+                            .addComponents(
+                                new MessageButton()
+                                    .setCustomId("1" + randomKey)
+                                    .setLabel("아니요")
+                                    .setStyle("SECONDARY")
+                            );
                         interaction.editReply({
                             embeds: [info],
                             components: [choose],
@@ -744,7 +653,7 @@ module.exports = {
                             {
                                 var rawanswer = ButtonInteraction.first().customId;
                             }
-                            if (rawanswer === "0") {
+                            if (rawanswer === "0" + randomKey) {
                                 mongo().then(async (mongoose) => {
                                     try {
                                         await schoolSchema.updateOne(

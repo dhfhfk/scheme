@@ -173,7 +173,6 @@ module.exports = {
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
                         let response;
-                        console.log(doHcs);
                         try {
                             if (rawanswer[0] !== "all") {
                                 response = await doHcs(result.users[rawanswer], RAT);
