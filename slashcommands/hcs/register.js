@@ -16,10 +16,8 @@ function encrypt(message) {
     return crypt.encrypt(message);
 }
 
-var secretKey = "79SDFGN4THU9BJK9X890HJL2399VU";
-
 function encrypt2(message) {
-    return CryptoJS.AES.encrypt(JSON.stringify(message), secretKey).toString();
+    return CryptoJS.AES.encrypt(JSON.stringify(message), config.services.secret_key).toString();
 }
 
 var maskingName = function (strName) {
@@ -39,7 +37,7 @@ var maskingName = function (strName) {
 
 module.exports = {
     name: "사용자등록",
-    description: "등록된 학교를 기반으로 자가진단 사용자를 등록해요.",
+    description: "등록된 학교를 기반으로 자가진단 사용자를 등록해요. 모든 정보는 암호화되어 저장됩니다.",
     options: [
         {
             name: "이름",
@@ -355,6 +353,7 @@ module.exports = {
                                     encBirth: birth,
                                     password: encPassword,
                                     endpoint: userInfo[1],
+                                    org: userInfo[2],
                                 },
                             },
                         },
@@ -362,11 +361,11 @@ module.exports = {
                     );
                 } finally {
                     await mongoose.connection.close();
-                    var counts = ["첫", "두", "세", "네"];
+                    var counts = ["첫", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"];
                     var count = users.length;
                     console.log(`[✅] (${userId}, ${userName}) REGISTER ${maskedName} user`);
                     var registered = new MessageEmbed()
-                        .setTitle(`${config.emojis.done} ${counts[count]}번째 사용자가 등록되었어요.`)
+                        .setTitle(`${config.emojis.done} ${counts[count]} 번째 사용자가 등록되었어요.`)
                         .setDescription("이제 `/스케줄등록`이 가능하고 `/자가진단` 명령어로 수동 자가진단에 참여할 수 있어요.")
                         .setColor(config.color.success)
                         .addFields(
@@ -375,15 +374,11 @@ module.exports = {
                                 value: `생년월일, 비밀번호, 성명은 자가진단 서버에서만 해독할 수 있는 RSA 암호화값으로 저장됩니다.`,
                             },
                             {
-                                name: `Q2. 개인 정보를 삭제하려면?`,
-                                value: `\`/설정 명령:조회\` 명령어로 개인 정보를 조회할 수 있고 \`/설정 명령:삭제\` 명령어로 개인 정보를 삭제할 수 있습니다.`,
-                            },
-                            {
-                                name: `Q3. 사용자 등록을 주기적으로 해야하나요?`,
+                                name: `Q2. 사용자 등록을 주기적으로 해야하나요?`,
                                 value: `비밀번호 변경, 학년 변경, 자가진단 중 오류 발생 시에는 정보 삭제 후 다시 등록해야 합니다.`,
                             },
                             {
-                                name: `Q4. 다른 사용자도 추가할 수 있나요?`,
+                                name: `Q3. 다른 사용자도 추가할 수 있나요?`,
                                 value: `현재 디스코드 계정당 \`${config.services.user_limit}\`명의 사용자만 등록 가능합니다.`,
                             }
                         );

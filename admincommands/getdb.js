@@ -120,24 +120,3 @@ module.exports = {
         });
     },
 };
-// module.exports = {
-//     name: "검색",
-//     description: "검색",
-//     /**
-//      * @param {Client} client
-//      * @param {Message} message
-//      * @param {String[]} args
-//      */
-//     run: async (client, interaction, args, message) => {
-//         mongo().then(async (mongoose) => {
-//             try {
-//                 var result = await schoolSchema.find({
-//                     "schedule.type": "A",
-//                 });
-//             } finally {
-//                 mongoose.connection.close();
-//                 console.log(result);
-//             }
-//         });
-//     },
-// };
