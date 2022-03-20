@@ -38,7 +38,7 @@ var __importDefault =
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = void 0;
 const request_1 = __importDefault(require("./request"));
-const encrypt_1 = __importDefault(require("./encrypt"));
+const util_1 = require("./util");
 function login(endpoint, schoolCode, name, birthday) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = {

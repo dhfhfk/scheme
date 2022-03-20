@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerPassword = void 0;
 const request_1 = __importDefault(require("./request"));
-const encrypt_1 = __importDefault(require("./encrypt"));
+const util_1 = require("./util");
 /**
  * 비밀번호를 설정합니다.
  *
@@ -26,7 +26,7 @@ function registerPassword(endpoint, token, password) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = {
             deviceUuid: "",
-            password: (0, encrypt_1.default)(password)
+            password: (0, util_1.encrypt)(password)
         };
         const response = yield (0, request_1.default)("/v2/registerPassword", "POST", data, endpoint, token);
         return { success: response };

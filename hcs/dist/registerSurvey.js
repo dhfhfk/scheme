@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerSurvey = exports.CovidQuickTestResult = void 0;
 const request_1 = __importDefault(require("./request"));
 const userInfo_1 = require("./userInfo");
+const util_1 = require("./util");
 var CovidQuickTestResult;
 (function (CovidQuickTestResult) {
     /** 검사하지 않음 */
@@ -66,8 +67,9 @@ function registerSurvey(
 ) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield (0, userInfo_1.userInfo)(endpoint, token);
+        const clientVersion = yield (0, util_1.retrieveClientVersion)();
         const data = {
-            clientVersion: "1.8.8",
+            clientVersion,
             deviceUuid: "",
             rspns00: !survey.Q1 && survey.Q2 !== CovidQuickTestResult.NONE && !survey.Q3 ? "Y" : "N",
             rspns01: survey.Q1 ? "2" : "1",
@@ -89,7 +91,14 @@ function registerSurvey(
             upperUserNameEncpt: user[0].name,
         };
         const response = yield (0, request_1.default)("/registerServey", "POST", data, endpoint, user[0].token);
+        if (response.isError) {
+            return {
+                success: false,
+                message: response.message,
+            };
+        }
         return {
+            success: true,
             registeredAt: response["registerDtm"],
         };
     });

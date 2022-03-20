@@ -3,20 +3,13 @@ const mongo = require("../mongo");
 const schedule = require("node-schedule");
 const schoolSchema = require("../schemas/school-schema");
 const { MessageEmbed } = require("discord.js");
-const hcs = require("../hcs");
 const CryptoJS = require("crypto-js");
 const config = require("../config.json");
 const request = require("request");
-
-var secretKey = "79SDFGN4THU9BJK9X890HJL2399VU";
+const { doHcs } = require("../handler/hcs");
 
 function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function decrypt2(message) {
-    const bytes = CryptoJS.AES.decrypt(message, secretKey);
-    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 }
 
 async function getRawMeal(options) {
@@ -184,85 +177,6 @@ async function getMeal(schoolInfo) {
     }
 }
 
-async function doHcs(user, sd) {
-    const today = new Date();
-    const week = today.getDay();
-    if ((week == 1 || week == 3) && sd == "7430059") {
-        console.log("RAT = TRUE, 음성으로 제출");
-        RAT = true;
-    }
-    const survey = {
-        /**
-         * 1. 학생 본인이 코로나19 감염에 의심되는 아래의 임상증상*이 있나요?
-         * (주요 임상증상) 발열(37.5℃), 기침, 호흡곤란, 오한, 근육통, 두통, 인후통, 후각·미각소실
-         */
-        Q1: false,
-
-        /**
-         * 2. 학생은 오늘 신속항원검사(자가진단)를 실시했나요?
-         */
-        Q2: RAT ? "NEGATIVE" : "NONE",
-
-        /**
-         * 3.학생 본인 또는 동거인이 PCR 검사를 받고 그 결과를 기다리고 있나요?
-         */
-        Q3: false,
-    };
-    const response = {
-        success: true,
-        message: "",
-        RAT: RAT,
-        user: user.name,
-    };
-    try {
-        var login = await hcs.login(user.endpoint, user.org, user.encName, user.encBirth);
-        if (!login.success) {
-            response.success = false;
-            response.message = "1차 로그인 실패";
-            return response;
-        }
-    } catch (e) {
-        response.success = false;
-        response.message = `1차 로그인 중 오류 발생 ${String(e)}`;
-        return response;
-    }
-    try {
-        var secondLogin = await hcs.secondLogin(user.endpoint, login.token, decrypt2(user.password));
-        if (secondLogin.success == false) {
-            const fail = secondLogin;
-            if (fail.message) {
-                response.success = false;
-                response.message = "2차 로그인 실패";
-                return response;
-            }
-            if (fail.remainingMinutes) {
-                response.success = false;
-                response.message = `비밀번호 로그인 \`${fail.remainingMinutes}\`분 제한`;
-                return response;
-            }
-            response.success = false;
-            response.message = `비밀번호 로그인 \`${fail.failCount}\`회 실패`;
-            return response;
-        }
-        token = secondLogin.token;
-    } catch (e) {
-        response.success = false;
-        response.message = `2차 로그인 중 오류 발생 ${String(e)}`;
-        return response;
-    }
-    const hcsresult = await hcs.registerSurvey(user.endpoint, token, survey);
-    if (!hcsresult.registeredAt) {
-        const reHcsresult = await hcs.registerSurvey(user.endpoint, token, survey);
-        if (!reHcsresult.registeredAt) {
-            response.success = false;
-            response.message = `자가진단 응답없음 ${reHcsresult}`;
-            return response;
-        }
-    }
-    response.message = `정상적으로 처리되었습니다.`;
-    return response;
-}
-
 client.on("ready", async () => {
     await mongo().then((mongoose) => {
         try {
@@ -308,7 +222,14 @@ client.on("ready", async () => {
                         });
                         const users = await Promise.all(
                             work.users.map((user) => {
-                                return doHcs(user, work.school.sd);
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT);
                             })
                         );
                         const registeredUsers = users.map((user) => {
@@ -316,13 +237,13 @@ client.on("ready", async () => {
                                 return {
                                     name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                     value: `${user.message}`,
-                                    inline: true,
+                                    inline: false,
                                 };
                             }
                             return {
                                 name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                 value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
-                                inline: true,
+                                inline: false,
                             };
                         });
                         const registered = {
@@ -343,7 +264,14 @@ client.on("ready", async () => {
                     const worksB = resultAB.map(async (work) => {
                         const users = await Promise.all(
                             work.users.map((user) => {
-                                return doHcs(user, work.school.sd);
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT);
                             })
                         );
                         const registeredUsers = users.map((user) => {
@@ -351,13 +279,13 @@ client.on("ready", async () => {
                                 return {
                                     name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                     value: `${user.message}`,
-                                    inline: true,
+                                    inline: false,
                                 };
                             }
                             return {
                                 name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                 value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
-                                inline: true,
+                                inline: false,
                             };
                         });
                         const registered = {
@@ -429,7 +357,14 @@ client.on("ready", async () => {
                         });
                         const users = await Promise.all(
                             work.users.map((user) => {
-                                return doHcs(user, work.school.sd);
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT);
                             })
                         );
                         const registeredUsers = users.map((user) => {
@@ -437,13 +372,13 @@ client.on("ready", async () => {
                                 return {
                                     name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                     value: `${user.message}`,
-                                    inline: true,
+                                    inline: false,
                                 };
                             }
                             return {
                                 name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                 value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
-                                inline: true,
+                                inline: false,
                             };
                         });
                         const registered = {
@@ -464,7 +399,14 @@ client.on("ready", async () => {
                     const worksB = resultBB.map(async (work) => {
                         const users = await Promise.all(
                             work.users.map((user) => {
-                                return doHcs(user, work.school.sd);
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT);
                             })
                         );
                         const registeredUsers = users.map((user) => {
@@ -472,13 +414,13 @@ client.on("ready", async () => {
                                 return {
                                     name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                     value: `${user.message}`,
-                                    inline: true,
+                                    inline: false,
                                 };
                             }
                             return {
                                 name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                 value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
-                                inline: true,
+                                inline: false,
                             };
                         });
                         const registered = {
@@ -515,7 +457,7 @@ client.on("ready", async () => {
 });
 
 client.on("ready", async () => {
-    const jobC = schedule.scheduleJob(`30 07 * * 1-5`, async function () {
+    const jobC = schedule.scheduleJob(`30 7 * * 1-5`, async function () {
         const wait = Math.floor(Math.random() * (10 - 0)) + 0;
         client.user.setPresence({
             activities: [{ name: `7시 ${30 + wait}분까지 대기`, type: "PLAYING" }],
@@ -550,7 +492,14 @@ client.on("ready", async () => {
                         });
                         const users = await Promise.all(
                             work.users.map((user) => {
-                                return doHcs(user, work.school.sd);
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT);
                             })
                         );
                         const registeredUsers = users.map((user) => {
@@ -558,13 +507,13 @@ client.on("ready", async () => {
                                 return {
                                     name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                     value: `${user.message}`,
-                                    inline: true,
+                                    inline: false,
                                 };
                             }
                             return {
                                 name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                 value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
-                                inline: true,
+                                inline: false,
                             };
                         });
                         const registered = {
@@ -585,7 +534,14 @@ client.on("ready", async () => {
                     const worksB = resultCB.map(async (work) => {
                         const users = await Promise.all(
                             work.users.map((user) => {
-                                return doHcs(user, work.school.sd);
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT);
                             })
                         );
                         const registeredUsers = users.map((user) => {
@@ -593,13 +549,141 @@ client.on("ready", async () => {
                                 return {
                                     name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                     value: `${user.message}`,
-                                    inline: true,
+                                    inline: false,
                                 };
                             }
                             return {
                                 name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                 value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
-                                inline: true,
+                                inline: false,
+                            };
+                        });
+                        const registered = {
+                            color: config.color.primary,
+                            title: `건강상태 자가진단 참여 결과예요.`,
+                            fields: [registeredUsers],
+                            timestamp: new Date(),
+                            footer: {
+                                text: client.users.cache.get(String(work._id)).username,
+                                icon_url: client.users.cache.get(String(work._id)).displayAvatarURL(),
+                            },
+                        };
+                        client.channels.cache.get(work.schedule.channelId).send({
+                            content: `<@${work._id}> 자가진단 결과를 확인해주세요!`,
+                            embeds: [registered],
+                        });
+                    });
+                    const worksC = resultCC.map(async (work) => {
+                        client.channels.cache.get(work.schedule.channelId).send({
+                            content: `<@${work._id}>`,
+                            embeds: [await getMeal(work)],
+                        });
+                    });
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        });
+        client.user.setPresence({
+            activities: [{ name: "/도움말", type: "WATCHING" }],
+            status: "online",
+        });
+    });
+});
+
+client.on("ready", async () => {
+    const jobTEST = schedule.scheduleJob(`55 46 17 * * 1-5`, async function () {
+        mongo().then(async (mongoose) => {
+            try {
+                var resultCA = await schoolSchema.find({
+                    "schedule.type": "TEST",
+                    "schedule.kinds": "A",
+                    "schedule.paused": false,
+                });
+                var resultCB = await schoolSchema.find({
+                    "schedule.type": "TEST",
+                    "schedule.kinds": "B",
+                    "schedule.paused": false,
+                });
+                var resultCC = await schoolSchema.find({
+                    "schedule.type": "TEST",
+                    "schedule.kinds": "C",
+                    "schedule.paused": false,
+                });
+            } finally {
+                mongoose.connection.close();
+                try {
+                    const worksA = resultCA.map(async (work) => {
+                        client.channels.cache.get(work.schedule.channelId).send({
+                            content: `<@${work._id}>`,
+                            embeds: [await getMeal(work)],
+                        });
+                        const users = await Promise.all(
+                            work.users.map((user) => {
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT, true);
+                            })
+                        );
+                        const registeredUsers = users.map((user) => {
+                            if (!user.success) {
+                                return {
+                                    name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                    value: `${user.message}`,
+                                    inline: false,
+                                };
+                            }
+                            return {
+                                name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
+                                inline: false,
+                            };
+                        });
+                        const registered = {
+                            color: config.color.primary,
+                            title: `건강상태 자가진단 참여 결과예요.`,
+                            fields: [registeredUsers],
+                            timestamp: new Date(),
+                            footer: {
+                                text: client.users.cache.get(String(work._id)).username,
+                                icon_url: client.users.cache.get(String(work._id)).displayAvatarURL(),
+                            },
+                        };
+                        client.channels.cache.get(work.schedule.channelId).send({
+                            content: `<@${work._id}> 자가진단 결과를 확인해주세요!`,
+                            embeds: [registered],
+                        });
+                    });
+                    const worksB = resultCB.map(async (work) => {
+                        const users = await Promise.all(
+                            work.users.map((user) => {
+                                let RAT = false;
+                                const today = new Date();
+                                const week = today.getDay();
+                                if ((week == 1 || week == 4) && user.org == "G100000214") {
+                                    console.log("RAT = TRUE, 음성으로 제출");
+                                    RAT = true;
+                                }
+                                return doHcs(user, RAT, true);
+                            })
+                        );
+                        const registeredUsers = users.map((user) => {
+                            if (!user.success) {
+                                return {
+                                    name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                    value: `${user.message}`,
+                                    inline: false,
+                                };
+                            }
+                            return {
+                                name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
+                                inline: false,
                             };
                         });
                         const registered = {

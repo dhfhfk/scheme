@@ -2,12 +2,7 @@ const { Client, Message, MessageEmbed, MessageActionRow, MessageSelectMenu } = r
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
-const { doHcs } = require("../../handler/dohcs");
-
-function randomInt(min, max) {
-    //min ~ max 사이의 임의의 정수 반환
-    return Math.floor(Math.random() * (max - min)) + min;
-}
+const { doHcs } = require("../../handler/hcs");
 
 module.exports = {
     name: "자가진단",
@@ -35,15 +30,11 @@ module.exports = {
      * @param {Message} message
      * @param {String[]} args
      */
-    run: async (client, interaction, args, message) => {
+    run: async (client, interaction, args) => {
         await interaction.deferReply({ ephemeral: true });
-        if (!args[0]) {
-            var RAT = false;
-        } else {
-            var RAT = JSON.parse(args[0]);
-        }
+        let RAT = false;
+        if (args[0]) RAT = JSON.parse(args[0])
         const userId = interaction.user.id;
-        const userName = interaction.user.username;
         await mongo().then(async (mongoose) => {
             try {
                 var result = await schoolSchema.findOne({
@@ -97,23 +88,23 @@ module.exports = {
                 }
                 if (users.length == 1) {
                     const response = await doHcs(result.users[0], RAT);
-                    if (typeof response == "object") {
-                        return interaction.editReply({
-                            embeds: [response],
-                            components: [],
-                            ephemeral: true,
-                        });
+                    if (!response.success) {
                     }
-                    var registered = new MessageEmbed()
-                        .setTitle(`${config.emojis.done} 자가진단에 정상적으로 참여했어요.`)
-                        .setColor(config.color.success)
-                        .addFields({
-                            name: `참여자`,
-                            value: `${response}`,
-                            inline: true,
-                        })
-                        .setTimestamp()
-                        .setFooter(client.users.cache.get(String(userId)).username, client.users.cache.get(String(userId)).displayAvatarURL());
+                    const registeredUsers = {
+                        name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
+                        value: `${response.message}\n자가진단키트 결과: ${response.RAT ? "음성" : "미검사"}`,
+                        inline: false,
+                    };
+                    const registered = {
+                        color: config.color.primary,
+                        title: `건강상태 자가진단 참여 결과예요.`,
+                        fields: [registeredUsers],
+                        timestamp: new Date(),
+                        footer: {
+                            text: client.users.cache.get(String(userId)).username,
+                            icon_url: client.users.cache.get(String(userId)).displayAvatarURL(),
+                        },
+                    };
                     return interaction.editReply({
                         embeds: [registered],
                         components: [],
@@ -172,35 +163,23 @@ module.exports = {
                     });
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
-                        let response;
                         try {
                             if (rawanswer[0] !== "all") {
-                                response = await doHcs(result.users[rawanswer], RAT);
+                                const response = await doHcs(result.users[rawanswer], RAT);
+                                if (!response.success) {
+                                }
                             } else {
-                                response = await Promise.all(
-                                    result.users.map((user, index) => {
-                                        return doHcs(user, RAT);
-                                    })
-                                );
-                                response = String(response.join(", ")).replace(/\*/g, "\\*");
                             }
-                            if (typeof response == "object") {
-                                return interaction.editReply({
-                                    embeds: [response],
-                                    components: [],
-                                    ephemeral: true,
-                                });
-                            }
-                            var registered = new MessageEmbed()
-                                .setTitle(`${config.emojis.done} 자가진단에 정상적으로 참여했어요.`)
-                                .setColor(config.color.success)
-                                .addFields({
-                                    name: `참여자`,
-                                    value: `${response}`,
-                                    inline: true,
-                                })
-                                .setTimestamp()
-                                .setFooter(client.users.cache.get(String(userId)).username, client.users.cache.get(String(userId)).displayAvatarURL());
+                            const registered = {
+                                color: config.color.primary,
+                                title: `건강상태 자가진단 참여 결과예요.`,
+                                fields: [registeredUsers],
+                                timestamp: new Date(),
+                                footer: {
+                                    text: client.users.cache.get(String(userId)).username,
+                                    icon_url: client.users.cache.get(String(userId)).displayAvatarURL(),
+                                },
+                            };
                             return interaction.editReply({
                                 embeds: [registered],
                                 components: [],

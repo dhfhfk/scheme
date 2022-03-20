@@ -47,6 +47,9 @@ const request_1 = __importDefault(require("./request"));
 function userInfo(endpoint, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield (0, request_1.default)("/v2/selectUserGroup", "POST", {}, endpoint, token);
+        if (response.message) {
+            return response.message;
+        }
         const list = [];
         for (const user of response) {
             const data = {
@@ -54,6 +57,9 @@ function userInfo(endpoint, token) {
                 userPNo: user["userPNo"],
             };
             const userinfo = yield (0, request_1.default)("/v2/getUserInfo", "POST", data, endpoint, user["token"]);
+            if (userinfo.message) {
+                console.log("자가진단 서버 일시적인 장애 발생?");
+            }
             list.push({
                 registerRequired: userinfo["registerDtm"] === undefined,
                 registeredAt: userinfo["registerDtm"],
