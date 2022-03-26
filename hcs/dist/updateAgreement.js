@@ -13,16 +13,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAgreement = void 0;
-const request_1 = __importDefault(require("./request"));
+const fetchHcs_1 = __importDefault(require("./util/fetchHcs"));
 /**
- * 개인정보 처리 방침 동의
- *
+ * 개인정보처리방침에 동의합니다.
  * @param endpoint 관할 시/도 엔드포인트
- * @param token 로그인 세션 토큰
+ * @param token 1차 로그인 토큰
+ * @returns {Promise<UpdateAgreementResult>}
  */
 function updateAgreement(endpoint, token) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, request_1.default)('/v2/updatePInfAgrmYn', 'POST', {}, endpoint, token);
+        yield (0, fetchHcs_1.default)('/v2/updatePInfAgrmYn', 'POST', {}, endpoint, token);
         return { success: true };
     });
 }

@@ -35,7 +35,14 @@ async function doHcs(user, RAT = false, test = false) {
         RAT: RAT,
         user: user.name,
     };
-    const login = await hcs.login(user.endpoint, user.org, user.encName, user.encBirth);
+    const schools = await hcs.searchSchool(user.schoolName)
+    const login = await hcs.login(
+        user.endpoint,
+        user.org,
+        user.encName,
+        user.encBirth,
+        schools[0].searchKey
+    );
     if (!login.success) {
         console.error("1차 로그인", login);
         response.success = false;
@@ -43,7 +50,11 @@ async function doHcs(user, RAT = false, test = false) {
         return response;
     }
     let secondToken;
-    const secondLogin = await hcs.secondLogin(user.endpoint, login.token, decrypt2(user.password));
+    const secondLogin = await hcs.secondLogin(
+        user.endpoint,
+        login.token,
+        decrypt2(user.password)
+    );
     if (secondLogin.success == false) {
         const fail = secondLogin;
         console.error("2차 로그인", fail);
@@ -79,7 +90,12 @@ async function doHcs(user, RAT = false, test = false) {
 }
 
 async function getUserInfo(user) {
-    const login = await hcs.login(user.endpoint, user.org, user.encName, user.encBirth);
+    const login = await hcs.login(
+        user.endpoint,
+        user.org,
+        user.encName,
+        user.encBirth
+    );
     if (!login.success) {
         console.error("1차 로그인", login);
         return login;

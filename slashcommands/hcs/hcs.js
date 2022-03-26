@@ -33,7 +33,7 @@ module.exports = {
     run: async (client, interaction, args) => {
         await interaction.deferReply({ ephemeral: true });
         let RAT = false;
-        if (args[0]) RAT = JSON.parse(args[0])
+        if (args[0]) RAT = JSON.parse(args[0]);
         const userId = interaction.user.id;
         await mongo().then(async (mongoose) => {
             try {
@@ -163,12 +163,43 @@ module.exports = {
                     });
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
+                        let response;
+                        let registeredUsers;
                         try {
                             if (rawanswer[0] !== "all") {
-                                const response = await doHcs(result.users[rawanswer], RAT);
+                                response = await doHcs(result.users[rawanswer], RAT);
                                 if (!response.success) {
+                                    registeredUsers = {
+                                        name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
+                                        value: `${response.message}`,
+                                        inline: false,
+                                    };
                                 }
+                                registeredUsers = {
+                                    name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
+                                    value: `${response.message}\n자가진단키트 결과: ${response.RAT ? "음성" : "미검사"}`,
+                                    inline: false,
+                                };
                             } else {
+                                response = await Promise.all(
+                                    result.users.map((user, index) => {
+                                        return doHcs(user, RAT);
+                                    })
+                                );
+                                registeredUsers = response.map((user) => {
+                                    if (!user.success) {
+                                        return {
+                                            name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                            value: `${user.message}`,
+                                            inline: false,
+                                        };
+                                    }
+                                    return {
+                                        name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                        value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
+                                        inline: false,
+                                    };
+                                });
                             }
                             const registered = {
                                 color: config.color.primary,

@@ -13,10 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.searchSchool = void 0;
-const request_1 = __importDefault(require("./request"));
+const fetchHcs_1 = __importDefault(require("./util/fetchHcs"));
+/**
+ * 학교를 검색합니다.
+ * @param schoolName 학교명
+ * @returns {Promise<School[]>}
+ */
 function searchSchool(schoolName) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield (0, request_1.default)("/v2/searchSchool", "GET", { orgName: schoolName });
+        const response = yield (0, fetchHcs_1.default)("/v2/searchSchool", "GET", { orgName: schoolName });
         const schoolList = Object(response["schulList"]);
         return schoolList.map(school => {
             return {
@@ -25,7 +30,8 @@ function searchSchool(schoolName) {
                 city: school["lctnScNm"],
                 address: school["addres"],
                 endpoint: school["atptOfcdcConctUrl"],
-                schoolCode: school["orgCode"]
+                schoolCode: school["orgCode"],
+                searchKey: response.key
             };
         });
     });

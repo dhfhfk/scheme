@@ -1,9 +1,9 @@
 export declare enum CovidQuickTestResult {
-    /** 검사하지 않음 */
+    /** 검사하지 않음 (0) */
     NONE = 0,
-    /** 음성 */
+    /** 음성 (1) */
     NEGATIVE = 1,
-    /** 양성 */
+    /** 양성 (2) */
     POSITIVE = 2
 }
 /** 설문 내용 */
@@ -34,10 +34,10 @@ export interface SurveyResult {
     registeredAt?: string;
 }
 /**
- * 설문을 진행합니다
- *
+ * 설문을 제출합니다.
  * @param endpoint 관할 시/도 엔드포인트
- * @param token 설문 토큰 (로그인 토큰이 아닙니다!)
+ * @param secondToken 2차 로그인 토큰
  * @param survey 설문 내용
+ * @returns {Promise<SurveyResult>}
  */
-export declare function registerSurvey(endpoint: string, token: string, survey?: SurveyData): Promise<SurveyResult>;
+export declare function registerSurvey(endpoint: string, secondToken: string, survey?: SurveyData): Promise<SurveyResult>;

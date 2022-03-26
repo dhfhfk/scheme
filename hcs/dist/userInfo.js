@@ -37,29 +37,23 @@ var __importDefault =
     };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userInfo = void 0;
-const request_1 = __importDefault(require("./request"));
+const fetchHcs_1 = __importDefault(require("./util/fetchHcs"));
 /**
- * 학생 정보를 가져옵니다.
- *
+ * 학생 정보를 확인합니다.
  * @param endpoint 관할 시/도 엔드포인트
- * @param token 로그인 세션 토큰
+ * @param token 1차 로그인 토큰
+ * @returns {Promise<UserInfo>}
  */
 function userInfo(endpoint, token) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield (0, request_1.default)("/v2/selectUserGroup", "POST", {}, endpoint, token);
-        if (response.message) {
-            return response.message;
-        }
+        const response = yield (0, fetchHcs_1.default)("/v2/selectUserGroup", "POST", {}, endpoint, token);
         const list = [];
         for (const user of response) {
             const data = {
                 orgCode: user["orgCode"],
                 userPNo: user["userPNo"],
             };
-            const userinfo = yield (0, request_1.default)("/v2/getUserInfo", "POST", data, endpoint, user["token"]);
-            if (userinfo.message) {
-                console.log("자가진단 서버 일시적인 장애 발생?");
-            }
+            const userinfo = yield (0, fetchHcs_1.default)("/v2/getUserInfo", "POST", data, endpoint, user["token"]);
             list.push({
                 registerRequired: userinfo["registerDtm"] === undefined,
                 registeredAt: userinfo["registerDtm"],

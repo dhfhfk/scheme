@@ -1,10 +1,4 @@
-const {
-    Client,
-    Message,
-    MessageEmbed,
-    MessageActionRow,
-    MessageSelectMenu,
-} = require("discord.js");
+const { Client, Message, MessageEmbed, MessageActionRow, MessageSelectMenu } = require("discord.js");
 const mongo = require("../mongo");
 const schoolSchema = require("../schemas/school-schema");
 const config = require("../config.json");
@@ -75,23 +69,18 @@ module.exports = {
                 try {
                     var users = result.users;
                     if (users.length == "0") {
-                        const error = new MessageEmbed()
-                            .setTitle(
-                                `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
-                            )
-                            .setColor(config.color.error)
-                            .addFields(
-                                {
-                                    name: `상세정보:`,
-                                    value: `DB에서 유저 식별 ID에 등록된 사용자를 찾지 못했어요.`,
-                                    inline: false,
-                                },
-                                {
-                                    name: `해결 방법:`,
-                                    value: `\`/사용자등록 이름:<이름> 생년월일:<생년월일> 비밀번호:<비밀번호> \` 명령어로 사용자를 등록하세요. `,
-                                    inline: false,
-                                }
-                            );
+                        const error = new MessageEmbed().setTitle(`${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`).setColor(config.color.error).addFields(
+                            {
+                                name: `상세정보:`,
+                                value: `DB에서 유저 식별 ID에 등록된 사용자를 찾지 못했어요.`,
+                                inline: false,
+                            },
+                            {
+                                name: `해결 방법:`,
+                                value: `\`/사용자등록 이름:<이름> 생년월일:<생년월일> 비밀번호:<비밀번호> \` 명령어로 사용자를 등록하세요. `,
+                                inline: false,
+                            }
+                        );
                         interaction.reply({
                             embeds: [error],
                             ephemeral: true,
@@ -100,9 +89,7 @@ module.exports = {
                     }
                 } catch (e) {
                     const error = new MessageEmbed()
-                        .setTitle(
-                            `${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`
-                        )
+                        .setTitle(`${config.emojis.x} 사용자 등록 정보를 찾을 수 없어요!`)
                         .setColor(config.color.error)
                         .addFields(
                             {
@@ -124,27 +111,17 @@ module.exports = {
                     return;
                 }
                 if (users.length == 1) {
-                    const response = await doHcs(result.users[0], RAT, test);
+                    const response = await doHcs(result.users[0], result.school.name, RAT, test);
                     if (!response.success) {
                         const registeredUsers = {
-                            name: `${response.user} 사용자 ${
-                                response.success
-                                    ? config.emojis.done
-                                    : config.emojis.x
-                            }`,
+                            name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
                             value: `${response.message}`,
                             inline: false,
                         };
                     }
                     const registeredUsers = {
-                        name: `${response.user} 사용자 ${
-                            response.success
-                                ? config.emojis.done
-                                : config.emojis.x
-                        }`,
-                        value: `${response.message}\n자가진단키트 결과: ${
-                            response.RAT ? "음성" : "미검사"
-                        }`,
+                        name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
+                        value: `${response.message}\n자가진단키트 결과: ${response.RAT ? "음성" : "미검사"}`,
                         inline: false,
                     };
                     const registered = {
@@ -153,11 +130,8 @@ module.exports = {
                         fields: [registeredUsers],
                         timestamp: new Date(),
                         footer: {
-                            text: client.users.cache.get(String(userId))
-                                .username,
-                            icon_url: client.users.cache
-                                .get(String(userId))
-                                .displayAvatarURL(),
+                            text: client.users.cache.get(String(userId)).username,
+                            icon_url: client.users.cache.get(String(userId)).displayAvatarURL(),
                         },
                     };
                     return interaction.editReply({
@@ -197,9 +171,7 @@ module.exports = {
                     const row = new MessageActionRow().addComponents(
                         new MessageSelectMenu()
                             .setCustomId("select")
-                            .setPlaceholder(
-                                "어떤 사용자의 자가진단을 참여할까요?"
-                            )
+                            .setPlaceholder("어떤 사용자의 자가진단을 참여할까요?")
                             .addOptions([
                                 {
                                     label: `모든 사용자`,
@@ -215,68 +187,45 @@ module.exports = {
                         ephemeral: true,
                     });
 
-                    var collector =
-                        interaction.channel.createMessageComponentCollector({
-                            max: 1,
-                        });
+                    var collector = interaction.channel.createMessageComponentCollector({
+                        max: 1,
+                    });
                     collector.on("end", async (SelectMenuInteraction) => {
                         let rawanswer = SelectMenuInteraction.first().values;
                         let response;
+                        let registeredUsers;
                         try {
                             if (rawanswer[0] !== "all") {
-                                const response = await doHcs(
-                                    result.users[rawanswer],
-                                    RAT,
-                                    test
-                                );
+                                const response = await doHcs(result.users[rawanswer], RAT, test);
                                 if (!response.success) {
-                                    const registeredUsers = {
-                                        name: `${response.user} 사용자 ${
-                                            response.success
-                                                ? config.emojis.done
-                                                : config.emojis.x
-                                        }`,
+                                    registeredUsers = {
+                                        name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
                                         value: `${response.message}`,
                                         inline: false,
                                     };
                                 }
-                                const registeredUsers = {
-                                    name: `${response.user} 사용자 ${
-                                        response.success
-                                            ? config.emojis.done
-                                            : config.emojis.x
-                                    }`,
-                                    value: `${
-                                        response.message
-                                    }\n자가진단키트 결과: ${
-                                        response.RAT ? "음성" : "미검사"
-                                    }`,
+                                registeredUsers = {
+                                    name: `${response.user} 사용자 ${response.success ? config.emojis.done : config.emojis.x}`,
+                                    value: `${response.message}\n자가진단키트 결과: ${response.RAT ? "음성" : "미검사"}`,
                                     inline: false,
                                 };
                             } else {
-                                const registeredUsers = users.map((user) => {
+                                const users = await Promise.all(
+                                    result.users.map((user, index) => {
+                                        return doHcs(user, RAT, test);
+                                    })
+                                );
+                                registeredUsers = users.map((user) => {
                                     if (!user.success) {
                                         return {
-                                            name: `${user.user} 사용자 ${
-                                                user.success
-                                                    ? config.emojis.done
-                                                    : config.emojis.x
-                                            }`,
+                                            name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
                                             value: `${user.message}`,
                                             inline: false,
                                         };
                                     }
                                     return {
-                                        name: `${user.user} 사용자 ${
-                                            user.success
-                                                ? config.emojis.done
-                                                : config.emojis.x
-                                        }`,
-                                        value: `${
-                                            user.message
-                                        }\n자가진단키트 결과: ${
-                                            user.RAT ? "음성" : "미검사"
-                                        }`,
+                                        name: `${user.user} 사용자 ${user.success ? config.emojis.done : config.emojis.x}`,
+                                        value: `${user.message}\n자가진단키트 결과: ${user.RAT ? "음성" : "미검사"}`,
                                         inline: false,
                                     };
                                 });
@@ -287,11 +236,8 @@ module.exports = {
                                 fields: [registeredUsers],
                                 timestamp: new Date(),
                                 footer: {
-                                    text: client.users.cache.get(String(userId))
-                                        .username,
-                                    icon_url: client.users.cache
-                                        .get(String(userId))
-                                        .displayAvatarURL(),
+                                    text: client.users.cache.get(String(userId)).username,
+                                    icon_url: client.users.cache.get(String(userId)).displayAvatarURL(),
                                 },
                             };
                             return interaction.editReply({

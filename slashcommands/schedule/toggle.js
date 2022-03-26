@@ -72,7 +72,7 @@ module.exports = {
                     } finally {
                         mongoose.connection.close();
                         console.log(`[✅] (${userId}, ${userName}) PAUSE schedule`);
-                        var paused = new MessageEmbed().setTitle(`${config.emojis.done} 스케줄이 _**일시정지**__ 되었어요.`).setDescription(`다시 명령어를 사용하면 일시정지를 해제할 수 있어요.`).setColor(config.color.success);
+                        var paused = new MessageEmbed().setTitle(`${config.emojis.done} 스케줄이 __**일시정지**__ 되었어요.`).setDescription(`다시 명령어를 사용하면 일시정지를 해제할 수 있어요.`).setColor(config.color.success);
                         interaction.editReply({
                             embeds: [paused],
                             ephemeral: false,

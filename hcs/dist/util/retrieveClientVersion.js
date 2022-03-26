@@ -12,17 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.passwordExists = void 0;
-const fetchHcs_1 = __importDefault(require("./util/fetchHcs"));
-/**
- * 비밀번호 설정 여부를 확인합니다.
- * @param endpoint 관할 시/도 엔드포인트
- * @param token 1차 로그인 토큰
- * @returns {boolean}
- */
-function passwordExists(endpoint, token) {
+const fetchHcs_1 = __importDefault(require("./fetchHcs"));
+function retrieveClientVersion() {
     return __awaiter(this, void 0, void 0, function* () {
-        return (0, fetchHcs_1.default)('/v2/hasPassword', 'POST', {}, endpoint, token);
+        const html = yield (0, fetchHcs_1.default)();
+        return html.match(/<link rel=icon href=https:\/\/.*\.toastcdn\.net\/eduro\/(.*)\/favicon\.ico type=image\/x-icon>/)[1];
     });
 }
-exports.passwordExists = passwordExists;
+exports.default = retrieveClientVersion;

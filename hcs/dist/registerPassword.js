@@ -13,22 +13,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerPassword = void 0;
-const request_1 = __importDefault(require("./request"));
-const util_1 = require("./util");
+const fetchHcs_1 = __importDefault(require("./util/fetchHcs"));
+const encrypt_1 = __importDefault(require("./util/encrypt"));
 /**
  * 비밀번호를 설정합니다.
- *
  * @param endpoint 관할 시/도 엔드포인트
- * @param token 로그인 세션 토큰
+ * @param token 1차 로그인 토큰
  * @param password 비밀번호
+ * @returns {Promise<RegisterPasswordResult>}
  */
 function registerPassword(endpoint, token, password) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = {
             deviceUuid: "",
-            password: (0, util_1.encrypt)(password)
+            password: (0, encrypt_1.default)(password)
         };
-        const response = yield (0, request_1.default)("/v2/registerPassword", "POST", data, endpoint, token);
+        const response = yield (0, fetchHcs_1.default)("/v2/registerPassword", "POST", data, endpoint, token);
         return { success: response };
     });
 }

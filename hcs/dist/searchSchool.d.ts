@@ -13,4 +13,9 @@ export interface School {
     /** 학교식별번호 */
     schoolCode: string;
 }
+/**
+ * 학교를 검색합니다.
+ * @param schoolName 학교명
+ * @returns {Promise<School[]>}
+ */
 export declare function searchSchool(schoolName: string): Promise<School[]>;

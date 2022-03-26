@@ -28,6 +28,7 @@ const schoolSchema = new mongoose.Schema(
                 password: { type: String, required: true },
                 endpoint: { type: String, required: true },
                 org: { type: String, required: true },
+                schoolName: { type: String, required: true },
                 _id: false,
             },
         ],

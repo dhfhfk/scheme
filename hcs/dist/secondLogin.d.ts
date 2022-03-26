@@ -10,7 +10,7 @@ export interface SecondLoginResultSuccess {
      *    }
      * */
     success: true;
-    /** 설문 토큰 */
+    /** 2차 로그인 토큰 */
     token: string;
 }
 export interface SecondLoginResultFailure {
@@ -30,4 +30,11 @@ export interface SecondLoginResultFailure {
     remainingMinutes?: number;
     message: string;
 }
+/**
+ * 2차 로그인을 진행합니다.
+ * @param endpoint 관할 시/도 엔드포인트
+ * @param token 1차 로그인 토큰
+ * @param password 비밀번호
+ * @returns {Promise<SecondLoginResult>}
+ */
 export declare function secondLogin(endpoint: string, token: string, password: string): Promise<SecondLoginResult>;

@@ -39,9 +39,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultAgent = void 0;
 const node_fetch_1 = __importDefault(require("node-fetch"));
 const fetch_cookie_1 = __importDefault(require("fetch-cookie"));
-const fetch = (0, fetch_cookie_1.default)(node_fetch_1.default);
 const https_1 = require("https");
 const url_1 = require("url");
+const fetch = (0, fetch_cookie_1.default)(node_fetch_1.default);
 exports.defaultAgent = new https_1.Agent({
     rejectUnauthorized: false,
 });
@@ -60,7 +60,7 @@ const defaultHeaders = {
     "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1",
     "X-Requested-With": "XMLHttpRequest",
 };
-function request(path = "/", method = "GET", data = {}, endpoint = "hcs.eduro.go.kr", token) {
+function fetchHcs(path = "/", method = "GET", data = {}, endpoint = "hcs.eduro.go.kr", token) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = method === "GET" ? "?" + new url_1.URLSearchParams(data).toString() : "";
         const url = "https://" + endpoint + path + query;
@@ -74,8 +74,7 @@ function request(path = "/", method = "GET", data = {}, endpoint = "hcs.eduro.go
         try {
             value = JSON.parse(value);
         } catch (ignored) {}
-        console.log(path, value);
         return value;
     });
 }
-exports.default = request;
+exports.default = fetchHcs;
