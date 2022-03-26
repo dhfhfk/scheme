@@ -3,7 +3,6 @@ const request = require("request");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const hcs = require("../../hcs");
 
 const cancelled = new MessageEmbed().setTitle(`학교 등록이 취소되었어요.`).setColor(config.color.error);
@@ -144,7 +143,7 @@ module.exports = {
                     } finally {
                         await mongoose.connection.close();
                         var registered = new MessageEmbed()
-                            .setTitle(`${config.emojis.done} ${interaction.user.nickname || interaction.user.username}님의 학교를 ${schoolInfo.name}로 등록했어요.`)
+                            .setTitle(`${config.emojis.done} ${interaction.member.nickname || interaction.user.username} 님의 학교를 ${schoolInfo.name}로 등록했어요.`)
                             .setDescription(
                                 `이제 자가진단 사용자를 등록하거나 자동 급식 알림 스케줄을 등록할 수 있어요! 
 (\`/사용자등록\` \`/스케줄등록\`)`
@@ -233,7 +232,7 @@ module.exports = {
                         } finally {
                             await mongoose.connection.close();
                             var registered = new MessageEmbed()
-                                .setTitle(`${config.emojis.done} ${interaction.user.nickname || interaction.user.username}님의 학교를 ${schoolInfo.name}로 등록했어요.`)
+                                .setTitle(`${config.emojis.done} ${interaction.member.nickname || interaction.user.username} 님의 학교를 ${schoolInfo.name}로 등록했어요.`)
                                 .setDescription(
                                     `이제 자가진단 사용자를 등록하거나 자동 급식 알림 스케줄을 등록할 수 있어요! 
 (\`/사용자등록\` \`/스케줄등록\`)`

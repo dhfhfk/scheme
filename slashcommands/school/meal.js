@@ -3,7 +3,6 @@ const request = require("request");
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 async function getMeal(schoolInfo, today) {
     var options = {
@@ -148,7 +147,12 @@ module.exports = {
                         });
                     }
                     const collector = interaction.channel.createMessageComponentCollector({ componentType: "BUTTON" });
-
+                    setTimeout(async function () {
+                        await interaction.editReply({
+                            components: [],
+                            ephemeral: true,
+                        });
+                    }, 600000);
                     collector.on("collect", async (i) => {
                         if (i.customId == `spec-${randomKey}`) {
                             i.reply({ ephemeral: false, content: `<@${i.user.id}> 급식을 조회할 날짜를 입력해주세요. 예) 2022년 3월 5일은 \`20220305\`로 입력하세요.` }).then(async () => {

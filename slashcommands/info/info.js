@@ -1,6 +1,5 @@
 const { Client, Message, MessageEmbed } = require("discord.js");
 const config = require("../../config.json");
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 module.exports = {
     name: "정보",

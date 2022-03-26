@@ -2,7 +2,6 @@ const { Client, Message, MessageEmbed, MessageActionRow, MessageButton } = requi
 const mongo = require("../../mongo");
 const schoolSchema = require("../../schemas/school-schema");
 const config = require("../../config.json");
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const hcs = require("../../hcs");
 const JSEncrypt = require("jsencrypt");
 const CryptoJS = require("crypto-js");
@@ -71,7 +70,6 @@ module.exports = {
                     _id: user_id,
                 });
                 try {
-                    var school_name = result.school.name;
                     var users = result.users;
                     if (users.length >= config.services.user_limit) {
                         const error = new MessageEmbed()
@@ -354,6 +352,7 @@ module.exports = {
                                     password: encPassword,
                                     endpoint: userInfo[1],
                                     org: userInfo[2],
+                                    schoolName: result.school.name,
                                 },
                             },
                         },
